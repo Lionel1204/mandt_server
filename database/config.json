@@ -1,0 +1,33 @@
+{
+  "development": {
+    "username": "root",
+    "password": "Passw0rd1",
+    "database": "mandt_development",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "dialectOptions": {
+      "supportBigNumbers": true
+    },
+    "operatorsAliases": false
+  },
+  "test": {
+    "username": "root",
+    "password": "Passw0rd1",
+    "database": "mandt_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "dialectOptions": {
+      "supportBigNumbers": true
+    }
+  },
+  "production": {
+    "username": "root",
+    "password": "Passw0rd1",
+    "database": "mandt_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "dialectOptions": {
+      "supportBigNumbers": true
+    }
+  }
+}

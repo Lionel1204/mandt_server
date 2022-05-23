@@ -1,0 +1,16 @@
+# Create a User
+POST http://{{host}}/{{api_prefix}}/users
+Content-Type: application/json
+
+{
+  "name": "testUser",
+  "title": "CEO",
+  "identity": "45678910123",
+  "phone": "13600000000",
+  "email": "test@163.com"
+}
+
+###
+# Get a user
+GET http://{{host}}/{{api_prefix}}/users/3
+Content-Type: application/json

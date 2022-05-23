@@ -1,0 +1,84 @@
+const db = require('../database/models');
+
+class DBService {
+    constructor() {}
+    initialize() {
+        return Promise.resolve();
+    }
+
+    //----- Projects:
+    async getProjects(opt) {
+        const options = {
+            order: [[db.sequelize.fn('lower', db.sequelize.col('createdAt')),'DESC']],
+            limit: opt.limit,
+            offset: opt.offset
+        }
+        const result = await db.projects.findAndCountAll(options);
+
+        return [result.count, result.rows];
+    }
+
+    async getProjectById(projectId) {
+        return await db.projects.findByPk(projectId);
+    }
+
+    async createProject(project) {
+        return db.projects.create(project);
+    }
+
+    async updateProject(projectId, project) {
+        delete project.id;
+        const where = { id: projectId };
+        const result = await db.projects.update(project, {
+            where
+        });
+        return result[0] > 0;
+    }
+
+    async deleteProject(projectId) {
+        const result = await db.projects.destroy({where: {id: projectId}});
+        return result > 0;
+    }
+
+    async listProjectUsers(projectIds) {
+        db.users.hasMany(db.project_users, { foreignKey: 'user_id' });
+        db.project_users.belongsTo(db.users, { foreignKey: 'user_id' });
+
+        const where = {
+            project_id: projectIds,
+            include: [{
+                model: db.users,
+                required: true
+            }]
+        }
+        return await db.project_users.findAll(where);
+    }
+
+    async addProjectUser(projectUser) {
+        return db.project_users.create(projectUser);
+    }
+
+    //----- Users:
+    async getUserByIds(userIds) {
+        const where = {
+            id: userIds
+        }
+        return await db.users.findAll(where);
+    }
+
+    async getUserById(userId) {
+        return await db.users.findByPk(userId);
+    }
+
+    async createUser(user) {
+        return db.users.create(user);
+    }
+
+
+    //----- Manifest-Notes:
+
+    //----- Cargos
+
+    //----- Shipping paths:
+}
+module.exports = DBService;

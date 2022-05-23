@@ -1,0 +1,794 @@
+swagger: '2.0'
+info:
+  description: This API is describe the basic operation of M and T system
+  version: 1.0.0
+  title: M & T API
+  contact:
+    email: lionel12@163.com
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+tags:
+  - name: Projects
+    description: Project info management
+  - name: Consignments
+    description: Consignments note management
+  - name: Packages
+    description: Packages info management
+  - name: ShippingPaths
+    description: Shipping Paths management
+  - name: Cargos
+    description: Cargos management
+
+  - name: Admins
+    description: Secured Admin-only calls
+
+
+paths:
+  /projects:
+    post:
+      tags:
+        - Projects
+      summary: Create a new projects
+      operationId: addProject
+      description: |
+        User should create a project to manage all of packages and cargos.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: payload
+          in: body
+          description: Payload of create a project
+          schema:
+            $ref: '#/definitions/CreateProjectItem'
+      responses:
+        201:
+          description: Created, return the created project item
+          schema:
+            $ref: '#/definitions/ProjectItem'
+        400:
+          description: Bad input parameter
+        500:
+          description: Internal error
+    get:
+      tags:
+        - Projects
+      summary: get projects
+      operationId: getProject
+      description: |
+        User could query projects with query string
+      consumes:
+        - application/json
+      produces:
+        - applicatoin/json
+      parameters:
+        - name: owner
+          in: query
+          description: Add owner id to filter projects by owner
+          type: integer
+          format: int32
+        - name: status
+          in: query
+          description: To filter projects by status
+          type: string
+        - name: limit
+          in: query
+          description: |
+            Max number of project items, 100 by default
+          type: integer
+          minimum: 1
+          maximum: 100
+        - in: query
+          name: offset
+          description: |
+            For pagination query, 0 by default
+          type: integer
+      responses:
+        200:
+          description: Success, query projects with query string
+          schema:
+            type: object
+            properties:
+              results:
+                description: Project array
+                type: array
+                items:
+                  $ref: '#/definitions/ProjectItem'
+              pagination:
+                $ref: '#/definitions/Pagination'
+        400:
+          description: Bad input parameter
+        500:
+          description: Internal error
+  /projects/{project_id}:
+    get:
+      tags:
+        - Projects
+      summary: get a project by id
+      operationId: getProjectById
+      description: |
+        Get a project with id
+      produces:
+        - application/json
+      parameters:
+        - name: project_id
+          in: path
+          type: integer
+          required: true
+      responses:
+        200:
+          description: Success, one single project payload
+          schema:
+            $ref: '#/definitions/ProjectItem'
+        404:
+          description: Project not found
+        500:
+          description: Internal error
+    patch:
+      tags:
+        - Projects
+      summary: update a project by id
+      operationId: patchProjectById
+      description: |
+        Update a project with id, including its status
+      consumes:
+        - application/json
+      produces:
+        - applicatoin/json
+      parameters:
+        - name: project_id
+          in: path
+          type: integer
+          required: true
+        - name: payload
+          in: body
+          description: |
+            Payload of update a project
+          schema:
+            $ref: '#/definitions/CreateProjectItem'
+      responses:
+        200:
+          description: Success, project has been updated.
+        400:
+          description: Bad input parameter
+        404:
+          description: Project not found
+        500:
+          description: Internal error
+    delete:
+      tags:
+        - Projects
+      summary: Delete a project by id
+      operationId: deleteProjectById
+      description: |
+        Delete a project with id, soft delete WITHOUT GDPR
+      produces:
+        - applicatoin/json
+      parameters:
+        - name: project_id
+          in: path
+          type: integer
+          required: true
+      responses:
+        204:
+          description: Success, no content
+        404:
+          description: Project not found
+        500:
+          description: Internal error
+  /consignments:
+    post:
+      tags:
+        - Consignments
+      summary: Create a consignment note
+      operationId: createConsignment
+      description: |
+        You can add a consignment in a project
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: payload
+          in: body
+          description: Payload of create a consignment note
+          schema:
+            $ref: '#/definitions/CreateConsignmentItem'
+      responses:
+        201:
+          description: Created, return the created consignment note
+          schema:
+            $ref: '#/definitions/ConsignmentItem'
+        400:
+          description: Bad input parameter
+        404:
+          description: Project not found
+        500:
+          description: Internal error
+    get:
+      tags:
+        - Consignments
+      summary: query consignment notes
+      operationId: searchConsignment
+      description: |
+        To Query consignment note with filter 'status' and 'project'
+      produces:
+        - application/json
+      parameters:
+        - name: project
+          in: query
+          type: integer
+          description: returns all consignment notes if null.
+        - name: owner
+          in: query
+          type: integer
+          description: Add owner id to filter
+        - name: status
+          in: query
+          type: string
+          description: filter by status
+        - name: offset
+          in: query
+          type: integer
+          description: For pagination query, 0 by default
+        - name: limit
+          in: query
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Max number of project items, 100 by default
+      responses:
+        200:
+          description: Success, query consignment with query string
+          schema:
+            type: object
+            properties:
+              results:
+                description: Consignment array
+                type: array
+                items:
+                  $ref: '#/definitions/ConsignmentItem'
+              pagination:
+                $ref: '#/definitions/Pagination'
+        400:
+          description: Bad input parameter
+        404:
+          description: Project not found
+        500:
+          description: Internal error
+  /consignments/{consignment_id}:
+    get:
+      tags:
+        - Consignments
+      summary: get a consignment by id
+      operationId: getConsignmentById
+      description: |
+        Get a consignment with id
+      produces:
+        - application/json
+      parameters:
+        - name: consignment_id
+          in: path
+          type: integer
+          required: true
+      responses:
+        200:
+          description: Success, one single consignment payload
+          schema:
+            $ref: '#/definitions/ConsignmentItem'
+        404:
+          description: Consignment not found
+        500:
+          description: Internal error
+    patch:
+      tags:
+        - Consignments
+      summary: update a consignment by id
+      operationId: patchConsignmentById
+      description: |
+        Update a consignment with id, including its status
+      consumes:
+        - application/json
+      produces:
+        - applicatoin/json
+      parameters:
+        - name: consignment_id
+          in: path
+          type: integer
+          required: true
+        - name: payload
+          in: body
+          description: |
+            Payload of update a consignment
+          schema:
+            $ref: '#/definitions/CreateConsignmentItem'
+      responses:
+        200:
+          description: Success, consignment has been updated.
+        400:
+          description: Bad input parameter
+        404:
+          description: Consignment not found
+        500:
+          description: Internal error
+    delete:
+      tags:
+        - Consignments
+      summary: Delete a consignment by id
+      operationId: deleteConsignmentById
+      description: |
+        Delete a consignment with id, soft delete WITHOUT GDPR
+      produces:
+        - applicatoin/json
+      parameters:
+        - name: consignment_id
+          in: path
+          type: integer
+          required: true
+      responses:
+        204:
+          description: Success, no content
+        404:
+          description: Consignment not found
+        500:
+          description: Internal error
+  /projects/{project_id}/packages:
+    post:
+      tags:
+        - Packages
+      summary: Create a new package
+      operationId: addPackage
+      description: |
+        User should create a package.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: project_id
+          required: true
+          in: path
+          type: integer
+          description: Create a package under the project
+        - name: payload
+          in: body
+          description: Payload of create a package
+          schema:
+            $ref: '#/definitions/CreatePackageItem'
+      responses:
+        201:
+          description: Created, return the created package item
+          schema:
+            $ref: '#/definitions/PackageItem'
+        400:
+          description: Bad input parameter
+        500:
+          description: Internal error
+    get:
+      tags:
+        - Packages
+      summary: query packages info
+      operationId: searchPackages
+      description: |
+        To Query package with filter
+      produces:
+        - application/json
+      parameters:
+        - name: project_id
+          required: true
+          in: path
+          type: integer
+          description: returns all pacakges.
+        - name: consignmentId
+          in: query
+          type: integer
+          description: Add consignment id to filter
+        - name: sort
+          in: query
+          type: string
+          enum:
+            - weigth
+            - amount
+        - name: offset
+          in: query
+          type: integer
+          description: For pagination query, 0 by default
+        - name: limit
+          in: query
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Max number of project items, 100 by default
+      responses:
+        200:
+          description: Success, query packages with query string
+          schema:
+            type: object
+            properties:
+              results:
+                description: Package array
+                type: array
+                items:
+                  $ref: '#/definitions/PackageItem'
+              pagination:
+                $ref: '#/definitions/Pagination'
+        400:
+          description: Bad input parameter
+        404:
+          description: Project not found
+        500:
+          description: Internal error
+  /projects/{project_id}/packages/{package_id}:
+    get:
+      tags:
+        - Packages
+      summary: get a package by id
+      operationId: getPackageById
+      description: |
+        Get a package with id
+      produces:
+        - application/json
+      parameters:
+        - name: project_id
+          in: path
+          type: integer
+          required: true
+        - name: package_id
+          in: path
+          type: integer
+          required: true
+      responses:
+        200:
+          description: Success, one single package payload
+          schema:
+            $ref: '#/definitions/PackageItem'
+        404:
+          description: Package not found
+        500:
+          description: Internal error
+    patch:
+      tags:
+        - Packages
+      summary: update a package by id
+      operationId: patchPackagetById
+      description: |
+        Update a package with id, including the consignment id
+      consumes:
+        - application/json
+      produces:
+        - applicatoin/json
+      parameters:
+        - name: project_id
+          in: path
+          type: integer
+          required: true
+        - name: package_id
+          in: path
+          type: integer
+          required: true
+        - name: payload
+          in: body
+          description: |
+            Payload of update a package
+          schema:
+            $ref: '#/definitions/CreatePackageItem'
+      responses:
+        200:
+          description: Success, package has been updated.
+        400:
+          description: Bad input parameter
+        404:
+          description: Consignment not found
+        500:
+          description: Internal error
+    delete:
+      tags:
+        - Packages
+      summary: Delete a package by id
+      operationId: deletePackageById
+      description: |
+        Delete a package with id, soft delete WITHOUT GDPR
+      produces:
+        - applicatoin/json
+      parameters:
+        - name: project_id
+          in: path
+          type: integer
+          required: true
+        - name: package_id
+          in: path
+          type: integer
+          required: true
+      responses:
+        204:
+          description: Success, no content
+        404:
+          description: Consignment not found
+        500:
+          description: Internal error
+  /inventory:
+    get:
+      tags:
+        - developers
+      summary: searches inventory
+      operationId: searchInventory
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: searchString
+          description: pass an optional search string for looking up inventory
+          required: false
+          type: string
+        - in: query
+          name: skip
+          description: number of records to skip for pagination
+          type: integer
+          format: int32
+          minimum: 0
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 50
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/InventoryItem'
+        400:
+          description: bad input parameter
+    post:
+      tags:
+        - admins
+      summary: adds an inventory item
+      operationId: addInventory
+      description: Adds an item to the system
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: inventoryItem
+          description: Inventory item to add
+          schema:
+            $ref: '#/definitions/InventoryItem'
+      responses:
+        201:
+          description: item created
+        400:
+          description: invalid input, object invalid
+        409:
+          description: an existing item already exists
+definitions:
+  Pagination:
+    type: object
+    required:
+      - offset
+      - limit
+    properties:
+      limit:
+        type: integer
+      offset:
+        type: integer
+      totalResults:
+        type: integer
+      next:
+        type: string
+  CreateProjectItem:
+    type: object
+    required:
+      - name
+      - owner
+    properties:
+      name:
+        type: string
+        example: Food To Shandong
+      ownerId:
+        type: integer
+        example: 1
+      receiverId:
+        type: integer
+        example: 2
+      status:
+        type: string
+        enum:
+          - ACTIVE
+          - COMPLETED
+          - VOID
+          - HOLD
+  ProjectItem:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: Food To Shandong
+      owner:
+        type: string
+        example: Aric
+      receiver:
+        type: string
+        example: Lionel
+      status:
+        type: string
+        enum:
+          - CREATED
+          - PROCESSING
+          - COMPLETED
+          - VOID
+          - HOLD
+      hidden:
+        type: boolean
+        example: false
+      createdAt:
+        type: string
+        format: date-time
+        example: '2016-08-29T09:12:33.001Z'
+      endedAt:
+        type: string
+        format: date-time
+        example: '2016-08-29T09:12:33.001Z'
+  CreateConsignmentItem:
+    type: object
+    required:
+      - noteNo
+      - amount
+    properties:
+      projectId:
+        type: integer
+        example: 1
+      noteNo:
+        type: string
+        example: note001
+      amount:
+        type: integer
+        example: 24
+  ConsignmentItem:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      projectId:
+        type: integer
+        example: 1
+      noteNo:
+        type: string
+        example: fhd001
+      amount:
+        type: integer
+        example: 24
+      status:
+        type: string
+        enum:
+          - OPEN
+          - CLOSED
+      createdAt:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001Z
+      endedAt:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001Z
+  CreatePackageItem:
+    type: object
+    required:
+      - packageNo
+      - wrappingType
+      - shippingType
+      - size
+      - weight
+    properties:
+      consignmentId:
+        type: integer
+      packageNo:
+        type: string
+        example: PK001
+      wrappingType:
+        type: string
+        enum:
+          - WoodenCase
+          - IronCase
+          - Tray
+          - Unwrapped
+      shippingType:
+        type: string
+        enum:
+          - Container
+          - Bulk
+      size:
+        $ref: '#/definitions/PackageSize'
+      weight:
+        type: number
+  PackageItem:
+    type: object
+    properties:
+      consignmentId:
+        type: integer
+      packageNo:
+        type: string
+        example: PK001
+      wrappingType:
+        type: string
+        enum:
+          - WoodenCase
+          - IronCase
+          - Tray
+          - Unwrapped
+      shippingType:
+        type: string
+        enum:
+          - Container
+          - Bulk
+      size:
+        $ref: '#/definitions/PackageSize'
+      weight:
+        type: number
+      amount:
+        type: integer
+  PackageSize:
+    type: object
+    properties:
+      length:
+        type: string
+      width:
+        type: string
+      heigth:
+        type: string
+
+  InventoryItem:
+    type: object
+    required:
+      - id
+      - name
+      - manufacturer
+      - releaseDate
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      name:
+        type: string
+        example: Widget Adapter
+      releaseDate:
+        type: string
+        format: date-time
+        example: 2016-08-29T09:12:33.001Z
+      manufacturer:
+        $ref: '#/definitions/Manufacturer'
+  Manufacturer:
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        example: ACME Corporation
+      homePage:
+        type: string
+        format: url
+        example:  https://www.acme-corp.com
+      phone:
+        type: string
+        example: 408-867-5309
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /Lionel1204/MandT/1.0.1
+schemes:
+  - https
