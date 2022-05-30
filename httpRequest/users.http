@@ -14,3 +14,10 @@ Content-Type: application/json
 # Get a user
 GET http://{{host}}/{{api_prefix}}/users/3
 Content-Type: application/json
+
+# List users
+###
+GET http://{{host}}/{{api_prefix}}/users?limit=10&offset=0&company=6
+Content-Type: application/json
+
+###

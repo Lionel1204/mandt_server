@@ -18,12 +18,12 @@ Content-Type: application/json
 
 ###
 # List Projects
-GET http://{{host}}/{{api_prefix}}/projects
+GET http://{{host}}/{{api_prefix}}/projects?limit=10&offset=0
 Content-Type: application/jsons
 
 ###
 # Get Projects
-GET http://{{host}}/{{api_prefix}}/projects/1
+GET http://{{host}}/{{api_prefix}}/projects/9
 Content-Type: application/json
 
 ###

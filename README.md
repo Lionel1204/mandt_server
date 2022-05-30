@@ -3,9 +3,9 @@ http://localhost:3000
 
 ## Create DB
 Install packages
-> npm install sequelize -S
-> npm install sequelize-cli -S
-> npm install mysql2 -S
+> npm install sequelize -S  
+> npm install sequelize-cli -S  
+> npm install mysql2 -S  
 
 Initialize db tree  
 - create a .sequelizerc

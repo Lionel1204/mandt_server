@@ -15,7 +15,9 @@ module.exports = {
         type: Sequelize.STRING
       },
       license: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: false
       },
       company_id: {
         type: Sequelize.STRING

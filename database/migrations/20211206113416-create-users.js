@@ -15,10 +15,14 @@ module.exports = {
         type: Sequelize.STRING
       },
       id_card: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: false
       },
       phone: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: false
       },
       email: {
         type: Sequelize.STRING
@@ -32,6 +36,7 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    queryInterface.addIndex('users', '')
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('users');

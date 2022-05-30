@@ -1,0 +1,5 @@
+# List Manifests
+GET http://{{host}}/{{api_prefix}}/manifests?limit=10&offset=0
+Content-Type: application/jsons
+
+###

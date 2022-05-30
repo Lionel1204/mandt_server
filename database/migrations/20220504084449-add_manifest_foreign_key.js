@@ -22,7 +22,7 @@ module.exports = {
     await queryInterface.changeColumn('manifest_notes', 'receiver', {
       type: Sequelize.BIGINT,
       references: {
-        model: 'companies',
+        model: 'users',
         key: 'id',
       },
       onUpdate: 'CASCADE',

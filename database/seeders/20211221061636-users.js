@@ -11,6 +11,7 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
+
     const records = [{
       name: 'Lionel Shen',
       title: 'Project Manager',
@@ -35,8 +36,10 @@ module.exports = {
       email: 'kevin@163.com',
       createdAt: new Date(),
       updatedAt: new Date()
-    }]
-    await queryInterface.bulkInsert('users', records, {});
+    }];
+    await queryInterface.bulkInsert('users', records, {
+      updateOnDuplicate: ['updatedAt']
+    });
   },
 
   down: async (queryInterface, Sequelize) => {

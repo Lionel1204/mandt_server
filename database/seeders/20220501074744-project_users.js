@@ -49,7 +49,10 @@ module.exports = {
       };
     });
 
-    await queryInterface.bulkInsert('project_users', records, {logging: console.log});
+    await queryInterface.bulkInsert('project_users', records, {
+      updateOnDuplicate: ['updatedAt'],
+      logging: console.log
+    });
   },
 
   down: async (queryInterface, Sequelize) => {

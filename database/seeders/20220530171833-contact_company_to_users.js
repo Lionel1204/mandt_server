@@ -10,22 +10,27 @@ module.exports = {
      *   name: 'John Doe',
      *   isBetaMember: false
      * }], {});
-    */
+     */
+    const companyId = await queryInterface.rawSelect(
+      'companies',
+      {
+        where: {
+          license: '123456778910'
+        },
+        logging: console.log
+      },
+      ['id']
+    );
 
-    const records = [{
-      note_no: 'M0001',
-      creator: 1,
-      receiver: null,
-      project_id: 1,
-      status: 'ACTIVE',
-      cargo_amount: 3,
-      published_at: new Date(),
-      ended_at: null,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }];
+    const phones = ['13564536791', '18001693299', '18654652911'];
 
-    await queryInterface.bulkInsert('manifest_notes', records, {logging: console.log});
+    await queryInterface.bulkUpdate(
+      'users',
+      { company_id: companyId },
+      {
+        phone: phones
+      }
+    );
   },
 
   down: async (queryInterface, Sequelize) => {

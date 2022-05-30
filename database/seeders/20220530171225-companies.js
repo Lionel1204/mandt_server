@@ -11,33 +11,18 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-
-    const ownerId = await queryInterface.rawSelect('users', {
-      where: {
-        name: 'Lionel Shen'
-      },
-      logging: console.log
-    }, ['id']);
-
-    const receiverId = await queryInterface.rawSelect('users', {
-      where: {
-        name: 'Aric Liu'
-      },
-      logging: console.log
-    }, ['id']);
-
     const records = [{
-      name: 'testProj1',
-      owner: ownerId,
-      receiver: receiverId,
-      status: 'ACTIVE',
+      name: 'itLogistics',
+      type: 'LTD',
+      license: '123456778910',
+      company_id: 'it-id',
+      contact: 1,
+      capability: 10000,
+      memo: 'The big company',
       createdAt: new Date(),
       updatedAt: new Date()
     }];
-
-    await queryInterface.bulkInsert('projects', records, {
-      logging: console.log
-    });
+    await queryInterface.bulkInsert('companies', records, {logging: console.log});
   },
 
   down: async (queryInterface, Sequelize) => {

@@ -16,14 +16,14 @@ module.exports = router;
 const controllers = require('../controllers');
 const {createControllerFunction} = require('../helper/routerHelper');
 const apiPrefix = '/api/v1'
+const {
+  projectsController,
+  usersController,
+  qrController,
+  manifestsController
+} = controllers;
+
 module.exports = function(app) {
-
-  const {
-    projectsController,
-    usersController,
-    qrController
-  } = controllers;
-
   // Projects
   app.get(`${apiPrefix}/projects`, createControllerFunction(projectsController, 'list'));
   app.get(`${apiPrefix}/projects/:projectId`, createControllerFunction(projectsController, 'get'));
@@ -40,6 +40,15 @@ module.exports = function(app) {
 
   // Users
   app.get(`${apiPrefix}/users/:userId`, createControllerFunction(usersController, 'get'));
-  app.post(`${apiPrefix}/users/`, createControllerFunction(usersController, 'post'));
+  app.post(`${apiPrefix}/users`, createControllerFunction(usersController, 'post'));
+  app.get(`${apiPrefix}/users`, createControllerFunction(usersController, 'list'));
 
+  // Manifests
+  app.get(`${apiPrefix}/manifests`, createControllerFunction(manifestsController, 'list'));
+  app.get(`${apiPrefix}/manifests/:manifestId`, createControllerFunction(manifestsController, 'get'));
+  app.post(`${apiPrefix}/manifests`, createControllerFunction(manifestsController, 'post'));
+  app.patch(`${apiPrefix}/manifests/:manifestId`, createControllerFunction(manifestsController, 'patch'));
+  app.delete(`${apiPrefix}/manifests/:manifestId`, createControllerFunction(manifestsController, 'delete'));
+
+  //
 };
