@@ -60,6 +60,7 @@ class SerializerService {
    */
   serializeUser(data) {
     const output = {
+      id: data.id,
       name: data.name,
       title: data.title,
       identity: data.id_card,
