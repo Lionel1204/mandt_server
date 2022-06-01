@@ -45,6 +45,10 @@ class DataService {
     if (payload?.status === ProjectStatus.Completed || payload?.status === ProjectStatus.Void) {
       project.ended_at = new Date();
     }
+    // TODO: use ajv to validate instead
+    if (payload?.receiverId) project.receiver = payload.receiverId;
+    if (payload?.ownerId) project.owner = payload.ownerId;
+
     const result = await this.dbService.updateProject(id, project);
     if (!result) throw new ResourceNotExistException('Cannot find project');
     return result;
