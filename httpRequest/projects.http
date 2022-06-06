@@ -28,10 +28,11 @@ Content-Type: application/json
 
 ###
 # Update Projects
-PATCH http://{{host}}/{{api_prefix}}/projects/3
+PATCH http://{{host}}/{{api_prefix}}/projects/1
 Content-Type: application/json
 
 {
+  "receiverId": 3,
   "status": "COMPLETED"
 }
 

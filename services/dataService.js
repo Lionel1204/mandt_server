@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { ProjectStatus } = require('../helper/constants');
+const { ProjectStatus, ManifestStatus } = require('../helper/constants');
 const { ResourceNotExistException, InternalServerException } = require('../exceptions/commonExceptions');
 
 class DataService {
@@ -13,7 +13,7 @@ class DataService {
 
   // ---------- Project
   async listProjects(options) {
-    return await this.dbService.getProjects(options);
+    return this.dbService.getProjects(options);
   }
 
   async getProjectById(projectId) {
@@ -115,8 +115,55 @@ class DataService {
   }
 
   // ---------- Manifest:
-  async createManifest(options) {
-    return await this.dbService.getManifests(options);
+  async listManifests(options) {
+    return this.dbService.getManifests(options);
+  }
+
+  async createManifest(payload) {
+    const manifest = {
+      project_id: payload?.projectId,
+      note_no: payload.note_no,
+      cargo_amount: 0,
+      creator: payload.creator,
+      receiver: payload?.receiver,
+      status: ManifestStatus.Created,
+      ended_at: null,
+      published_at: null,
+    }
+    return await this.dbService.createManifest(manifest);
+  }
+
+  async updateManifest(manifestId, payload) {
+    let publishedAt = undefined;
+    let endedAt = undefined;
+
+    if (payload?.status === ManifestStatus.Published) {
+      publishedAt = new Date();
+    } else if (payload?.status === ManifestStatus.Ended) {
+      endedAt = new Date();
+    }
+
+    const manifest = _.omit({
+      project_id: payload?.projectId,
+      note_no: payload?.note_no,
+      creator: payload.creator,
+      receiver: payload?.receiver,
+      status: payload?.status,
+      ended_at: endedAt,
+      published_at: publishedAt,
+    });
+
+    // TODO: do not allow change status ended -> published or ended -> created or published -> created
+
+    return this.dbService.updateManifest(manifestId, manifest)
+  }
+
+  async getManifestById(manifestId) {
+    return this.dbService.getManifestById(manifestId);
+  }
+
+  async deleteManifest(manifestId) {
+    return this.dbService.deleteManifest(manifestId);
   }
 }
 

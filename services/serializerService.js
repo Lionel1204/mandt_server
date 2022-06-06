@@ -74,5 +74,26 @@ class SerializerService {
     if (!Array.isArray(users) || users.length === 0) return [];
     return _.map(users, this.serializeUser)
   }
+
+  serializeManifest(data) {
+    const output = {
+      id: data.id,
+      noteNo: data.note_no,
+      creator: data.creator,
+      receiver: data.receiver,
+      amount: data.cargo_amount,
+      status: data.status,
+      projectId: data.project_id,
+      endedAt: data.ended_at,
+      publishedAt: data.published_at,
+      createdAt: data.createdAt
+    };
+    return output;
+  }
+
+  serializeManifests(manifests) {
+    if (!Array.isArray(manifests) || manifests.length === 0) return [];
+    return _.map(manifests, this.serializeManifest)
+  }
 }
 module.exports = SerializerService;

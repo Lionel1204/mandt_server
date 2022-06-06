@@ -2,6 +2,8 @@ const _ = require('lodash');
 const BaseController = require('./baseController');
 const serviceFactory = require('../services/serviceFactory');
 const { paginateResult } = require('../helper/utils');
+const { createProjectSchema, projectPathSchema, updateProjectSchema } = require('../validateSchemas/projectSchemas');
+const { paginationSchema } = require('../validateSchemas/baseSchemas');
 
 class ProjectsController extends BaseController {
   constructor() {
@@ -10,10 +12,9 @@ class ProjectsController extends BaseController {
 
   // TODO add pagination
   async list(req, res) {
-    const limit = parseInt(req.query.limit) || 100;
-    const offset = parseInt(req.query.offset) || 0;
-
     try {
+      this.validateQuery(paginationSchema, req.query);
+      const { limit, offset } = req.query;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const [count, projects] = await dataService.listProjects({ limit, offset });
       const projectUsers = await dataService.listProjectUsers(projects.map((p) => p.id));
@@ -26,14 +27,15 @@ class ProjectsController extends BaseController {
   }
 
   async get(req, res) {
-    const { projectId } = req.params;
-
-    const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
-    const options = {
-      withUsers: true
-    };
-
     try {
+      this.validateParam(projectPathSchema, req.params);
+      const { projectId } = req.params;
+
+      const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
+      const options = {
+        withUsers: true
+      };
+
       const project = await dataService.getProjectById(projectId, options);
 
       const projectUsers = await dataService.listProjectUsers([project.id]);
@@ -45,16 +47,19 @@ class ProjectsController extends BaseController {
   }
 
   async post(req, res) {
-    const payload = {
-      name: req.body.name,
-      owner: req.body.ownerId,
-      receiver: req.body.receiverId,
-      status: req.body.status,
-      hidden: false,
-      endedAt: null
-    };
-    const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
     try {
+      this.validateBody(createProjectSchema, req.body);
+
+      const payload = {
+        name: req.body.name,
+        owner: req.body.ownerId,
+        receiver: req.body.receiverId,
+        status: req.body.status,
+        hidden: false,
+        endedAt: null
+      };
+      const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
+
       const project = await dataService.createProject(payload);
       const projectUsers = await dataService.listProjectUsers([project.id]);
       const output = serializerService.serializeProject(project, projectUsers[project.id]);
@@ -65,11 +70,14 @@ class ProjectsController extends BaseController {
   }
 
   async patch(req, res) {
-    const { projectId } = req.params;
-    const payload = req.body;
-
-    const [dataService] = await serviceFactory.getService('DataService', 'SerializerService');
     try {
+      this.validateParam(projectPathSchema, req.params);
+      this.validateBody(updateProjectSchema, req.body);
+      const { projectId } = req.params;
+      const payload = req.body;
+
+      const [dataService] = await serviceFactory.getService('DataService', 'SerializerService');
+
       await dataService.updateProject(projectId, payload);
       res.status(200).end();
     } catch (ex) {
@@ -78,10 +86,12 @@ class ProjectsController extends BaseController {
   }
 
   async delete(req, res) {
-    const { projectId } = req.params;
-    const [dataService] = await serviceFactory.getService('DataService', 'SerializerService');
     try {
-      const result = await dataService.deleteProject(projectId);
+      this.validateParam(projectPathSchema, req.params);
+      const { projectId } = req.params;
+      const [dataService] = await serviceFactory.getService('DataService', 'SerializerService');
+
+      await dataService.deleteProject(projectId);
       res.status(204).end();
     } catch (ex) {
       this.errorResponse(res, ex);

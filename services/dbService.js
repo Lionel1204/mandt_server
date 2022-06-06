@@ -95,10 +95,38 @@ class DBService {
       limit: opt.limit,
       offset: opt.offset
     };
+
+    if (opt.owner) options.owner = opt.owner;
+    if (opt.receiver) options.receiver = opt.receiver;
+    if (opt.status) options.status = opt.status;
+
     const result = await db.manifest_notes.findAndCountAll(options);
 
     return [result.count, result.rows];
   }
+
+  async createManifest(manifest) {
+    return db.manifest_notes.create(manifest);
+  }
+
+  async updateManifest(manifestId, data) {
+    delete data.id;
+    const where = { id: manifestId };
+    const result = await db.manifest_notes.update(data, {
+      where
+    });
+    return result[0] > 0;
+  }
+
+  async getManifestById(manifestId) {
+    return db.manifest_notes.findByPk(manifestId);
+  }
+
+  async deleteManifest(manifestId) {
+    const result = await db.manifest_notes.destroy({ where: { id: manifestId } });
+    return result > 0;
+  }
+
   //----- Cargos
 
   //----- Shipping paths:
