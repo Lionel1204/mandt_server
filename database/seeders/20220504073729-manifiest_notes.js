@@ -17,7 +17,7 @@ module.exports = {
       creator: 1,
       receiver: null,
       project_id: 1,
-      status: 'ACTIVE',
+      status: 'CREATED',
       cargo_amount: 3,
       published_at: new Date(),
       ended_at: null,

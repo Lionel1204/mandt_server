@@ -85,7 +85,7 @@ class SerializerService {
       cargoAmount: data.cargo_amount,
       status: data.status,
       projectId: data.project_id,
-      projectName: project.name,
+      projectName: project?.name || null,
       endedAt: data.ended_at,
       publishedAt: data.published_at,
       createdAt: data.createdAt
@@ -97,7 +97,9 @@ class SerializerService {
     if (!Array.isArray(manifests) || manifests.length === 0) return [];
 
     const output = _.map(manifests, (m) => {
-      const project = projectsMap[m.project_id];
+      let project = null;
+      if (m.project_id)
+        project = projectsMap[m.project_id];
       return this.serializeManifest(m, project);
     });
     return output;
