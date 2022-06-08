@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     note_no: DataTypes.STRING,
     creator: DataTypes.INTEGER,
     receiver: DataTypes.INTEGER,
+    package_amount: DataTypes.INTEGER,
     cargo_amount: DataTypes.INTEGER,
     status: DataTypes.STRING,
     project_id: DataTypes.BIGINT,

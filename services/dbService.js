@@ -19,7 +19,12 @@ class DBService {
   }
 
   async getProjectById(projectId) {
-    return await db.projects.findByPk(projectId);
+    return db.projects.findByPk(projectId);
+  }
+
+  async getProjectsByIds(projectIds) {
+    const where = { id: projectIds };
+    return db.projects.findAll({where});
   }
 
   async createProject(project) {

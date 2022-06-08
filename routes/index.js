@@ -20,7 +20,8 @@ const {
   projectsController,
   usersController,
   qrController,
-  manifestsController
+  manifestsController,
+  companiesController
 } = controllers;
 
 module.exports = function(app) {
@@ -50,5 +51,9 @@ module.exports = function(app) {
   app.patch(`${apiPrefix}/manifests/:manifestId`, createControllerFunction(manifestsController, 'patch'));
   app.delete(`${apiPrefix}/manifests/:manifestId`, createControllerFunction(manifestsController, 'delete'));
 
-  //
+  // Companies
+  app.get(`${apiPrefix}/companies`, createControllerFunction(companiesController, 'list'));
+  app.post(`${apiPrefix}/companies`, createControllerFunction(companiesController, 'post'));
+
+
 };

@@ -17,10 +17,14 @@ class DataService {
   }
 
   async getProjectById(projectId) {
-    const id = parseInt(projectId);
-    const project = await this.dbService.getProjectById(id);
+    const project = await this.dbService.getProjectById(projectId);
     if (!project) throw new ResourceNotExistException('Cannot find project');
     return project;
+  }
+
+  async getProjectsByIds(projectIds) {
+    const projects = await this.dbService.getProjectsByIds(projectIds);
+    return projects;
   }
 
   async createProject(payload) {
@@ -122,7 +126,8 @@ class DataService {
   async createManifest(payload) {
     const manifest = {
       project_id: payload?.projectId,
-      note_no: payload.note_no,
+      note_no: payload.noteNo,
+      package_amount: 0,
       cargo_amount: 0,
       creator: payload.creator,
       receiver: payload?.receiver,

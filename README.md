@@ -22,7 +22,7 @@ Create a model and a script:
 > npx sequelize model:generate --name project_users --attributes user_id:bigint,project_id:bigint,project_role:string
 
 - ManifestNotes
-> npx sequelize model:generate --name manifest_notes --attributes note_no:string,creator:bigint,receiver:bigint,cargo_amount:integer,status:string,project_id:bigint,ended_at:date,published_at:date
+> npx sequelize model:generate --name manifest_notes --attributes note_no:string,creator:bigint,receiver:bigint,package_amount:integer,cargo_amount:integer,status:string,project_id:bigint,ended_at:date,published_at:date
 
 - Packages
 > npx sequelize model:generate --name packages --attributes package_no:string,wrapping_type:string,shipping_type:string,size:JSON,weight:float,amount:integer,project_id:bigint

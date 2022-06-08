@@ -1,7 +1,13 @@
 const BaseController = require('./baseController');
 const serviceFactory = require('../services/serviceFactory');
-const { listManifestQuerySchema, createManifestBodySchema, manifestParamSchema, updateManifestBodySchema } = require('../validateSchemas/manifestSchemas');
-const {paginateResult} = require("../helper/utils");
+const {
+  listManifestQuerySchema,
+  createManifestBodySchema,
+  manifestParamSchema,
+  updateManifestBodySchema
+} = require('../validateSchemas/manifestSchemas');
+const { paginateResult } = require('../helper/utils');
+const _ = require('lodash');
 
 class ManifestsController extends BaseController {
   constructor() {
@@ -15,7 +21,10 @@ class ManifestsController extends BaseController {
       const { limit, offset } = options;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const [count, manifests] = await dataService.listManifests(options);
-      const output = serializerService.serializeManifests(manifests);
+      const projectIds = _.uniq(manifests.map((m) => m.project_id));
+      const projects = await dataService.getProjectsByIds(projectIds);
+      const projectMap = _.keyBy(projects, 'id');
+      const output = serializerService.serializeManifests(manifests, projectMap);
       const paginationOut = paginateResult(output, req, limit, offset, count);
       res.json(paginationOut);
     } catch (ex) {

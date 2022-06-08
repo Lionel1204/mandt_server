@@ -17,6 +17,9 @@ module.exports = {
       receiver: {
         type: Sequelize.BIGINT
       },
+      package_amount: {
+        type: Sequelize.INTEGER
+      },
       cargo_amount: {
         type: Sequelize.INTEGER
       },

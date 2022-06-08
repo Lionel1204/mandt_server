@@ -75,15 +75,17 @@ class SerializerService {
     return _.map(users, this.serializeUser)
   }
 
-  serializeManifest(data) {
+  serializeManifest(data, project) {
     const output = {
       id: data.id,
       noteNo: data.note_no,
       creator: data.creator,
       receiver: data.receiver,
-      amount: data.cargo_amount,
+      amount: data.package_amount,
+      cargoAmount: data.cargo_amount,
       status: data.status,
       projectId: data.project_id,
+      projectName: project.name,
       endedAt: data.ended_at,
       publishedAt: data.published_at,
       createdAt: data.createdAt
@@ -91,9 +93,14 @@ class SerializerService {
     return output;
   }
 
-  serializeManifests(manifests) {
+  serializeManifests(manifests, projectsMap) {
     if (!Array.isArray(manifests) || manifests.length === 0) return [];
-    return _.map(manifests, this.serializeManifest)
+
+    const output = _.map(manifests, (m) => {
+      const project = projectsMap[m.project_id];
+      return this.serializeManifest(m, project);
+    });
+    return output;
   }
 }
 module.exports = SerializerService;

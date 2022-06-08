@@ -15,18 +15,18 @@ module.exports = {
         key: 'id',
       },
       onUpdate: 'CASCADE',
-      onDelete: 'SET NULL',
+      onDelete: 'CASCADE',
       defaultValue: null, after: 'can_maintain_system'
     });
 
     await queryInterface.changeColumn('manifest_notes', 'receiver', {
       type: Sequelize.BIGINT,
       references: {
-        model: 'users',
+        model: 'companies',
         key: 'id',
       },
       onUpdate: 'CASCADE',
-      onDelete: 'SET NULL',
+      onDelete: 'CASCADE',
       defaultValue: null, after: 'can_maintain_system'
     });
   },
