@@ -104,5 +104,38 @@ class SerializerService {
     });
     return output;
   }
+
+  serializeCompanies(companies, usersMap) {
+    if (!Array.isArray(companies) || companies.length === 0) return [];
+
+    const output = _.map(companies, (c) => {
+      let company = null;
+      if (c.contact) company = this.serializeCompany(c, usersMap[c.contact]);
+      else company = this.serializeCompany(c, null);
+      return company;
+    });
+    return output;
+  }
+
+  serializeCompany(company, user) {
+    const output = {
+      id: company.id,
+      name: company.name,
+      type: company.type,
+      scope: company.scope,
+      license: company.license,
+      capability: company.capability,
+      transport: company.transport,
+      contactInfo: {
+        id: user?.id,
+        name: user?.name,
+        title: user?.title,
+        identity: user?.id_card,
+        phone: user?.phone,
+        email: user?.email
+      }
+    };
+    return output;
+  }
 }
 module.exports = SerializerService;

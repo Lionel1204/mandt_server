@@ -66,15 +66,20 @@ class DBService {
   }
 
   //----- Users:
-  async getUserByIds(userIds) {
+  async getUsersByIds(userIds) {
     const where = {
       id: userIds
     };
     return await db.users.findAll(where);
   }
 
+  async getUserByIdCard(idCard) {
+    const where = { id_card: idCard };
+    return db.users.findOne({where});
+  }
+
   async getUserById(userId) {
-    return await db.users.findByPk(userId);
+    return db.users.findByPk(userId);
   }
 
   async createUser(user) {
@@ -130,6 +135,26 @@ class DBService {
   async deleteManifest(manifestId) {
     const result = await db.manifest_notes.destroy({ where: { id: manifestId } });
     return result > 0;
+  }
+
+  //----- Companies
+  async createCompany(company) {
+    return db.companies.create(company);
+  }
+
+  async getCompanies(opt) {
+    const options = {
+      order: [[db.sequelize.fn('lower', db.sequelize.col('createdAt')), 'DESC']],
+      limit: opt.limit,
+      offset: opt.offset
+    };
+
+    if (opt.owner) options.type = opt.type;
+    if (opt.receiver) options.scope = opt.scope;
+
+    const result = await db.companies.findAndCountAll(options);
+
+    return [result.count, result.rows];
   }
 
   //----- Cargos

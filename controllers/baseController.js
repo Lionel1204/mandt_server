@@ -37,11 +37,11 @@ class BaseController {
   }
 
   _getErrorTitle(ex) {
-    return (ex && ex.getMessage && ex.getMessage()) || (ex && ex.title);
+    return (ex && ex.getMessage && ex.getMessage()) || (ex && (ex.title || ex.name));
   }
 
   _getErrorDetail(ex) {
-    return (ex && ex.getDetailDescription && ex.getDetailDescription()) || (ex && ex.detail);
+    return (ex && ex.getDetailDescription && ex.getDetailDescription()) || (ex && (ex.detail || ex.message));
   }
 
   getErrorStatus(ex) {

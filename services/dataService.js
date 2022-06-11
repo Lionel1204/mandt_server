@@ -103,6 +103,10 @@ class DataService {
     return await this.dbService.getUserById(id);
   }
 
+  async getUsersByIds(ids) {
+    return await this.dbService.getUsersByIds(ids);
+  }
+
   async createUser(payload) {
     const user = {
       name: payload.name,
@@ -169,6 +173,42 @@ class DataService {
 
   async deleteManifest(manifestId) {
     return this.dbService.deleteManifest(manifestId);
+  }
+
+  // ---------- Company
+  async createCompany(payload) {
+    let contactId = payload.contactId;
+    let contact = null;
+    if (!contactId) {
+      // Create a contact of company at first
+      try {
+        contact = await this.createUser(payload.contactInfo);
+        contactId = contact.id;
+      } catch (ex) {
+        if (ex.name === 'SequelizeUniqueConstraintError') {
+          contact = await this.dbService.getUserByIdCard(payload.contactInfo.identity);
+          contactId = contact.id;
+        }
+      }
+    } else {
+      contact = await this.dbService.getUser(payload.contactId);
+    }
+
+    const company = {
+      name: payload.name,
+      type: payload.type,
+      license: payload.license,
+      contact: contactId,
+      capability: payload.capability,
+      scope: payload.scope,
+      transport: payload.transport
+    }
+    const result = await this.dbService.createCompany(company);
+    return [result, contact]
+  }
+
+  async listCompanies(options) {
+    return this.dbService.getCompanies(options);
   }
 }
 

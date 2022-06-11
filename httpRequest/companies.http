@@ -1,0 +1,26 @@
+###
+
+POST http://{{host}}/{{api_prefix}}/companies
+Content-Type: application/json
+
+{
+  "name": "abc",
+  "type": "LOGISTICS",
+  "scope": "INLAND",
+  "transport": ["HIGHWAY", "SEA"],
+  "contactInfo": {
+    "name": "haha",
+    "title": "CEO",
+    "identity": "123412341234",
+    "phone": "13522222222",
+    "email": "abc@163.com"
+  },
+  "license": "123412341234",
+  "capability": 3
+}
+###
+
+GET http://{{host}}/{{api_prefix}}/companies?offset=0&limit=10
+Content-Type: application/json
+
+###

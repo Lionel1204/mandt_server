@@ -17,10 +17,10 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     type: DataTypes.STRING,
     license: DataTypes.STRING,
-    company_id: DataTypes.STRING,
+    scope: DataTypes.STRING,
+    transport: DataTypes.JSON,
     contact: DataTypes.BIGINT,
-    capability: DataTypes.INTEGER,
-    memo: DataTypes.STRING
+    capability: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'companies',

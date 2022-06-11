@@ -11,14 +11,25 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
+    const userId = await queryInterface.rawSelect(
+      'users',
+      {
+        where: {
+          phone: '13564536791'
+        },
+        logging: console.log
+      },
+      ['id']
+    );
+
     const records = [{
       name: 'itLogistics',
-      type: 'LTD',
+      type: 'LOGISTICS',
       license: '123456778910',
-      company_id: 'it-id',
-      contact: 1,
-      capability: 10000,
-      memo: 'The big company',
+      contact: userId,
+      capability: 5,
+      transport: ['HIGHWAY'],
+      scope: 'INLAND',
       createdAt: new Date(),
       updatedAt: new Date()
     }];
