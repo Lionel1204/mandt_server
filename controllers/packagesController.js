@@ -2,7 +2,7 @@ const BaseController = require('./baseController');
 const serviceFactory = require('../services/serviceFactory');
 const { paginateResult } = require('../helper/utils');
 const _ = require('lodash');
-const {createPackageBodySchema, packageParamSchema} = require("../validateSchemas/packageSchemas");
+const {createPackageBodySchema, packageParamSchema, packageQuerySchema} = require("../validateSchemas/packageSchemas");
 
 class PackagesController extends BaseController {
   constructor() {
@@ -37,6 +37,20 @@ class PackagesController extends BaseController {
   }
 
   async delete(req, res) {
+
+  }
+
+  async query(req, res) {
+    try {
+      this.validateQuery(packageQuerySchema, req.query);
+      const { userId }= req.query;
+      const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
+      const pkg = await dataService.queryPackages(userId);
+
+    } catch (ex) {
+
+    }
+
 
   }
 }

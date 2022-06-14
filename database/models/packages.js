@@ -21,7 +21,8 @@ module.exports = (sequelize, DataTypes) => {
     size: DataTypes.JSON,
     weight: DataTypes.JSON,
     amount: DataTypes.INTEGER,
-    status: DataTypes.STRING
+    status: DataTypes.STRING,
+    creator: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'packages',

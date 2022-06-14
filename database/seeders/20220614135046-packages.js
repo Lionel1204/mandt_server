@@ -22,6 +22,17 @@ module.exports = {
       ['id']
     );
 
+    const userId = await queryInterface.rawSelect(
+      'users',
+      {
+        where: {
+          phone: '13564536791'
+        },
+        logging: console.log
+      },
+      ['id']
+    );
+
     const records = [{
       manifest_id: manifestId,
       package_no: 'test001',
@@ -39,6 +50,7 @@ module.exports = {
       }),
       status: 'CREATED',
       amount: 0,
+      creator: userId,
       createdAt: new Date(),
       updatedAt: new Date()
     }];

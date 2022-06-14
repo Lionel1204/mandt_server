@@ -149,6 +149,7 @@ class SerializerService {
       weight: pkg.weight,
       status: pkg.status,
       amount: cargosAmount,
+      creator: pkg.creator,
       paths
     };
     return output;

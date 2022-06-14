@@ -225,6 +225,10 @@ class DataService {
     }
     return await this.dbService.createPackage(packagePayload);
   }
+
+  async queryPackages(userId) {
+
+  }
 }
 
 module.exports = DataService;

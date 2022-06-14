@@ -62,5 +62,5 @@ module.exports = function(app) {
   app.post(`${apiPrefix}/manifests/:manifestId/packages`, createControllerFunction(packagesController, 'post'));
   app.patch(`${apiPrefix}/manifests/:manifestId/packages/:packagesId`, createControllerFunction(packagesController, 'patch'));
   app.delete(`${apiPrefix}/manifests/:manifestId/packages/:packagesId`, createControllerFunction(packagesController, 'delete'));
-
+  app.get(`${apiPrefix}/packages`, createControllerFunction(packagesController, 'query'));
 };

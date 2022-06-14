@@ -53,6 +53,10 @@ const createPackageBodySchema = {
       type: 'string',
       enum: ['CREATED', 'INTRANSIT', 'FINISHED']
     },
+    creator: {
+      type: 'integer',
+      minimum: 1
+    },
     size: packageSizeSchema,
     weight: packageWeightSchema
   }
@@ -68,7 +72,18 @@ const packageParamSchema = {
   },
   required: ['manifestId']
 }
+
+const packageQuerySchema = {
+  type: 'object',
+  properties: {
+    userId: {
+      type: 'integer',
+      minimum: 1
+    }
+  }
+}
 module.exports = {
   createPackageBodySchema,
-  packageParamSchema
+  packageParamSchema,
+  packageQuerySchema
 };
