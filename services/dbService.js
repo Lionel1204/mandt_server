@@ -157,6 +157,11 @@ class DBService {
     return [result.count, result.rows];
   }
 
+  //----- Packages
+  async createPackage(payload) {
+    return db.packages.create(payload);
+  }
+
   //----- Cargos
 
   //----- Shipping paths:

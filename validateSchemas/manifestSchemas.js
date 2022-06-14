@@ -79,7 +79,7 @@ const updateManifestBodySchema = {
     },
     status: {
       type: 'string',
-      enum: ['CREATED', 'PUBLISHED', 'ENDED']
+      enum: ['CREATED', 'PUBLISHED', 'CONFIRMED', 'SHIPPING', 'ENDED']
     }
   }
 }

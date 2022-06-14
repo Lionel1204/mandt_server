@@ -14,13 +14,14 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   packages.init({
+    manifest_id: DataTypes.BIGINT,
     package_no: DataTypes.STRING,
     wrapping_type: DataTypes.STRING,
     shipping_type: DataTypes.STRING,
     size: DataTypes.JSON,
-    weight: DataTypes.FLOAT,
+    weight: DataTypes.JSON,
     amount: DataTypes.INTEGER,
-    project_id: DataTypes.BIGINT
+    status: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'packages',

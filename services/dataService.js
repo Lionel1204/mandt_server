@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { ProjectStatus, ManifestStatus } = require('../helper/constants');
+const { ProjectStatus, ManifestStatus, PackageStatus } = require('../helper/constants');
 const { ResourceNotExistException, InternalServerException } = require('../exceptions/commonExceptions');
 
 class DataService {
@@ -209,6 +209,21 @@ class DataService {
 
   async listCompanies(options) {
     return this.dbService.getCompanies(options);
+  }
+
+  // ---------- Package
+  async createPackage(manifestId, payload) {
+    const packagePayload = {
+      manifest_id: manifestId,
+      package_no: payload.packageNo,
+      wrapping_type: payload.wrappingType,
+      shipping_type: payload.shippingType,
+      cargo_amount: 0, //TODO: wait for get cargo
+      size: payload.size,
+      weight: payload.weight,
+      status: PackageStatus.Created
+    }
+    return await this.dbService.createPackage(packagePayload);
   }
 }
 

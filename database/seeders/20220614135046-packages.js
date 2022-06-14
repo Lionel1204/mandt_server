@@ -11,11 +11,11 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-    const userId = await queryInterface.rawSelect(
-      'users',
+    const manifestId = await queryInterface.rawSelect(
+      'manifest_notes',
       {
         where: {
-          phone: '13564536791'
+          note_no: 'M0001'
         },
         logging: console.log
       },
@@ -23,17 +23,27 @@ module.exports = {
     );
 
     const records = [{
-      name: 'itLogistics',
-      type: 'LOGISTICS',
-      license: '123456778910',
-      contact: userId,
-      capability: 5,
-      transport: JSON.stringify(['HIGHWAY']),
-      scope: 'INLAND',
+      manifest_id: manifestId,
+      package_no: 'test001',
+      wrapping_type: 'IRONCASE',
+      shipping_type: 'CONTAINER',
+      size: JSON.stringify({
+        length: 20,
+        width: 20,
+        height: 20,
+        unit: 'cm'
+      }),
+      weight: JSON.stringify({
+        scale: 10,
+        unit: 'kg'
+      }),
+      status: 'CREATED',
+      amount: 0,
       createdAt: new Date(),
       updatedAt: new Date()
     }];
-    await queryInterface.bulkInsert('companies', records, {logging: console.log});
+    await queryInterface.bulkInsert('packages', records, {logging: console.log});
+
   },
 
   down: async (queryInterface, Sequelize) => {

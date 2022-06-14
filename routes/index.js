@@ -21,7 +21,8 @@ const {
   usersController,
   qrController,
   manifestsController,
-  companiesController
+  companiesController,
+  packagesController
 } = controllers;
 
 module.exports = function(app) {
@@ -55,5 +56,11 @@ module.exports = function(app) {
   app.get(`${apiPrefix}/companies`, createControllerFunction(companiesController, 'list'));
   app.post(`${apiPrefix}/companies`, createControllerFunction(companiesController, 'post'));
 
+  // Packages
+  app.get(`${apiPrefix}/manifests/:manifestId/packages`, createControllerFunction(packagesController, 'list'));
+  app.get(`${apiPrefix}/manifests/:manifestId/packages/:packagesId`, createControllerFunction(packagesController, 'get'));
+  app.post(`${apiPrefix}/manifests/:manifestId/packages`, createControllerFunction(packagesController, 'post'));
+  app.patch(`${apiPrefix}/manifests/:manifestId/packages/:packagesId`, createControllerFunction(packagesController, 'patch'));
+  app.delete(`${apiPrefix}/manifests/:manifestId/packages/:packagesId`, createControllerFunction(packagesController, 'delete'));
 
 };

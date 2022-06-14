@@ -105,18 +105,6 @@ class SerializerService {
     return output;
   }
 
-  serializeCompanies(companies, usersMap) {
-    if (!Array.isArray(companies) || companies.length === 0) return [];
-
-    const output = _.map(companies, (c) => {
-      let company = null;
-      if (c.contact) company = this.serializeCompany(c, usersMap[c.contact]);
-      else company = this.serializeCompany(c, null);
-      return company;
-    });
-    return output;
-  }
-
   serializeCompany(company, user) {
     const output = {
       id: company.id,
@@ -136,6 +124,38 @@ class SerializerService {
       }
     };
     return output;
+  }
+
+  serializeCompanies(companies, usersMap) {
+    if (!Array.isArray(companies) || companies.length === 0) return [];
+
+    const output = _.map(companies, (c) => {
+      let company = null;
+      if (c.contact) company = this.serializeCompany(c, usersMap[c.contact]);
+      else company = this.serializeCompany(c, null);
+      return company;
+    });
+    return output;
+  }
+
+  serializePackage(pkg, cargosAmount = 0, paths = {}) {
+    const output = {
+      id: pkg.id,
+      manifestId: pkg.manifest_id,
+      packageNo: pkg.package_no,
+      wrappingType: pkg.wrapping_type,
+      shippingType: pkg.shipping_type,
+      size: pkg.size,
+      weight: pkg.weight,
+      status: pkg.status,
+      amount: cargosAmount,
+      paths
+    };
+    return output;
+  }
+
+  serializePackages() {
+
   }
 }
 module.exports = SerializerService;

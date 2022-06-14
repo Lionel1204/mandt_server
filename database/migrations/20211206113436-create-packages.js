@@ -8,6 +8,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      manifest_id: {
+        type: Sequelize.BIGINT
+      },
       package_no: {
         type: Sequelize.STRING
       },
@@ -21,13 +24,13 @@ module.exports = {
         type: Sequelize.JSON
       },
       weight: {
-        type: Sequelize.FLOAT
+        type: Sequelize.JSON
       },
       amount: {
         type: Sequelize.INTEGER
       },
-      project_id: {
-        type: Sequelize.BIGINT
+      status: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
