@@ -17,7 +17,7 @@ class PackagesController extends BaseController {
       const payload = req.body;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const pkg = await dataService.createPackage(manifestId, payload);
-      const output = serializerService.serializePackage(pkg);
+      const output = serializerService.serializePackages(pkg);
       res.status(201).json(output);
     } catch (ex) {
       this.errorResponse(res, ex);
@@ -43,12 +43,15 @@ class PackagesController extends BaseController {
   async query(req, res) {
     try {
       this.validateQuery(packageQuerySchema, req.query);
-      const { userId }= req.query;
+      const {limit, offset} = req.query;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
-      const pkg = await dataService.queryPackages(userId);
-
+      const {count, rows} = await dataService.queryPackages(req.query);
+      //TODO: add the cargosRecord
+      const output = serializerService.serializePackages(rows, []);
+      const paginationOut = paginateResult(output, req, limit, offset, count);
+      res.status(200).json(paginationOut);
     } catch (ex) {
-
+      this.errorResponse(res, ex);
     }
 
 

@@ -1,4 +1,5 @@
 const db = require('../database/models');
+const _ = require("lodash");
 
 class DBService {
   constructor() {}
@@ -24,7 +25,7 @@ class DBService {
 
   async getProjectsByIds(projectIds) {
     const where = { id: projectIds };
-    return db.projects.findAll({where});
+    return db.projects.findAll({ where });
   }
 
   async createProject(project) {
@@ -75,7 +76,7 @@ class DBService {
 
   async getUserByIdCard(idCard) {
     const where = { id_card: idCard };
-    return db.users.findOne({where});
+    return db.users.findOne({ where });
   }
 
   async getUserById(userId) {
@@ -160,6 +161,17 @@ class DBService {
   //----- Packages
   async createPackage(payload) {
     return db.packages.create(payload);
+  }
+
+  async getPackages(options) {
+    const { limit, offset } = options;
+    const { creator, status, manifest_id } = options;
+    const where = _.omitBy({
+      creator,
+      status,
+      manifest_id
+    }, _.isUndefined)
+    return db.packages.findAndCountAll({ where, limit, offset });
   }
 
   //----- Cargos

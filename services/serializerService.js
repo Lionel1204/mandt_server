@@ -155,8 +155,10 @@ class SerializerService {
     return output;
   }
 
-  serializePackages() {
-
+  serializePackages(packages, cargosMap = {}) {
+    return _.map(packages, (p) => {
+      return this.serializePackage(p)
+    })
   }
 }
 module.exports = SerializerService;

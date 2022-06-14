@@ -226,8 +226,17 @@ class DataService {
     return await this.dbService.createPackage(packagePayload);
   }
 
-  async queryPackages(userId) {
+  async queryPackages(query) {
+    const { userId, status, manifestId, limit, offset} = query;
+    const options = {
+      creator: userId,
+      status,
+      manifest_id: manifestId === -1 ? null : manifestId,
+      limit,
+      offset
+    }
 
+    return this.dbService.getPackages(options);
   }
 }
 

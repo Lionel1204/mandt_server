@@ -1,3 +1,5 @@
+const { paginationSchema } = require('./baseSchemas');
+
 const packageSizeSchema = {
   type: 'object',
   properties: {
@@ -74,13 +76,25 @@ const packageParamSchema = {
 }
 
 const packageQuerySchema = {
-  type: 'object',
-  properties: {
-    userId: {
-      type: 'integer',
-      minimum: 1
+  allOf: [
+    paginationSchema,
+    {
+      type: 'object',
+      properties: {
+        userId: {
+          type: 'integer',
+          minimum: 1
+        },
+        status: {
+          type: 'string'
+        },
+        manifestId: {
+          type: 'integer',
+          minimum: -1
+        }
+      }
     }
-  }
+  ]
 }
 module.exports = {
   createPackageBodySchema,
