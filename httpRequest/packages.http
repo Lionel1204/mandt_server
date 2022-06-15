@@ -21,5 +21,39 @@ Content-Type: application/json
     "scale": 10,
     "unit": "kg"
   },
-  "status": "CREATED"
+  "status": "CREATED",
+  "creator": 1
 }
+
+###
+GET http://{{host}}/{{api_prefix}}/manifests/1/packages/2
+Content-Type: application/json
+
+###
+PATCH http://{{host}}/{{api_prefix}}/manifests/1/packages/5
+Content-Type: application/json
+
+{
+  "packageNo": "test003",
+  "wrappingType": "WOODENCASE",
+  "shippingType": "BULK",
+  "size": {
+    "length": 30,
+    "width": 30,
+    "height": 30,
+    "unit": "cm"
+  },
+  "weight": {
+    "scale": 20,
+    "unit": "kg"
+  },
+  "status": "INTRANSIT"
+}
+
+###
+DELETE http://{{host}}/{{api_prefix}}/manifests/1/packages/2
+Content-Type: application/json
+
+###
+GET http://{{host}}/{{api_prefix}}/manifests/1/packages
+Content-Type: application/json

@@ -218,12 +218,38 @@ class DataService {
       package_no: payload.packageNo,
       wrapping_type: payload.wrappingType,
       shipping_type: payload.shippingType,
-      cargo_amount: 0, //TODO: wait for get cargo
+      amount: 0, //TODO: wait for get cargo
       size: payload.size,
       weight: payload.weight,
-      status: PackageStatus.Created
+      status: PackageStatus.Created,
+      creator: payload.creator
     }
     return await this.dbService.createPackage(packagePayload);
+  }
+
+  async getPackage(manifestId, packageId) {
+    return await this.dbService.getPackage(packageId);
+  }
+
+  async updatePackage(manifestId, packageId, payload) {
+    const updatePackagePayload = {
+      package_no: payload.packageNo,
+      wrapping_type: payload.wrappingType,
+      shipping_type: payload.shippingType,
+      size: payload.size,
+      weight: payload.weight,
+      status: payload.status
+    };
+    return await this.dbService.updatePackage(manifestId, packageId, updatePackagePayload);
+  }
+
+  async updatePackageCargoAmount(manifestId, packageId, amount) {
+    const updatePackagePayload = {amount};
+    return await this.dbService.updatePackage(manifestId, packageId, updatePackagePayload);
+  }
+
+  async deletePackage(manifestId, packageId) {
+    return await this.dbService.deletePackage(packageId);
   }
 
   async queryPackages(query) {

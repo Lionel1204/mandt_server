@@ -58,9 +58,9 @@ module.exports = function(app) {
 
   // Packages
   app.get(`${apiPrefix}/manifests/:manifestId/packages`, createControllerFunction(packagesController, 'list'));
-  app.get(`${apiPrefix}/manifests/:manifestId/packages/:packagesId`, createControllerFunction(packagesController, 'get'));
+  app.get(`${apiPrefix}/manifests/:manifestId/packages/:packageId`, createControllerFunction(packagesController, 'get'));
   app.post(`${apiPrefix}/manifests/:manifestId/packages`, createControllerFunction(packagesController, 'post'));
-  app.patch(`${apiPrefix}/manifests/:manifestId/packages/:packagesId`, createControllerFunction(packagesController, 'patch'));
-  app.delete(`${apiPrefix}/manifests/:manifestId/packages/:packagesId`, createControllerFunction(packagesController, 'delete'));
+  app.patch(`${apiPrefix}/manifests/:manifestId/packages/:packageId`, createControllerFunction(packagesController, 'patch'));
+  app.delete(`${apiPrefix}/manifests/:manifestId/packages/:packageId`, createControllerFunction(packagesController, 'delete'));
   app.get(`${apiPrefix}/packages`, createControllerFunction(packagesController, 'query'));
 };

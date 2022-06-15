@@ -70,6 +70,10 @@ const packageParamSchema = {
     manifestId: {
       type: 'integer',
       minimum: 1
+    },
+    packageId: {
+      type: 'integer',
+      minimum: 1
     }
   },
   required: ['manifestId']
@@ -95,9 +99,37 @@ const packageQuerySchema = {
       }
     }
   ]
+};
+
+const updatePackageBodySchema = {
+  type: 'object',
+  additionalProperties: false,
+  properties: {
+    packageNo: {
+      type: 'string',
+      minLength: 1
+    },
+    wrappingType: {
+      type: 'string',
+      enum: ['WOODENCASE', 'IRONCASE', 'TRAY', 'UNWRAPPED']
+    },
+    shippingType: {
+      type: 'string',
+      enum: ['CONTAINER', 'BULK']
+    },
+    status: {
+      type: 'string',
+      enum: ['CREATED', 'INTRANSIT', 'FINISHED']
+    },
+    size: packageSizeSchema,
+    weight: packageWeightSchema
+  }
 }
+
+
 module.exports = {
   createPackageBodySchema,
   packageParamSchema,
-  packageQuerySchema
+  packageQuerySchema,
+  updatePackageBodySchema
 };

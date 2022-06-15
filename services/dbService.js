@@ -163,6 +163,18 @@ class DBService {
     return db.packages.create(payload);
   }
 
+  async updatePackage(manifestId, packageId, data) {
+    const where = { id: packageId };
+    const result = await db.packages.update(data, {
+      where
+    });
+    return result[0] > 0;
+  }
+
+  async getPackage(packageId) {
+    return db.packages.findByPk(packageId)
+  }
+
   async getPackages(options) {
     const { limit, offset } = options;
     const { creator, status, manifest_id } = options;
@@ -172,6 +184,11 @@ class DBService {
       manifest_id
     }, _.isUndefined)
     return db.packages.findAndCountAll({ where, limit, offset });
+  }
+
+  async deletePackage(packageId) {
+    const result = await db.packages.destroy({ where: { id: packageId } });
+    return result > 0;
   }
 
   //----- Cargos

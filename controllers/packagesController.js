@@ -2,7 +2,13 @@ const BaseController = require('./baseController');
 const serviceFactory = require('../services/serviceFactory');
 const { paginateResult } = require('../helper/utils');
 const _ = require('lodash');
-const {createPackageBodySchema, packageParamSchema, packageQuerySchema} = require("../validateSchemas/packageSchemas");
+const {
+  createPackageBodySchema,
+  packageParamSchema,
+  packageQuerySchema,
+  updatePackageBodySchema
+} = require('../validateSchemas/packageSchemas');
+const { paginationSchema } = require('../validateSchemas/baseSchemas');
 
 class PackagesController extends BaseController {
   constructor() {
@@ -13,11 +19,11 @@ class PackagesController extends BaseController {
     try {
       this.validateBody(createPackageBodySchema, req.body);
       this.validateParam(packageParamSchema, req.params);
-      const { manifestId }= req.params;
+      const { manifestId } = req.params;
       const payload = req.body;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const pkg = await dataService.createPackage(manifestId, payload);
-      const output = serializerService.serializePackages(pkg);
+      const output = serializerService.serializePackage(pkg);
       res.status(201).json(output);
     } catch (ex) {
       this.errorResponse(res, ex);
@@ -25,27 +31,70 @@ class PackagesController extends BaseController {
   }
 
   async get(req, res) {
-
+    try {
+      this.validateParam(packageParamSchema, req.params);
+      const { manifestId, packageId } = req.params;
+      const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
+      const pkg = await dataService.getPackage(manifestId, packageId);
+      const output = serializerService.serializePackage(pkg);
+      res.status(200).json(output);
+    } catch (ex) {
+      this.errorResponse(res, ex);
+    }
   }
 
   async list(req, res) {
-
+    try {
+      this.validateParam(packageParamSchema, req.params);
+      this.validateQuery(paginationSchema, req.query);
+      const options = req.query;
+      const { limit, offset } = options;
+      const { manifestId } = req.params;
+      options.manifestId = manifestId;
+      const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
+      const { count, rows } = await dataService.queryPackages(options);
+      const output = serializerService.serializePackages(rows, {});
+      const paginationOut = paginateResult(output, req, limit, offset, count);
+      res.status(200).json(paginationOut);
+    } catch (ex) {
+      this.errorResponse(res, ex);
+    }
   }
 
   async patch(req, res) {
-
+    try {
+      this.validateParam(packageParamSchema, req.params);
+      this.validateBody(updatePackageBodySchema, req.body);
+      const { manifestId, packageId } = req.params;
+      const payload = req.body;
+      const [dataService] = await serviceFactory.getService('DataService', 'SerializerService');
+      const result = await dataService.updatePackage(manifestId, packageId, payload);
+      if (result) res.status(200).end();
+      else res.status(404).end();
+    } catch (ex) {
+      this.errorResponse(res, ex);
+    }
   }
 
   async delete(req, res) {
-
+    try {
+      this.validateParam(packageParamSchema, req.params);
+      const { manifestId, packageId } = req.params;
+      const [dataService] = await serviceFactory.getService('DataService', 'SerializerService');
+      const result = await dataService.deletePackage(manifestId, packageId);
+      if (result) res.status(204).end();
+      else res.status(404).end();
+    } catch (ex) {
+      this.errorResponse(res, ex);
+    }
   }
 
   async query(req, res) {
     try {
       this.validateQuery(packageQuerySchema, req.query);
-      const {limit, offset} = req.query;
+      const { limit, offset } = req.query;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
-      const {count, rows} = await dataService.queryPackages(req.query);
+      const { count, rows } = await dataService.queryPackages(req.query);
       //TODO: add the cargosRecord
       const output = serializerService.serializePackages(rows, []);
       const paginationOut = paginateResult(output, req, limit, offset, count);
@@ -53,8 +102,6 @@ class PackagesController extends BaseController {
     } catch (ex) {
       this.errorResponse(res, ex);
     }
-
-
   }
 }
 
