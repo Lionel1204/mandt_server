@@ -61,7 +61,8 @@ const createPackageBodySchema = {
     },
     size: packageSizeSchema,
     weight: packageWeightSchema
-  }
+  },
+  required: ['wrappingType', 'shippingType', 'size', 'weight', 'creator']
 }
 
 const packageParamSchema = {

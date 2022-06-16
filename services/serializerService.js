@@ -150,7 +150,8 @@ class SerializerService {
       status: pkg.status,
       amount: cargosAmount,
       creator: pkg.creator,
-      paths
+      paths,
+      createAt: pkg.createdAt
     };
     return output;
   }
