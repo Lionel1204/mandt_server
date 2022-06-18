@@ -4,5 +4,6 @@ module.exports = {
     manifestsController: require('./manifestsController'),
     companiesController: require('./companiesController'),
     packagesController: require('./packagesController'),
+    cargosController: require('./cargosController'),
     qrController: require('./qrController')
 };

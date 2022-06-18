@@ -86,7 +86,7 @@ const packageQuerySchema = {
     {
       type: 'object',
       properties: {
-        userId: {
+        creator: {
           type: 'integer',
           minimum: 1
         },

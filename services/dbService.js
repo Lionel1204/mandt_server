@@ -192,7 +192,30 @@ class DBService {
   }
 
   //----- Cargos
+  async createCargo(payload) {
+    return db.cargos.create(payload);
+  }
 
+  async getCargo(cargoId) {
+    return db.cargos.findByPk(cargoId);
+  }
+
+  async listCargos(options) {
+    const { limit, offset } = options;
+    const { name, model, manifest_id, creator } = options;
+    const where = _.omitBy({
+      name,
+      model,
+      manifest_id,
+      creator
+    }, _.isUndefined)
+    return db.cargos.findAndCountAll({ where, limit, offset });
+  }
+
+  async deleteCargo(cargoId) {
+    const result = await db.cargos.destroy({ where: {id: cargoId }});
+    return result > 0;
+  }
   //----- Shipping paths:
 }
 module.exports = DBService;

@@ -17,6 +17,22 @@ const paginationSchema = {
     }
   }
 };
+
+const manifestPathSchema = {
+  type: 'object',
+  properties: {
+    manifestId: {
+      type: 'integer',
+      minimum: 1
+    },
+    cargoId: {
+      type: 'integer',
+      minimum: 1
+    }
+  }
+}
+
 module.exports = {
-  paginationSchema
+  paginationSchema,
+  manifestPathSchema
 };

@@ -22,7 +22,8 @@ const {
   qrController,
   manifestsController,
   companiesController,
-  packagesController
+  packagesController,
+  cargosController
 } = controllers;
 
 module.exports = function(app) {
@@ -63,4 +64,15 @@ module.exports = function(app) {
   app.patch(`${apiPrefix}/manifests/:manifestId/packages/:packageId`, createControllerFunction(packagesController, 'patch'));
   app.delete(`${apiPrefix}/manifests/:manifestId/packages/:packageId`, createControllerFunction(packagesController, 'delete'));
   app.get(`${apiPrefix}/packages`, createControllerFunction(packagesController, 'query'));
+
+  // Cargos
+  app.get(`${apiPrefix}/manifests/:manifestId/cargos`, createControllerFunction(cargosController, 'list'));
+  app.get(`${apiPrefix}/manifests/:manifestId/cargos/:cargoId`, createControllerFunction(cargosController, 'get'));
+  app.post(`${apiPrefix}/manifests/:manifestId/cargos`, createControllerFunction(cargosController, 'post'));
+  app.patch(`${apiPrefix}/manifests/:manifestId/cargos/:cargoId`, createControllerFunction(cargosController, 'patch'));
+  app.delete(`${apiPrefix}/manifests/:manifestId/cargos/:cargoId`, createControllerFunction(cargosController, 'delete'));
+  app.get(`${apiPrefix}/cargos`, createControllerFunction(cargosController, 'query'));
+
+  // Paths
+
 };

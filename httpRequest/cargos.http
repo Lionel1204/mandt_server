@@ -1,0 +1,28 @@
+###
+POST http://{{host}}/{{api_prefix}}/manifests/1/cargos
+Content-Type: application/json
+
+{
+  "name": "718",
+  "model": "acm-1",
+  "amount": 12,
+  "creator": 1,
+  "packageId": 1
+}
+###
+GET http://{{host}}/{{api_prefix}}/manifests/1/cargos/6
+Content-Type: application/json
+
+###
+DELETE http://{{host}}/{{api_prefix}}/manifests/1/cargos/9
+Content-Type: application/json
+
+###
+GET http://{{host}}/{{api_prefix}}/manifests/1/cargos?limit=10&offset=0&name=aaa
+Content-Type: application/json
+
+###
+GET http://{{host}}/{{api_prefix}}/cargos?creator=2
+Content-Type: application/json
+
+###

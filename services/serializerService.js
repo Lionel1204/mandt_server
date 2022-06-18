@@ -157,9 +157,30 @@ class SerializerService {
   }
 
   serializePackages(packages, cargosMap = {}) {
+    if (!Array.isArray(packages) || packages.length === 0) return [];
     return _.map(packages, (p) => {
       return this.serializePackage(p)
-    })
+    });
+  }
+
+  serializeCargo(cargo) {
+    const output = {
+      id: cargo.id,
+      manifestId: cargo.manifest_id,
+      packageId: cargo.package_id,
+      name: cargo.name,
+      creator: cargo.creator,
+      amount: cargo.amount,
+      model: cargo.model
+    };
+    return output;
+  }
+
+  serializeCargos(cargos) {
+    if (!Array.isArray(cargos) || cargos.length === 0) return [];
+    return _.map(cargos, (c) => {
+      return this.serializeCargo(c)
+    });
   }
 }
 module.exports = SerializerService;

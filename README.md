@@ -28,7 +28,7 @@ Create a model and a script:
 > npx sequelize model:generate --name packages --attributes package_no:string,wrapping_type:string,shipping_type:string,size:json,weight:json,amount:integer,manifest_id:bigint,status:string
 
 - Cargos
-> npx sequelize model:generate --name cargos --attributes name:string,model:string,amount:integer,package_id:bigint
+> npx sequelize model:generate --name cargos --attributes name:string,model:string,amount:integer,package_id:bigint,manifest_id:bigint,creator:bigint
 
 - PackageShippings
 > npx sequelize model:generate --name packages_shippings --attributes package_id:bigint,shipping_id:bigint,status:string

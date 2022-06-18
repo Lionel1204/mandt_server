@@ -243,8 +243,12 @@ class DataService {
     return await this.dbService.updatePackage(manifestId, packageId, updatePackagePayload);
   }
 
-  async updatePackageCargoAmount(manifestId, packageId, amount) {
-    const updatePackagePayload = {amount};
+  async updatePackageCargoAmount(manifestId, packageId, amount, add = true) {
+    const pkg = await this.dbService.getPackage(manifestId, packageId);
+    const result = add ? pkg.amount + amount : Math.max(pkg.amount - amount, 0)
+    const updatePackagePayload = {
+      amount: result
+    };
     return await this.dbService.updatePackage(manifestId, packageId, updatePackagePayload);
   }
 
@@ -253,16 +257,57 @@ class DataService {
   }
 
   async queryPackages(query) {
-    const { userId, status, manifestId, limit, offset} = query;
+    const { creator, status, manifestId, limit, offset} = query;
     const options = {
-      creator: userId,
+      creator,
       status,
       manifest_id: manifestId === -1 ? null : manifestId,
       limit,
       offset
     }
 
-    return this.dbService.getPackages(options);
+    return await this.dbService.getPackages(options);
+  }
+
+  // ---------- Cargo
+  async createCargo(manifestId, payload) {
+    const cargo = {
+      name: payload.name,
+      model: payload.model,
+      amount: payload.amount,
+      package_id: payload.packageId,
+      manifest_id: manifestId,
+      creator: payload.creator
+    };
+
+    const result = await this.dbService.createCargo(cargo);
+
+    if (result && cargo.package_id)
+      await this.updatePackageCargoAmount(manifestId, payload.packageId, payload.amount, true);
+
+    return result;
+  }
+
+  async getCargo(manifestId, cargoId) {
+    return this.dbService.getCargo(cargoId);
+  }
+
+  async listCargos(options) {
+    return this.dbService.listCargos(options);
+  }
+
+  async queryCargos(options) {
+    return this.listCargos(options);
+  }
+
+  async deleteCargo(manifestId, cargoId) {
+    const cargo = await this.getCargo(manifestId, cargoId);
+    const result = await this.dbService.deleteCargo(cargoId);
+
+    if (result && cargo.package_id) {
+      await this.updatePackageCargoAmount(manifestId, cargo.package_id, cargo.amount, false);
+    }
+    return result;
   }
 }
 

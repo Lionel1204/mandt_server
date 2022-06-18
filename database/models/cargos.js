@@ -17,7 +17,9 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     model: DataTypes.STRING,
     amount: DataTypes.INTEGER,
-    package_id: DataTypes.BIGINT
+    package_id: DataTypes.BIGINT,
+    creator: DataTypes.BIGINT,
+    manifest_id: DataTypes.BIGINT
   }, {
     sequelize,
     modelName: 'cargos',
