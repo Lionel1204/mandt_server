@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const {ResourceNotExistException} = require("../exceptions/commonExceptions");
 
 class SerializerService {
   constructor() {}
@@ -18,6 +19,8 @@ class SerializerService {
    * @returns {*}
    */
   serializeProject(project, users) {
+    if (!project) throw new ResourceNotExistException('Project does not exist')
+
     const uniqUsers = _.keyBy(_.uniq(users), 'userId');
 
     const output = {
@@ -59,6 +62,8 @@ class SerializerService {
    * @returns {*}
    */
   serializeUser(data) {
+    if (!data) throw new ResourceNotExistException('User does not exist')
+
     const output = {
       id: data.id,
       name: data.name,
@@ -76,6 +81,8 @@ class SerializerService {
   }
 
   serializeManifest(data, project) {
+    if (!data) throw new ResourceNotExistException('Manifest does not exist')
+
     const output = {
       id: data.id,
       noteNo: data.note_no,
@@ -106,6 +113,8 @@ class SerializerService {
   }
 
   serializeCompany(company, user) {
+    if (!company) throw new ResourceNotExistException('Company does not exist')
+
     const output = {
       id: company.id,
       name: company.name,
@@ -139,6 +148,7 @@ class SerializerService {
   }
 
   serializePackage(pkg, cargosAmount = 0, paths = {}) {
+    if (!pkg) throw new ResourceNotExistException('Package does not exist')
     const output = {
       id: pkg.id,
       manifestId: pkg.manifest_id,
@@ -163,23 +173,51 @@ class SerializerService {
     });
   }
 
-  serializeCargo(cargo) {
-    const output = {
+  serializeCargo(cargo, packageMap = {} ) {
+    if (!cargo) throw new ResourceNotExistException('Cargo does not exist')
+    const pkg = _.get(packageMap, cargo.package_id);
+    const output = _.omit({
       id: cargo.id,
       manifestId: cargo.manifest_id,
       packageId: cargo.package_id,
+      packageNo: pkg?.package_no || undefined,
       name: cargo.name,
       creator: cargo.creator,
       amount: cargo.amount,
-      model: cargo.model
-    };
+      model: cargo.model,
+      createdAt: cargo.createdAt
+    }, _.isUndefined);
     return output;
   }
 
-  serializeCargos(cargos) {
+  serializeCargos(cargos, packageMap) {
     if (!Array.isArray(cargos) || cargos.length === 0) return [];
     return _.map(cargos, (c) => {
-      return this.serializeCargo(c)
+      return this.serializeCargo(c, packageMap)
+    });
+  }
+
+  serializePath(path) {
+    if (!path) throw new ResourceNotExistException('Path does not exist')
+
+    const output = {
+      id: path.id,
+      manifestId: path.manifest_id,
+      waybillNo: path.waybill_no,
+      packageId: path.package_id,
+      address: path.address,
+      assignee: path.assignee,
+      arrived: !!path.arrived,
+      type: path.type
+    }
+    return output;
+  }
+
+  serializePaths(paths) {
+    if (!Array.isArray(paths) || paths.length === 0) return [];
+
+    return _.map(paths, (p) => {
+      return this.serializePath(p)
     });
   }
 }

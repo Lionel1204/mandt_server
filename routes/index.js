@@ -23,7 +23,8 @@ const {
   manifestsController,
   companiesController,
   packagesController,
-  cargosController
+  cargosController,
+  pathsController
 } = controllers;
 
 module.exports = function(app) {
@@ -74,5 +75,7 @@ module.exports = function(app) {
   app.get(`${apiPrefix}/cargos`, createControllerFunction(cargosController, 'query'));
 
   // Paths
-
+  app.post(`${apiPrefix}/manifests/:manifestId/paths`, createControllerFunction(pathsController, 'post'));
+  app.get(`${apiPrefix}/manifests/:manifestId/paths`, createControllerFunction(pathsController, 'list'));
+  app.patch(`${apiPrefix}/manifests/:manifestId/paths`, createControllerFunction(pathsController, 'patch'));
 };

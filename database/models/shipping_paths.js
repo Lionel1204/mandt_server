@@ -1,3 +1,4 @@
+// Deprecated
 'use strict';
 const {
   Model

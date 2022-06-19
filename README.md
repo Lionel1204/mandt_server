@@ -36,6 +36,9 @@ Create a model and a script:
 - ShippingPaths
 > npx sequelize model:generate --name shipping_paths --attributes node_name:string,from:string,to:string,owner:bigint,shipping_type:string
 
+- Paths
+> npx sequelize model:generate --name paths --attributes manifest_id:bigint,package_id:bigint,address:string,assignee:bigint,waybill_no:string,arrived:boolean,type:integer,sequence_no:integer
+
 - Companies
 > npx sequelize model:generate --name companies --attributes name:string,type:string,license:string,scope:string,transport:json,contact:bigint,capability:integer,memo:string
 

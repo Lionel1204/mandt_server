@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { ProjectStatus, ManifestStatus, PackageStatus } = require('../helper/constants');
+const { ProjectStatus, ManifestStatus, PackageStatus, PathType } = require('../helper/constants');
 const { ResourceNotExistException, InternalServerException } = require('../exceptions/commonExceptions');
 
 class DataService {
@@ -231,6 +231,10 @@ class DataService {
     return await this.dbService.getPackage(packageId);
   }
 
+  async getPackagesByIds(packageIds) {
+    return await this.dbService.getPackagesByIds(packageIds);
+  }
+
   async updatePackage(manifestId, packageId, payload) {
     const updatePackagePayload = {
       package_no: payload.packageNo,
@@ -307,6 +311,55 @@ class DataService {
     if (result && cargo.package_id) {
       await this.updatePackageCargoAmount(manifestId, cargo.package_id, cargo.amount, false);
     }
+    return result;
+  }
+
+  // ------ Paths
+  async createPaths(manifestId, payload) {
+    const paths = _.map(payload.pathList, (p, ind)=> {
+      return {
+        manifest_id: manifestId,
+        package_id: payload.packageId,
+        address: p.address,
+        assignee: p.assignee,
+        waybill_no: p.waybillNo,
+        arrived: p.arrived,
+        type: p.type,
+        sequence_no: ind
+      };
+    });
+
+    return this.dbService.createPaths(paths);
+  }
+
+  async listPaths(manifestId, packageId) {
+    const options = {
+      manifest_id: manifestId,
+      package_id: packageId,
+      limit: 50,
+      offset: 0
+    };
+    return await this.dbService.listPaths(options)
+  }
+
+  async updatePathsArrived(manifestId, payload) {
+    const {packageId, pathIdList, arrived} = payload;
+
+    const result = await this.dbService.updatePathsArrived(manifestId, packageId, pathIdList, arrived);
+
+    // update the package status
+    const paths = await this.listPaths(manifestId, packageId);
+    const finishedEndNode = _.find(paths, (p) => (p.type === PathType.End) && p.arrived);
+    const finishedMidNode = _.find(paths, (p) => (p.type === PathType.Middle) && p.arrived);
+
+    if (finishedEndNode) {
+      // Finished
+      await this.updatePackage(manifestId, packageId, { status: PackageStatus.Finished });
+    } else if (finishedMidNode) {
+      // InTransit
+      await this.updatePackage(manifestId, packageId, { status: PackageStatus.InTransit });
+    } else {}
+
     return result;
   }
 }

@@ -1,5 +1,5 @@
 const db = require('../database/models');
-const _ = require("lodash");
+const _ = require('lodash');
 
 class DBService {
   constructor() {}
@@ -172,18 +172,31 @@ class DBService {
   }
 
   async getPackage(packageId) {
-    return db.packages.findByPk(packageId)
+    return db.packages.findByPk(packageId);
+  }
+
+  async getPackagesByIds(packageIds) {
+    return db.packages.findAll({
+      where: { id: packageIds }
+    });
   }
 
   async getPackages(options) {
     const { limit, offset } = options;
     const { creator, status, manifest_id } = options;
-    const where = _.omitBy({
-      creator,
-      status,
-      manifest_id
-    }, _.isUndefined)
+    const where = _.omitBy(
+      {
+        creator,
+        status,
+        manifest_id
+      },
+      _.isUndefined
+    );
     return db.packages.findAndCountAll({ where, limit, offset });
+  }
+
+  async countPackages(manifestId) {
+    return db.packages.count({ where: { manifest_id: manifestId } });
   }
 
   async deletePackage(packageId) {
@@ -203,19 +216,55 @@ class DBService {
   async listCargos(options) {
     const { limit, offset } = options;
     const { name, model, manifest_id, creator } = options;
-    const where = _.omitBy({
-      name,
-      model,
-      manifest_id,
-      creator
-    }, _.isUndefined)
+    const where = _.omitBy(
+      {
+        name,
+        model,
+        manifest_id,
+        creator
+      },
+      _.isUndefined
+    );
     return db.cargos.findAndCountAll({ where, limit, offset });
   }
 
   async deleteCargo(cargoId) {
-    const result = await db.cargos.destroy({ where: {id: cargoId }});
+    const result = await db.cargos.destroy({ where: { id: cargoId } });
     return result > 0;
   }
   //----- Shipping paths:
+  async createPaths(paths) {
+    return db.paths.bulkCreate(paths, {
+      updateOnDuplicate: ['sequence_no'],
+      returning: true
+    });
+  }
+
+  async listPaths(options) {
+    const { limit, offset } = options;
+
+    const where = {
+      package_id: options.package_id,
+      manifest_id: options.manifest_id
+    };
+
+    const order = [['sequence_no', 'ASC']];
+
+    return db.paths.findAll({ where, limit, offset, order });
+  }
+
+  async updatePathsArrived(manifestId, packageId, pathIdList, arrived) {
+    const where = {
+      id: pathIdList
+    };
+
+    const result = await db.paths.update(
+      { arrived },
+      {
+        where
+      }
+    );
+    return result > 0;
+  }
 }
 module.exports = DBService;

@@ -47,7 +47,7 @@ const createCargoBodySchema = {
       minimum: 1
     }
   },
-  required: ['name', 'model', 'amount', 'creator']
+  required: ['name', 'model', 'amount', 'creator', 'packageId']
 };
 
 module.exports = {

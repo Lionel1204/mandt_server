@@ -20,8 +20,15 @@ const PackageStatus = {
   Finished: 'FINISHED'
 }
 
+const PathType = {
+  Start: 0,
+  End: 1,
+  Middle: 2
+}
+
 module.exports = {
   ProjectStatus,
   ManifestStatus,
-  PackageStatus
+  PackageStatus,
+  PathType
 };

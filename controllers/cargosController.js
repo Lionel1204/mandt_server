@@ -6,7 +6,7 @@ const {
   createCargoBodySchema,
   listCargoQuerySchema
 } = require('../validateSchemas/cargoSchemas');
-const { paginationSchema, manifestPathSchema } = require('../validateSchemas/baseSchemas');
+const { manifestPathSchema } = require('../validateSchemas/baseSchemas');
 const {packageQuerySchema} = require("../validateSchemas/packageSchemas");
 
 class CargosController extends BaseController {
@@ -32,13 +32,16 @@ class CargosController extends BaseController {
 
   async list(req, res) {
     try {
+      this.validateParam(manifestPathSchema, req.params);
       this.validateQuery(listCargoQuerySchema, req.query);
       const options = req.query;
       const { limit, offset } = options;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const {count, rows} = await dataService.listCargos(options);
-
-      const output = serializerService.serializeCargos(rows);
+      const packageIds = _.uniq(_.map(rows, (r) => r.package_id));
+      const packages = await dataService.getPackagesByIds(packageIds);
+      const packageMap = _.keyBy(packages, 'id');
+      const output = serializerService.serializeCargos(rows, packageMap);
       const paginationOut = paginateResult(output, req, limit, offset, count);
       res.json(paginationOut);
     } catch (ex) {
@@ -53,7 +56,10 @@ class CargosController extends BaseController {
       const { manifestId, cargoId } = req.params;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const cargo = await dataService.getCargo(manifestId, cargoId);
-      const output = serializerService.serializeCargo(cargo);
+      const packageIds = [cargo.package_id];
+      const packages = await dataService.getPackagesByIds(packageIds);
+      const packageMap = _.keyBy(packages, 'id');
+      const output = serializerService.serializeCargo(cargo, packageMap);
       res.json(output);
     } catch (ex) {
       this.errorResponse(res, ex);
@@ -80,7 +86,10 @@ class CargosController extends BaseController {
       const { limit, offset } = req.query;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const { count, rows } = await dataService.queryCargos(req.query);
-      const output = serializerService.serializeCargos(rows);
+      const packageIds = _.uniq(_.map(rows, (r) => r.package_id));
+      const packages = await dataService.getPackagesByIds(packageIds);
+      const packageMap = _.keyBy(packages, 'id');
+      const output = serializerService.serializeCargos(rows, packageMap);
       const paginationOut = paginateResult(output, req, limit, offset, count);
       res.status(200).json(paginationOut);
     } catch (ex) {

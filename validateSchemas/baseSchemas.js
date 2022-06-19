@@ -18,10 +18,16 @@ const paginationSchema = {
   }
 };
 
+
+// Request Path parameters check
 const manifestPathSchema = {
   type: 'object',
   properties: {
     manifestId: {
+      type: 'integer',
+      minimum: 1
+    },
+    packageId: {
       type: 'integer',
       minimum: 1
     },
