@@ -18,10 +18,11 @@ module.exports = {
       onDelete: 'CASCADE',
       defaultValue: null
     });
-    await queryInterface.changeColumn('cargos', 'package_id', {
+    await queryInterface.removeColumn('cargos', 'package_id');
+    await queryInterface.addColumn('cargos', 'package_id', {
       type: Sequelize.BIGINT,
       references: {
-        model: 'users',
+        model: 'packages',
         key: 'id',
       },
       onUpdate: 'CASCADE',
@@ -47,5 +48,10 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
+
+    await queryInterface.removeConstraint('cargos', 'cargos_creator_foreign_idx');
+    await queryInterface.removeConstraint('cargos', 'cargos_manifest_id_foreign_idx');
+    await queryInterface.removeColumn('cargos', 'creator');
+    await queryInterface.removeColumn('cargos', 'manifest_id');
   }
 };

@@ -275,6 +275,9 @@ class DataService {
 
   // ---------- Cargo
   async createCargo(manifestId, payload) {
+    const pkg = await this.getPackage(manifestId, payload.packageId);
+    if (!pkg) throw new ResourceNotExistException(`Cannot find package ${payload.packageId}`);
+
     const cargo = {
       name: payload.name,
       model: payload.model,
@@ -286,9 +289,9 @@ class DataService {
 
     const result = await this.dbService.createCargo(cargo);
 
-    if (result && cargo.package_id)
-      await this.updatePackageCargoAmount(manifestId, payload.packageId, payload.amount, true);
-
+    if (result?.package_id) {
+      await this.updatePackageCargoAmount(manifestId, result.package_id, result.amount, true);
+    }
     return result;
   }
 
@@ -306,6 +309,9 @@ class DataService {
 
   async deleteCargo(manifestId, cargoId) {
     const cargo = await this.getCargo(manifestId, cargoId);
+    if (!cargo) throw new ResourceNotExistException(`Cannot find cargo ${cargoId}`);
+    const pkg = await this.getPackage(manifestId, cargo.package_id);
+    if (!pkg) throw new ResourceNotExistException(`Cannot find package ${cargo.package_id}`);
     const result = await this.dbService.deleteCargo(cargoId);
 
     if (result && cargo.package_id) {

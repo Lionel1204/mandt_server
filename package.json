@@ -6,6 +6,7 @@
     "start": "node ./bin/www",
     "db:create": "npx sequelize db:create",
     "db:migrate": "npx sequelize db:migrate",
+    "db:migrate:undo": "npx sequelize db:migrate:undo",
     "db:drop": "npx sequelize db:drop",
     "db:seeds": "npx sequelize db:seed:all"
   },
