@@ -248,7 +248,7 @@ class DataService {
   }
 
   async updatePackageCargoAmount(manifestId, packageId, amount, add = true) {
-    const pkg = await this.dbService.getPackage(manifestId, packageId);
+    const pkg = await this.dbService.getPackage(packageId);
     const result = add ? pkg.amount + amount : Math.max(pkg.amount - amount, 0)
     const updatePackagePayload = {
       amount: result
