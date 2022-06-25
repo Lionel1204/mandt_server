@@ -20,11 +20,11 @@ class ManifestsController extends BaseController {
       const options = req.query;
       const { limit, offset } = options;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
-      const [count, manifests] = await dataService.listManifests(options);
-      const projectIds = _.uniq(manifests.map((m) => m.project_id));
+      const {count, rows} = await dataService.listManifests(options);
+      const projectIds = _.uniq(rows.map((m) => m.project_id));
       const projects = await dataService.getProjectsByIds(projectIds);
       const projectMap = _.keyBy(projects, 'id');
-      const output = serializerService.serializeManifests(manifests, projectMap);
+      const output = serializerService.serializeManifests(rows, projectMap);
       const paginationOut = paginateResult(output, req, limit, offset, count);
       res.json(paginationOut);
     } catch (ex) {

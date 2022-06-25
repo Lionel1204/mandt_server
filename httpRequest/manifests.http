@@ -1,5 +1,5 @@
 # List Manifests
-GET http://{{host}}/{{api_prefix}}/manifests?limit=10&offset=0
+GET http://{{host}}/{{api_prefix}}/manifests?limit=10&offset=0&noteNo=01
 Content-Type: application/jsons
 
 ###
@@ -11,7 +11,7 @@ Content-Type: application/json
   "projectId": 1,
   "noteNo": "test001",
   "creator": 3,
-  "receiver": 2
+  "receiver": 1
 }
 
 ###

@@ -95,7 +95,11 @@ const packageQuerySchema = {
         },
         manifestId: {
           type: 'integer',
-          minimum: -1
+          minimum: 1
+        },
+        packageNo: {
+          type: 'string',
+          minLength: 3
         }
       }
     }

@@ -4,7 +4,8 @@ const { paginateResult } = require('../helper/utils');
 const _ = require('lodash');
 const {
   createCargoBodySchema,
-  listCargoQuerySchema
+  listCargoQuerySchema,
+  queryCargoSchema
 } = require('../validateSchemas/cargoSchemas');
 const { manifestPathSchema } = require('../validateSchemas/baseSchemas');
 const {packageQuerySchema} = require("../validateSchemas/packageSchemas");
@@ -82,7 +83,7 @@ class CargosController extends BaseController {
 
   async query(req, res) {
     try {
-      this.validateQuery(packageQuerySchema, req.query);
+      this.validateQuery(queryCargoSchema, req.query);
       const { limit, offset } = req.query;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const { count, rows } = await dataService.queryCargos(req.query);

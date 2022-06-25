@@ -16,6 +16,10 @@ const listManifestQuerySchema = {
         },
         status: {
           type: 'string'
+        },
+        noteNo: {
+          type: 'string',
+          minLength: 3
         }
       }
     }

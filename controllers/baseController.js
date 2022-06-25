@@ -15,8 +15,8 @@ class BaseController {
   }
 
   validateParam(schema, params) {
-    if (!this.queryAjv.validate(schema, params)) {
-      throw new Exceptions.BadRequestException(this.bodyAjv.errorsText())
+    if (!this.paramsAjv.validate(schema, params)) {
+      throw new Exceptions.BadRequestException(this.paramsAjv.errorsText())
     }
   }
 
@@ -27,8 +27,8 @@ class BaseController {
   }
 
   validateQuery(schema, query) {
-    if (!this.paramsAjv.validate(schema, query)) {
-      throw new Exceptions.BadRequestException(this.bodyAjv.errorsText())
+    if (!this.queryAjv.validate(schema, query)) {
+      throw new Exceptions.BadRequestException(this.queryAjv.errorsText())
     }
   }
 

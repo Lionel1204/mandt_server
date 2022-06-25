@@ -124,7 +124,13 @@ class DataService {
 
   // ---------- Manifest:
   async listManifests(options) {
-    return this.dbService.getManifests(options);
+    const opt = _.omitBy({
+      owner: options.owner,
+      receiver: options.receiver,
+      status: options.status,
+      note_no: options.noteNo
+    }, _.isUndefined);
+    return this.dbService.getManifests(opt, options.limit, options.offset);
   }
 
   async createManifest(payload) {
@@ -152,7 +158,7 @@ class DataService {
       endedAt = new Date();
     }
 
-    const manifest = _.omit({
+    const manifest = _.omitBy({
       project_id: payload?.projectId,
       note_no: payload?.note_no,
       creator: payload.creator,
@@ -160,11 +166,22 @@ class DataService {
       status: payload?.status,
       ended_at: endedAt,
       published_at: publishedAt,
-    });
+    }, _.isUndefined);
 
     // TODO: do not allow change status ended -> published or ended -> created or published -> created
 
     return this.dbService.updateManifest(manifestId, manifest)
+  }
+
+  async updateManifestAmount(manifestId) {
+    const packageCount = await this.dbService.countPackages(manifestId)
+    const cargoCount = await this.dbService.countCargos(manifestId)
+
+    const payload = {
+      package_amount: packageCount,
+      cargo_amount: cargoCount
+    }
+    return this.dbService.updateManifest(manifestId, payload);
   }
 
   async getManifestById(manifestId) {
@@ -218,13 +235,17 @@ class DataService {
       package_no: payload.packageNo,
       wrapping_type: payload.wrappingType,
       shipping_type: payload.shippingType,
-      amount: 0, //TODO: wait for get cargo
+      amount: 0,
       size: payload.size,
       weight: payload.weight,
       status: PackageStatus.Created,
       creator: payload.creator
     }
-    return await this.dbService.createPackage(packagePayload);
+    const newPackage =  await this.dbService.createPackage(packagePayload);
+
+    if (newPackage)
+      await this.updateManifestAmount(newPackage.manifest_id);
+    return newPackage;
   }
 
   async getPackage(manifestId, packageId) {
@@ -257,17 +278,21 @@ class DataService {
   }
 
   async deletePackage(manifestId, packageId) {
-    return await this.dbService.deletePackage(packageId);
+    const result = await this.dbService.deletePackage(manifestId, packageId);
+    if (result)
+      await this.updateManifestAmount(manifestId);
+    return result;
   }
 
   async queryPackages(query) {
-    const { creator, status, manifestId, limit, offset} = query;
+    const { creator, status, manifestId, packageNo, limit, offset} = query;
     const options = {
       creator,
       status,
-      manifest_id: manifestId === -1 ? null : manifestId,
-      limit,
-      offset
+      manifest_id: manifestId,
+      package_no: packageNo,
+      offset,
+      limit
     }
 
     return await this.dbService.getPackages(options);
@@ -290,7 +315,8 @@ class DataService {
     const result = await this.dbService.createCargo(cargo);
 
     if (result?.package_id) {
-      await this.updatePackageCargoAmount(manifestId, result.package_id, result.amount, true);
+      await this.updatePackageCargoAmount(result.manifest_id, result.package_id, result.amount, true);
+      await this.updateManifestAmount(result.manifest_id);
     }
     return result;
   }
@@ -304,7 +330,16 @@ class DataService {
   }
 
   async queryCargos(options) {
-    return this.listCargos(options);
+    const opt = {
+      creator: options.creator,
+      package_id: options.packageId,
+      manifest_id: options.manifestId,
+      name: options.name,
+      model: options.model,
+      limit: options.limit,
+      offset: options.offset
+    }
+    return this.listCargos(opt);
   }
 
   async deleteCargo(manifestId, cargoId) {
@@ -312,10 +347,11 @@ class DataService {
     if (!cargo) throw new ResourceNotExistException(`Cannot find cargo ${cargoId}`);
     const pkg = await this.getPackage(manifestId, cargo.package_id);
     if (!pkg) throw new ResourceNotExistException(`Cannot find package ${cargo.package_id}`);
-    const result = await this.dbService.deleteCargo(cargoId);
+    const result = await this.dbService.deleteCargo(manifestId, cargoId);
 
     if (result && cargo.package_id) {
       await this.updatePackageCargoAmount(manifestId, cargo.package_id, cargo.amount, false);
+      await this.updateManifestAmount(manifestId);
     }
     return result;
   }

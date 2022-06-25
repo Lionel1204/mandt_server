@@ -95,8 +95,7 @@ class PackagesController extends BaseController {
       const { limit, offset } = req.query;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const { count, rows } = await dataService.queryPackages(req.query);
-      //TODO: add the cargosRecord
-      const output = serializerService.serializePackages(rows, []);
+      const output = serializerService.serializePackages(rows);
       const paginationOut = paginateResult(output, req, limit, offset, count);
       res.status(200).json(paginationOut);
     } catch (ex) {

@@ -8,13 +8,13 @@ const listCargoQuerySchema = {
       properties: {
         name: {
           type: 'string',
-          minLength: 1
+          minLength: 3
         },
         model: {
           type: 'string',
           minLength: 1
         },
-        creator: {
+        packageId: {
           type: 'integer',
           minimum: 1
         }
@@ -22,6 +22,23 @@ const listCargoQuerySchema = {
     }
   ]
 };
+
+const queryCargoSchema = {
+  allOf: [
+    listCargoQuerySchema,
+    {
+      type: 'object',
+      properties: {
+        creator: {
+          type: 'integer',
+          minimum: 1
+        }
+      }
+    }
+
+  ]
+}
+
 
 const createCargoBodySchema = {
   type: 'object',
@@ -52,5 +69,6 @@ const createCargoBodySchema = {
 
 module.exports = {
   listCargoQuerySchema,
-  createCargoBodySchema
+  createCargoBodySchema,
+  queryCargoSchema
 };

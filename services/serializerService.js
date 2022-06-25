@@ -82,7 +82,6 @@ class SerializerService {
 
   serializeManifest(data, project) {
     if (!data) throw new ResourceNotExistException('Manifest does not exist')
-
     const output = {
       id: data.id,
       noteNo: data.note_no,
@@ -147,7 +146,7 @@ class SerializerService {
     return output;
   }
 
-  serializePackage(pkg, cargosAmount = 0, paths = {}) {
+  serializePackage(pkg, paths = {}) {
     if (!pkg) throw new ResourceNotExistException('Package does not exist')
     const output = {
       id: pkg.id,
@@ -158,7 +157,7 @@ class SerializerService {
       size: pkg.size,
       weight: pkg.weight,
       status: pkg.status,
-      amount: cargosAmount,
+      amount: pkg.amount,
       creator: pkg.creator,
       paths,
       createAt: pkg.createdAt
@@ -166,7 +165,7 @@ class SerializerService {
     return output;
   }
 
-  serializePackages(packages, cargosMap = {}) {
+  serializePackages(packages) {
     if (!Array.isArray(packages) || packages.length === 0) return [];
     return _.map(packages, (p) => {
       return this.serializePackage(p)

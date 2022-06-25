@@ -1,14 +1,14 @@
 # Get packages
-GET http://{{host}}/{{api_prefix}}/packages?creator=1
+GET http://{{host}}/{{api_prefix}}/packages?packageNo=test
 Content-Type: application/json
 
 ###
 # Create packages
-POST http://{{host}}/{{api_prefix}}/manifests/1/packages
+POST http://{{host}}/{{api_prefix}}/manifests/3/packages
 Content-Type: application/json
 
 {
-  "packageNo": "test002",
+  "packageNo": "test001",
   "wrappingType": "WOODENCASE",
   "shippingType": "BULK",
   "size": {
@@ -51,7 +51,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://{{host}}/{{api_prefix}}/manifests/1/packages/2
+DELETE http://{{host}}/{{api_prefix}}/manifests/3/packages/11
 Content-Type: application/json
 
 ###

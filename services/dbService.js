@@ -1,5 +1,7 @@
 const db = require('../database/models');
 const _ = require('lodash');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 class DBService {
   constructor() {}
@@ -100,20 +102,12 @@ class DBService {
   }
 
   //----- Manifest-Notes:
-  async getManifests(opt) {
-    const options = {
-      order: [[db.sequelize.fn('lower', db.sequelize.col('createdAt')), 'DESC']],
-      limit: opt.limit,
-      offset: opt.offset
-    };
-
-    if (opt.owner) options.owner = opt.owner;
-    if (opt.receiver) options.receiver = opt.receiver;
-    if (opt.status) options.status = opt.status;
-
-    const result = await db.manifest_notes.findAndCountAll(options);
-
-    return [result.count, result.rows];
+  async getManifests(opt, limit, offset) {
+    const options = opt;
+    const order = [[db.sequelize.fn('lower', db.sequelize.col('createdAt')), 'DESC']];
+    if (opt.note_no) options.note_no = { [Op.like]: `%${opt.note_no}%`};
+    const where = options;
+    return await db.manifest_notes.findAndCountAll({where, order, limit, offset});
   }
 
   async createManifest(manifest) {
@@ -183,7 +177,7 @@ class DBService {
 
   async getPackages(options) {
     const { limit, offset } = options;
-    const { creator, status, manifest_id } = options;
+    const { creator, status, manifest_id, package_no } = options;
     const where = _.omitBy(
       {
         creator,
@@ -192,6 +186,8 @@ class DBService {
       },
       _.isUndefined
     );
+
+    if (package_no) where.package_no = { [Op.like]: `%${package_no}%`}
     return db.packages.findAndCountAll({ where, limit, offset });
   }
 
@@ -199,12 +195,25 @@ class DBService {
     return db.packages.count({ where: { manifest_id: manifestId } });
   }
 
-  async deletePackage(packageId) {
-    const result = await db.packages.destroy({ where: { id: packageId } });
+  async deletePackage(manifestId, packageId) {
+    const result = await db.packages.destroy({ where: { id: packageId, manifest_id: manifestId } });
     return result > 0;
   }
 
   //----- Cargos
+  async countCargos(manifestId) {
+    try {
+      const result = await db.cargos.findAll({
+        attributes: [[db.sequelize.fn('sum', db.sequelize.col('amount')), 'total']],
+        where: {manifest_id: manifestId},
+        logging: true
+      });
+      return result[0].total;
+    } catch (ex) {
+      throw ex;
+    }
+  }
+
   async createCargo(payload) {
     return db.cargos.create(payload);
   }
@@ -215,21 +224,23 @@ class DBService {
 
   async listCargos(options) {
     const { limit, offset } = options;
-    const { name, model, manifest_id, creator } = options;
+    const { name, model, manifest_id, creator, package_id } = options;
     const where = _.omitBy(
       {
-        name,
         model,
         manifest_id,
-        creator
+        creator,
+        package_id
       },
       _.isUndefined
     );
+
+    if (name) where.name = { [Op.like]: `%${name}%`}
     return db.cargos.findAndCountAll({ where, limit, offset });
   }
 
-  async deleteCargo(cargoId) {
-    const result = await db.cargos.destroy({ where: { id: cargoId } });
+  async deleteCargo(manifestId, cargoId) {
+    const result = await db.cargos.destroy({ where: { id: cargoId, manifest_id: manifestId } });
     return result > 0;
   }
   //----- Shipping paths:

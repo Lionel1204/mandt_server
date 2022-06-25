@@ -1,5 +1,5 @@
 ###
-POST http://{{host}}/{{api_prefix}}/manifests/1/cargos
+POST http://{{host}}/{{api_prefix}}/manifests/3/cargos
 Content-Type: application/json
 
 {
@@ -7,7 +7,7 @@ Content-Type: application/json
   "model": "acm-1",
   "amount": 12,
   "creator": 1,
-  "packageId": 5
+  "packageId": 7
 }
 ###
 GET http://{{host}}/{{api_prefix}}/manifests/1/cargos/6
@@ -18,11 +18,11 @@ DELETE http://{{host}}/{{api_prefix}}/manifests/1/cargos/9
 Content-Type: application/json
 
 ###
-GET http://{{host}}/{{api_prefix}}/manifests/1/cargos?limit=10&offset=0&name=aaa
+GET http://{{host}}/{{api_prefix}}/manifests/1/cargos?limit=10&offset=0&name=aaa&filter[test]=
 Content-Type: application/json
 
 ###
-GET http://{{host}}/{{api_prefix}}/cargos?creator=2
+GET http://{{host}}/{{api_prefix}}/cargos?name=79
 Content-Type: application/json
 
 ###
