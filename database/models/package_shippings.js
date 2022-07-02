@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     manifest_id: DataTypes.BIGINT,
     package_id: DataTypes.BIGINT,
     path_id: DataTypes.BIGINT,
-    current_node: DataTypes.INTEGER,
+    path_node: DataTypes.INTEGER,
     way_bill_no: DataTypes.STRING,
     arrived: DataTypes.BOOLEAN,
     assignee: DataTypes.BIGINT,

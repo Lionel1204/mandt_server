@@ -43,7 +43,7 @@ Create a model and a script:
 > npx sequelize model:generate --name permissions --attributes name:string,authority:string,description:string,user_id:bigint,path_id:bigint
 - 
 - packageShippings
-> npx sequelize model:generate --name package_shippings --attributes manifest_id:bigint,package_id:bigint,path_id:bigint,current_node:integer,way_bill_no:string,arrived:boolean,assignee:bigint
+> npx sequelize model:generate --name package_shippings --attributes manifest_id:bigint,package_id:bigint,path_id:bigint,path_node:integer,way_bill_no:string,arrived:boolean,assignee:bigint
  
 Create a schema:
 > npx sequelize db:create

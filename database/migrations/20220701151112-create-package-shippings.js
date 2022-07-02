@@ -17,7 +17,7 @@ module.exports = {
       path_id: {
         type: Sequelize.BIGINT
       },
-      current_node: {
+      path_node: {
         type: Sequelize.INTEGER
       },
       way_bill_no: {

@@ -206,5 +206,21 @@ class SerializerService {
     }
     return output;
   }
+
+  serializeArriveInfo(records) {
+    if (!Array.isArray(records) || records.length === 0) return [];
+    return _.map(records, (r) => {
+      return {
+        id: r.id,
+        manifestId: r.manifest_id,
+        packageId: r.package_id,
+        pathId: r.path_id,
+        wayBillNo: r.way_bill_no,
+        pathNode: r.path_node,
+        arrived: r.arrived,
+        assignee: r.assignee
+      }
+    })
+  }
 }
 module.exports = SerializerService;

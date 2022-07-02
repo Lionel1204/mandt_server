@@ -24,7 +24,8 @@ const {
   companiesController,
   packagesController,
   cargosController,
-  pathsController
+  pathsController,
+  packageArrivedController
 } = controllers;
 
 module.exports = function(app) {
@@ -80,5 +81,7 @@ module.exports = function(app) {
   // Do not support this right now
   //app.patch(`${apiPrefix}/manifests/:manifestId/paths`, createControllerFunction(pathsController, 'patch'));
 
-  // 
+  // Package Arrived
+  app.get(`${apiPrefix}/packages/:packageId/arrived-info`, createControllerFunction(packageArrivedController, 'list'));
+  app.patch(`${apiPrefix}/packages/:packageId/arrived-info`, createControllerFunction(packageArrivedController, 'patch'));
 };

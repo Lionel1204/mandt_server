@@ -151,6 +151,7 @@ class DataService {
   async updateManifest(manifestId, payload) {
     let publishedAt = undefined;
     let endedAt = undefined;
+    let createShippingFlag = payload?.status === ManifestStatus.Shipping;
 
     if (payload?.status === ManifestStatus.Published) {
       publishedAt = new Date();
@@ -170,7 +171,12 @@ class DataService {
 
     // TODO: do not allow change status ended -> published or ended -> created or published -> created
 
-    return this.dbService.updateManifest(manifestId, manifest)
+    const result = await this.dbService.updateManifest(manifestId, manifest)
+    if (createShippingFlag && result) {
+      // Manifest is ready, start to create shipping record
+      await this.createArrivedInfo(manifestId)
+    }
+    return result
   }
 
   async updateManifestAmount(manifestId) {
@@ -372,6 +378,13 @@ class DataService {
     return await this.dbService.getPaths(options)
   }
 
+  /**
+   * updatePathsArrived
+   * @Deprecated
+   * @param manifestId
+   * @param payload
+   * @returns {Promise<*|boolean>}
+   */
   async updatePathsArrived(manifestId, payload) {
     const {packageId, pathIdList, arrived} = payload;
 
@@ -391,6 +404,68 @@ class DataService {
     } else {}
 
     return result;
+  }
+
+  // arrived info
+  async createArrivedInfo(manifestId) {
+    // infinite loading:
+    let offset = 0;
+    const limit = 50;
+    let packages = [];
+    while (true) {
+      const { count, rows } = await this.queryPackages({ manifestId, offset, limit });
+      packages = [...packages, ...rows];
+      offset += rows.length;
+      if (packages.length >= count) break;
+    }
+
+    if (packages.length === 0) return;
+
+    const pathRec = await this.getPaths(manifestId);
+    if (!pathRec) return;
+
+    const arrivedInfoList = packages.map((p) => {
+      return pathRec.paths.map((path, index) => {
+        const payload = {
+          manifest_id: manifestId,
+          package_id: p.id,
+          path_id: pathRec.id,
+          way_bill_no: null,
+          arrived: index === 0,
+          path_node: index,
+          assignee: path.assignee,
+        };
+        return payload;
+      });
+    });
+
+    for (const arrivedInfo of arrivedInfoList) {
+      await this.dbService.bulkCreateArrivedInfo(arrivedInfo);
+    }
+  }
+
+  async listArrivedInfo(packageId, payload) {
+    let assigneeId = payload.assignee;
+    if (payload.userId) {
+      const user = await this.getUser(payload.userId);
+      assigneeId = user.company_id;
+    }
+
+    const options = {
+      package_id: packageId
+    }
+    if (assigneeId) options.assignee = assigneeId;
+    return this.dbService.listArrivedInfo(options);
+  }
+
+  async updateArrivedInfo(packageId, body) {
+    const options = {
+      package_id: packageId,
+      path_node: body.pathNode,
+      arrived: !!body.arrived,
+      wayBillNo: body.wayBillNo || null
+    }
+    return this.dbService.updateArrivedInfo(options);
   }
 }
 

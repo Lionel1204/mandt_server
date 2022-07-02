@@ -8,7 +8,8 @@
     "db:migrate": "npx sequelize db:migrate",
     "db:migrate:undo": "npx sequelize db:migrate:undo",
     "db:drop": "npx sequelize db:drop",
-    "db:seeds": "npx sequelize db:seed:all"
+    "db:seeds": "npx sequelize db:seed:all",
+    "db:seed": "npx sequelize db:seed --seed=20220702045747-package_arrived"
   },
   "dependencies": {
     "ajv": "^8.11.0",

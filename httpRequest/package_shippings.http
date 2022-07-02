@@ -1,0 +1,13 @@
+# Get arrivedinfo
+GET http://{{host}}/{{api_prefix}}/packages/5/arrived-info
+Content-Type: application/json
+
+###
+PATCH http://{{host}}/{{api_prefix}}/packages/5/arrived-info
+Content-Type: application/json
+
+{
+  "pathNode": 1,
+  "arrived": true
+}
+###

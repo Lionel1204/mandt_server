@@ -21,14 +21,10 @@ Content-Type: application/jsons
 
 ###
 
-PATCH http://{{host}}/{{api_prefix}}/manifests/7
+PATCH http://{{host}}/{{api_prefix}}/manifests/3
 Content-Type: application/json
 
 {
-  "projectId": 2,
-  "noteNo": "test001",
-  "creator": 2,
-  "receiver": 3,
-  "status": "PUBLISHED"
+  "status": "SHIPPING"
 }
 ###

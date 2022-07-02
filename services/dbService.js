@@ -105,9 +105,9 @@ class DBService {
   async getManifests(opt, limit, offset) {
     const options = opt;
     const order = [[db.sequelize.fn('lower', db.sequelize.col('createdAt')), 'DESC']];
-    if (opt.note_no) options.note_no = { [Op.like]: `%${opt.note_no}%`};
+    if (opt.note_no) options.note_no = { [Op.like]: `%${opt.note_no}%` };
     const where = options;
-    return await db.manifest_notes.findAndCountAll({where, order, limit, offset});
+    return await db.manifest_notes.findAndCountAll({ where, order, limit, offset });
   }
 
   async createManifest(manifest) {
@@ -187,7 +187,7 @@ class DBService {
       _.isUndefined
     );
 
-    if (package_no) where.package_no = { [Op.like]: `%${package_no}%`}
+    if (package_no) where.package_no = { [Op.like]: `%${package_no}%` };
     return db.packages.findAndCountAll({ where, limit, offset });
   }
 
@@ -205,8 +205,7 @@ class DBService {
     try {
       const result = await db.cargos.findAll({
         attributes: [[db.sequelize.fn('sum', db.sequelize.col('amount')), 'total']],
-        where: {manifest_id: manifestId},
-        logging: true
+        where: { manifest_id: manifestId }
       });
       return result[0].total;
     } catch (ex) {
@@ -235,7 +234,7 @@ class DBService {
       _.isUndefined
     );
 
-    if (name) where.name = { [Op.like]: `%${name}%`}
+    if (name) where.name = { [Op.like]: `%${name}%` };
     return db.cargos.findAndCountAll({ where, limit, offset });
   }
 
@@ -267,6 +266,33 @@ class DBService {
       }
     );
     return result > 0;
+  }
+
+  // Arrived Info
+  async bulkCreateArrivedInfo(records) {
+    // TODO: try to use transaction;
+    await db.package_shippings.bulkCreate(records,{ updateOnDuplicate: ['package_id', 'path_node'] });
+  }
+
+  async listArrivedInfo(options) {
+    const where = options;
+    return await db.package_shippings.findAll({ where });
+  }
+
+  async updateArrivedInfo(options) {
+    const where = {
+      package_id: options.package_id,
+      path_node: options.path_node
+    };
+
+    const data = {
+      arrived: options.arrived,
+      way_bill_no: options.way_bill_no
+    };
+    const result = await db.package_shippings.update(data, {
+      where
+    });
+    return result[0] > 0;
   }
 }
 module.exports = DBService;

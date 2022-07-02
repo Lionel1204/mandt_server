@@ -6,5 +6,6 @@ module.exports = {
     packagesController: require('./packagesController'),
     cargosController: require('./cargosController'),
     pathsController: require('./pathsController'),
+    packageArrivedController: require('./packageArrivedController'),
     qrController: require('./qrController')
 };
