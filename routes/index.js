@@ -76,6 +76,9 @@ module.exports = function(app) {
 
   // Paths
   app.post(`${apiPrefix}/manifests/:manifestId/paths`, createControllerFunction(pathsController, 'post'));
-  app.get(`${apiPrefix}/manifests/:manifestId/paths`, createControllerFunction(pathsController, 'list'));
-  app.patch(`${apiPrefix}/manifests/:manifestId/paths`, createControllerFunction(pathsController, 'patch'));
+  app.get(`${apiPrefix}/manifests/:manifestId/paths`, createControllerFunction(pathsController, 'get'));
+  // Do not support this right now
+  //app.patch(`${apiPrefix}/manifests/:manifestId/paths`, createControllerFunction(pathsController, 'patch'));
+
+  // 
 };

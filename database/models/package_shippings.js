@@ -1,10 +1,9 @@
-// Deprecated
 'use strict';
 const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class packages_shippings extends Model {
+  class package_shippings extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -14,13 +13,17 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   };
-  packages_shippings.init({
+  package_shippings.init({
+    manifest_id: DataTypes.BIGINT,
     package_id: DataTypes.BIGINT,
-    shipping_id: DataTypes.BIGINT,
-    status: DataTypes.STRING
+    path_id: DataTypes.BIGINT,
+    current_node: DataTypes.INTEGER,
+    way_bill_no: DataTypes.STRING,
+    arrived: DataTypes.BOOLEAN,
+    assignee: DataTypes.BIGINT,
   }, {
     sequelize,
-    modelName: 'packages_shippings',
+    modelName: 'package_shippings',
   });
-  return packages_shippings;
+  return package_shippings;
 };

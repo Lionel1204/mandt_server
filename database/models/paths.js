@@ -15,13 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   paths.init({
     manifest_id: DataTypes.BIGINT,
-    package_id: DataTypes.BIGINT,
-    address: DataTypes.STRING,
-    assignee: DataTypes.BIGINT,
-    waybill_no: DataTypes.STRING,
-    arrived: DataTypes.BOOLEAN,
-    type: DataTypes.INTEGER,
-    sequence_no: DataTypes.INTEGER,
+    paths: DataTypes.JSON,
   }, {
     sequelize,
     modelName: 'paths',

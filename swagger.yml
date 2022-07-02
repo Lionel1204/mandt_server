@@ -1,794 +1,4570 @@
-swagger: '2.0'
-info:
-  description: This API is describe the basic operation of M and T system
-  version: 1.0.0
-  title: M & T API
-  contact:
-    email: lionel12@163.com
-
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-
-tags:
-  - name: Projects
-    description: Project info management
-  - name: Consignments
-    description: Consignments note management
-  - name: Packages
-    description: Packages info management
-  - name: ShippingPaths
-    description: Shipping Paths management
-  - name: Cargos
-    description: Cargos management
-
-  - name: Admins
-    description: Secured Admin-only calls
-
-
-paths:
-  /projects:
-    post:
-      tags:
-        - Projects
-      summary: Create a new projects
-      operationId: addProject
-      description: |
-        User should create a project to manage all of packages and cargos.
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: payload
-          in: body
-          description: Payload of create a project
-          schema:
-            $ref: '#/definitions/CreateProjectItem'
-      responses:
-        201:
-          description: Created, return the created project item
-          schema:
-            $ref: '#/definitions/ProjectItem'
-        400:
-          description: Bad input parameter
-        500:
-          description: Internal error
-    get:
-      tags:
-        - Projects
-      summary: get projects
-      operationId: getProject
-      description: |
-        User could query projects with query string
-      consumes:
-        - application/json
-      produces:
-        - applicatoin/json
-      parameters:
-        - name: owner
-          in: query
-          description: Add owner id to filter projects by owner
-          type: integer
-          format: int32
-        - name: status
-          in: query
-          description: To filter projects by status
-          type: string
-        - name: limit
-          in: query
-          description: |
-            Max number of project items, 100 by default
-          type: integer
-          minimum: 1
-          maximum: 100
-        - in: query
-          name: offset
-          description: |
-            For pagination query, 0 by default
-          type: integer
-      responses:
-        200:
-          description: Success, query projects with query string
-          schema:
-            type: object
-            properties:
-              results:
-                description: Project array
-                type: array
-                items:
-                  $ref: '#/definitions/ProjectItem'
-              pagination:
-                $ref: '#/definitions/Pagination'
-        400:
-          description: Bad input parameter
-        500:
-          description: Internal error
-  /projects/{project_id}:
-    get:
-      tags:
-        - Projects
-      summary: get a project by id
-      operationId: getProjectById
-      description: |
-        Get a project with id
-      produces:
-        - application/json
-      parameters:
-        - name: project_id
-          in: path
-          type: integer
-          required: true
-      responses:
-        200:
-          description: Success, one single project payload
-          schema:
-            $ref: '#/definitions/ProjectItem'
-        404:
-          description: Project not found
-        500:
-          description: Internal error
-    patch:
-      tags:
-        - Projects
-      summary: update a project by id
-      operationId: patchProjectById
-      description: |
-        Update a project with id, including its status
-      consumes:
-        - application/json
-      produces:
-        - applicatoin/json
-      parameters:
-        - name: project_id
-          in: path
-          type: integer
-          required: true
-        - name: payload
-          in: body
-          description: |
-            Payload of update a project
-          schema:
-            $ref: '#/definitions/CreateProjectItem'
-      responses:
-        200:
-          description: Success, project has been updated.
-        400:
-          description: Bad input parameter
-        404:
-          description: Project not found
-        500:
-          description: Internal error
-    delete:
-      tags:
-        - Projects
-      summary: Delete a project by id
-      operationId: deleteProjectById
-      description: |
-        Delete a project with id, soft delete WITHOUT GDPR
-      produces:
-        - applicatoin/json
-      parameters:
-        - name: project_id
-          in: path
-          type: integer
-          required: true
-      responses:
-        204:
-          description: Success, no content
-        404:
-          description: Project not found
-        500:
-          description: Internal error
-  /consignments:
-    post:
-      tags:
-        - Consignments
-      summary: Create a consignment note
-      operationId: createConsignment
-      description: |
-        You can add a consignment in a project
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: payload
-          in: body
-          description: Payload of create a consignment note
-          schema:
-            $ref: '#/definitions/CreateConsignmentItem'
-      responses:
-        201:
-          description: Created, return the created consignment note
-          schema:
-            $ref: '#/definitions/ConsignmentItem'
-        400:
-          description: Bad input parameter
-        404:
-          description: Project not found
-        500:
-          description: Internal error
-    get:
-      tags:
-        - Consignments
-      summary: query consignment notes
-      operationId: searchConsignment
-      description: |
-        To Query consignment note with filter 'status' and 'project'
-      produces:
-        - application/json
-      parameters:
-        - name: project
-          in: query
-          type: integer
-          description: returns all consignment notes if null.
-        - name: owner
-          in: query
-          type: integer
-          description: Add owner id to filter
-        - name: status
-          in: query
-          type: string
-          description: filter by status
-        - name: offset
-          in: query
-          type: integer
-          description: For pagination query, 0 by default
-        - name: limit
-          in: query
-          type: integer
-          minimum: 0
-          maximum: 100
-          description: Max number of project items, 100 by default
-      responses:
-        200:
-          description: Success, query consignment with query string
-          schema:
-            type: object
-            properties:
-              results:
-                description: Consignment array
-                type: array
-                items:
-                  $ref: '#/definitions/ConsignmentItem'
-              pagination:
-                $ref: '#/definitions/Pagination'
-        400:
-          description: Bad input parameter
-        404:
-          description: Project not found
-        500:
-          description: Internal error
-  /consignments/{consignment_id}:
-    get:
-      tags:
-        - Consignments
-      summary: get a consignment by id
-      operationId: getConsignmentById
-      description: |
-        Get a consignment with id
-      produces:
-        - application/json
-      parameters:
-        - name: consignment_id
-          in: path
-          type: integer
-          required: true
-      responses:
-        200:
-          description: Success, one single consignment payload
-          schema:
-            $ref: '#/definitions/ConsignmentItem'
-        404:
-          description: Consignment not found
-        500:
-          description: Internal error
-    patch:
-      tags:
-        - Consignments
-      summary: update a consignment by id
-      operationId: patchConsignmentById
-      description: |
-        Update a consignment with id, including its status
-      consumes:
-        - application/json
-      produces:
-        - applicatoin/json
-      parameters:
-        - name: consignment_id
-          in: path
-          type: integer
-          required: true
-        - name: payload
-          in: body
-          description: |
-            Payload of update a consignment
-          schema:
-            $ref: '#/definitions/CreateConsignmentItem'
-      responses:
-        200:
-          description: Success, consignment has been updated.
-        400:
-          description: Bad input parameter
-        404:
-          description: Consignment not found
-        500:
-          description: Internal error
-    delete:
-      tags:
-        - Consignments
-      summary: Delete a consignment by id
-      operationId: deleteConsignmentById
-      description: |
-        Delete a consignment with id, soft delete WITHOUT GDPR
-      produces:
-        - applicatoin/json
-      parameters:
-        - name: consignment_id
-          in: path
-          type: integer
-          required: true
-      responses:
-        204:
-          description: Success, no content
-        404:
-          description: Consignment not found
-        500:
-          description: Internal error
-  /projects/{project_id}/packages:
-    post:
-      tags:
-        - Packages
-      summary: Create a new package
-      operationId: addPackage
-      description: |
-        User should create a package.
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: project_id
-          required: true
-          in: path
-          type: integer
-          description: Create a package under the project
-        - name: payload
-          in: body
-          description: Payload of create a package
-          schema:
-            $ref: '#/definitions/CreatePackageItem'
-      responses:
-        201:
-          description: Created, return the created package item
-          schema:
-            $ref: '#/definitions/PackageItem'
-        400:
-          description: Bad input parameter
-        500:
-          description: Internal error
-    get:
-      tags:
-        - Packages
-      summary: query packages info
-      operationId: searchPackages
-      description: |
-        To Query package with filter
-      produces:
-        - application/json
-      parameters:
-        - name: project_id
-          required: true
-          in: path
-          type: integer
-          description: returns all pacakges.
-        - name: consignmentId
-          in: query
-          type: integer
-          description: Add consignment id to filter
-        - name: sort
-          in: query
-          type: string
-          enum:
-            - weigth
-            - amount
-        - name: offset
-          in: query
-          type: integer
-          description: For pagination query, 0 by default
-        - name: limit
-          in: query
-          type: integer
-          minimum: 0
-          maximum: 100
-          description: Max number of project items, 100 by default
-      responses:
-        200:
-          description: Success, query packages with query string
-          schema:
-            type: object
-            properties:
-              results:
-                description: Package array
-                type: array
-                items:
-                  $ref: '#/definitions/PackageItem'
-              pagination:
-                $ref: '#/definitions/Pagination'
-        400:
-          description: Bad input parameter
-        404:
-          description: Project not found
-        500:
-          description: Internal error
-  /projects/{project_id}/packages/{package_id}:
-    get:
-      tags:
-        - Packages
-      summary: get a package by id
-      operationId: getPackageById
-      description: |
-        Get a package with id
-      produces:
-        - application/json
-      parameters:
-        - name: project_id
-          in: path
-          type: integer
-          required: true
-        - name: package_id
-          in: path
-          type: integer
-          required: true
-      responses:
-        200:
-          description: Success, one single package payload
-          schema:
-            $ref: '#/definitions/PackageItem'
-        404:
-          description: Package not found
-        500:
-          description: Internal error
-    patch:
-      tags:
-        - Packages
-      summary: update a package by id
-      operationId: patchPackagetById
-      description: |
-        Update a package with id, including the consignment id
-      consumes:
-        - application/json
-      produces:
-        - applicatoin/json
-      parameters:
-        - name: project_id
-          in: path
-          type: integer
-          required: true
-        - name: package_id
-          in: path
-          type: integer
-          required: true
-        - name: payload
-          in: body
-          description: |
-            Payload of update a package
-          schema:
-            $ref: '#/definitions/CreatePackageItem'
-      responses:
-        200:
-          description: Success, package has been updated.
-        400:
-          description: Bad input parameter
-        404:
-          description: Consignment not found
-        500:
-          description: Internal error
-    delete:
-      tags:
-        - Packages
-      summary: Delete a package by id
-      operationId: deletePackageById
-      description: |
-        Delete a package with id, soft delete WITHOUT GDPR
-      produces:
-        - applicatoin/json
-      parameters:
-        - name: project_id
-          in: path
-          type: integer
-          required: true
-        - name: package_id
-          in: path
-          type: integer
-          required: true
-      responses:
-        204:
-          description: Success, no content
-        404:
-          description: Consignment not found
-        500:
-          description: Internal error
-  /inventory:
-    get:
-      tags:
-        - developers
-      summary: searches inventory
-      operationId: searchInventory
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
-      produces:
-        - application/json
-      parameters:
-        - in: query
-          name: searchString
-          description: pass an optional search string for looking up inventory
-          required: false
-          type: string
-        - in: query
-          name: skip
-          description: number of records to skip for pagination
-          type: integer
-          format: int32
-          minimum: 0
-        - in: query
-          name: limit
-          description: maximum number of records to return
-          type: integer
-          format: int32
-          minimum: 0
-          maximum: 50
-      responses:
-        200:
-          description: search results matching criteria
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/InventoryItem'
-        400:
-          description: bad input parameter
-    post:
-      tags:
-        - admins
-      summary: adds an inventory item
-      operationId: addInventory
-      description: Adds an item to the system
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: inventoryItem
-          description: Inventory item to add
-          schema:
-            $ref: '#/definitions/InventoryItem'
-      responses:
-        201:
-          description: item created
-        400:
-          description: invalid input, object invalid
-        409:
-          description: an existing item already exists
-definitions:
-  Pagination:
-    type: object
-    required:
-      - offset
-      - limit
-    properties:
-      limit:
-        type: integer
-      offset:
-        type: integer
-      totalResults:
-        type: integer
-      next:
-        type: string
-  CreateProjectItem:
-    type: object
-    required:
-      - name
-      - owner
-    properties:
-      name:
-        type: string
-        example: Food To Shandong
-      ownerId:
-        type: integer
-        example: 1
-      receiverId:
-        type: integer
-        example: 2
-      status:
-        type: string
-        enum:
-          - ACTIVE
-          - COMPLETED
-          - VOID
-          - HOLD
-  ProjectItem:
-    type: object
-    properties:
-      id:
-        type: integer
-        example: 1
-      name:
-        type: string
-        example: Food To Shandong
-      owner:
-        type: string
-        example: Aric
-      receiver:
-        type: string
-        example: Lionel
-      status:
-        type: string
-        enum:
-          - CREATED
-          - PROCESSING
-          - COMPLETED
-          - VOID
-          - HOLD
-      hidden:
-        type: boolean
-        example: false
-      createdAt:
-        type: string
-        format: date-time
-        example: '2016-08-29T09:12:33.001Z'
-      endedAt:
-        type: string
-        format: date-time
-        example: '2016-08-29T09:12:33.001Z'
-  CreateConsignmentItem:
-    type: object
-    required:
-      - noteNo
-      - amount
-    properties:
-      projectId:
-        type: integer
-        example: 1
-      noteNo:
-        type: string
-        example: note001
-      amount:
-        type: integer
-        example: 24
-  ConsignmentItem:
-    type: object
-    properties:
-      id:
-        type: integer
-        example: 1
-      projectId:
-        type: integer
-        example: 1
-      noteNo:
-        type: string
-        example: fhd001
-      amount:
-        type: integer
-        example: 24
-      status:
-        type: string
-        enum:
-          - OPEN
-          - CLOSED
-      createdAt:
-        type: string
-        format: date-time
-        example: 2016-08-29T09:12:33.001Z
-      endedAt:
-        type: string
-        format: date-time
-        example: 2016-08-29T09:12:33.001Z
-  CreatePackageItem:
-    type: object
-    required:
-      - packageNo
-      - wrappingType
-      - shippingType
-      - size
-      - weight
-    properties:
-      consignmentId:
-        type: integer
-      packageNo:
-        type: string
-        example: PK001
-      wrappingType:
-        type: string
-        enum:
-          - WoodenCase
-          - IronCase
-          - Tray
-          - Unwrapped
-      shippingType:
-        type: string
-        enum:
-          - Container
-          - Bulk
-      size:
-        $ref: '#/definitions/PackageSize'
-      weight:
-        type: number
-  PackageItem:
-    type: object
-    properties:
-      consignmentId:
-        type: integer
-      packageNo:
-        type: string
-        example: PK001
-      wrappingType:
-        type: string
-        enum:
-          - WoodenCase
-          - IronCase
-          - Tray
-          - Unwrapped
-      shippingType:
-        type: string
-        enum:
-          - Container
-          - Bulk
-      size:
-        $ref: '#/definitions/PackageSize'
-      weight:
-        type: number
-      amount:
-        type: integer
-  PackageSize:
-    type: object
-    properties:
-      length:
-        type: string
-      width:
-        type: string
-      heigth:
-        type: string
-
-  InventoryItem:
-    type: object
-    required:
-      - id
-      - name
-      - manufacturer
-      - releaseDate
-    properties:
-      id:
-        type: string
-        format: uuid
-        example: d290f1ee-6c54-4b01-90e6-d701748f0851
-      name:
-        type: string
-        example: Widget Adapter
-      releaseDate:
-        type: string
-        format: date-time
-        example: 2016-08-29T09:12:33.001Z
-      manufacturer:
-        $ref: '#/definitions/Manufacturer'
-  Manufacturer:
-    required:
-      - name
-    properties:
-      name:
-        type: string
-        example: ACME Corporation
-      homePage:
-        type: string
-        format: url
-        example:  https://www.acme-corp.com
-      phone:
-        type: string
-        example: 408-867-5309
-# Added by API Auto Mocking Plugin
-host: virtserver.swaggerhub.com
-basePath: /Lionel1204/MandT/1.0.1
-schemes:
-  - https
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "M&T",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Projects"
+    },
+    {
+      "name": "Manifests"
+    },
+    {
+      "name": "Packages"
+    },
+    {
+      "name": "Users"
+    },
+    {
+      "name": "Cargos"
+    },
+    {
+      "name": "Paths"
+    },
+    {
+      "name": "Companies"
+    },
+    {
+      "name": "Register"
+    },
+    {
+      "name": "PackageArrivedInfo"
+    }
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "summary": "RegisterUser",
+        "x-apifox-folder": "Register",
+        "x-apifox-status": "developing",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Register"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-ignore-properties": [],
+                  "x-apifox-orders": []
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{project_id}/users/{user_id}": {
+      "post": {
+        "summary": "AddUserToProject",
+        "x-apifox-folder": "Projects",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-ignore-properties": [],
+                  "x-apifox-orders": []
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{project_id}/users": {
+      "post": {
+        "summary": "AddProjectUser",
+        "x-apifox-folder": "Users",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-ignore-properties": [],
+                  "x-apifox-orders": []
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "ListProjectUsers",
+        "x-apifox-folder": "Projects",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectUserItem"
+                  }
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": [
+                      {
+                        "id": 95,
+                        "userId": 42,
+                        "projectId": 24,
+                        "projectRole": "pariatur laboris",
+                        "userName": "冯秀兰",
+                        "userTitle": "三每种铁进总",
+                        "identity": "27",
+                        "phone": "18173814415",
+                        "email": "j.jwehvd@qq.com"
+                      },
+                      {
+                        "id": 40,
+                        "userId": 82,
+                        "projectId": 92,
+                        "projectRole": "est",
+                        "userName": "余秀英",
+                        "userTitle": "用常己天",
+                        "identity": "95",
+                        "phone": "13341484594",
+                        "email": "v.edhedrxv@qq.com"
+                      },
+                      {
+                        "id": 41,
+                        "userId": 37,
+                        "projectId": 33,
+                        "projectRole": "Lorem voluptate Excepteur in",
+                        "userName": "谭磊",
+                        "userTitle": "精论对资",
+                        "identity": "6",
+                        "phone": "18152599127",
+                        "email": "r.hhktljkqo@qq.com"
+                      },
+                      {
+                        "id": 40,
+                        "userId": 51,
+                        "projectId": 30,
+                        "projectRole": "dolore",
+                        "userName": "蒋娟",
+                        "userTitle": "边政求金放",
+                        "identity": "30",
+                        "phone": "13210412436",
+                        "email": "k.eldswugjv@qq.com"
+                      },
+                      {
+                        "id": 59,
+                        "userId": 22,
+                        "projectId": 62,
+                        "projectRole": "incididunt aute",
+                        "userName": "石平",
+                        "userTitle": "小平想周至",
+                        "identity": "62",
+                        "phone": "18662378167",
+                        "email": "g.szvxxidon@qq.com"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "summary": "CreateUser",
+        "x-apifox-folder": "Users",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserItem"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "The request is incorrect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "ListUsers",
+        "x-apifox-folder": "Users",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "company",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[name]",
+            "in": "query",
+            "description": "Fuzzy Search ",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/UserItem"
+                      }
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "pagination",
+                    "results"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-ignore-properties": [],
+                  "x-apifox-orders": []
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/manifests/{manifest_id}/packages/{package_id}": {
+      "delete": {
+        "summary": "DeletePackage",
+        "x-apifox-folder": "Packages",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "Delete a package with id, soft delete WITHOUT GDPR\n",
+        "operationId": "deletePackageById",
+        "tags": [
+          "Packages"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "package_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success, no content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-orders": [],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Pakcage not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "GetPackage",
+        "x-apifox-folder": "Packages",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "Get a package with id\n",
+        "operationId": "getPackageById",
+        "tags": [
+          "Packages"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "package_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success, one single package payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackageItem"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "status": "INTRANSIT",
+                      "amount": 54,
+                      "paths": {
+                        "id": 33,
+                        "packageId": 22,
+                        "manifestId": 83,
+                        "waybillNo": "in commodo anim Duis",
+                        "from": {
+                          "address": "西藏自治区济宁市南岸区",
+                          "assignee": "ad",
+                          "arrived": false,
+                          "sequence": 45264056
+                        },
+                        "to": {
+                          "address": "山西省天津市贵溪市",
+                          "assignee": "enim in pariatur dolore",
+                          "arrived": true,
+                          "sequence": 7837141
+                        },
+                        "mid": [
+                          {
+                            "address": "海外吉林市二道江区",
+                            "assignee": "Ut eiusmod labore nulla",
+                            "arrived": true,
+                            "sequence": 57104792
+                          },
+                          {
+                            "address": "山东省天津市其它区",
+                            "assignee": "consectetur",
+                            "arrived": true,
+                            "sequence": 79541344
+                          },
+                          {
+                            "address": "新疆维吾尔自治区泉州市江阴市",
+                            "assignee": "et",
+                            "arrived": false,
+                            "sequence": 24156932
+                          }
+                        ]
+                      },
+                      "manifestId": 42,
+                      "weight": 92,
+                      "wrappingType": "Tray",
+                      "shippingType": "Bulk",
+                      "id": 16,
+                      "size": {
+                        "length": "qui do",
+                        "height": "in fugiat",
+                        "width": "81"
+                      },
+                      "packageNo": "in et"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "UpdatePackage",
+        "x-apifox-folder": "Packages",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "Update a package with id, including the consignment id\n",
+        "operationId": "patchPackagetById",
+        "tags": [
+          "Packages"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "package_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePackageItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success, package has been updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-ignore-properties": [],
+                  "x-apifox-orders": []
+                },
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "LoginUser",
+        "x-apifox-folder": "Register",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Register"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/loginPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "boolean",
+                      "title": ""
+                    },
+                    "error": {
+                      "type": "string",
+                      "enum": [
+                        "ERR_PASSWORD_NOT_RIGHT",
+                        "ERR_CAPTCHA_NOT_RIGHT"
+                      ],
+                      "x-apifox": {
+                        "enumDescriptions": {
+                          "ERR_PASSWORD_NOT_RIGHT": "密码错误",
+                          "ERR_CAPTCHA_NOT_RIGHT": "验证码错误"
+                        }
+                      },
+                      "title": "错误码",
+                      "description": "result为true，error无效；result为false，取error中错误码显示"
+                    },
+                    "id": {
+                      "title": "用户记录主键",
+                      "type": "integer"
+                    },
+                    "company": {
+                      "type": "integer",
+                      "title": "关联公司主键"
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "result",
+                    "error",
+                    "id",
+                    "company"
+                  ],
+                  "required": [
+                    "result",
+                    "error",
+                    "id",
+                    "company"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {}
+              }
+            }
+          },
+          "404": {
+            "description": "User does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-ignore-properties": [],
+                  "x-apifox-orders": []
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/manifests/{manifest_id}/paths": {
+      "patch": {
+        "summary": "UpdateArrived",
+        "x-apifox-folder": "Paths",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Paths"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "packageId": {
+                    "title": "包装ID",
+                    "type": "integer"
+                  },
+                  "arrived": {
+                    "title": "是否到达",
+                    "type": "boolean"
+                  },
+                  "pathIdList": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "title": "路径ID",
+                    "minItems": 1,
+                    "uniqueItems": true
+                  }
+                },
+                "x-apifox-orders": [
+                  "packageId",
+                  "arrived",
+                  "pathIdList"
+                ],
+                "required": [
+                  "packageId",
+                  "arrived",
+                  "pathIdList"
+                ],
+                "x-apifox-ignore-properties": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "null"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "ListPaths",
+        "x-apifox-folder": "Paths",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "No paginations but the paths should less than 100",
+        "tags": [
+          "Paths"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PathItem"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": [
+                      {
+                        "address": "青海省上海市叙永县",
+                        "assignee": 12,
+                        "type": 2
+                      },
+                      {
+                        "assignee": 37,
+                        "address": "甘肃省唐山市巴东县",
+                        "type": 2
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Manifest or package does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "CreatePath",
+        "x-apifox-folder": "Paths",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Paths"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePathItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PathItem"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": [
+                      {
+                        "assigneeName": "学数达支战达步",
+                        "type": 0,
+                        "arrived": true,
+                        "assigneePhone": "18675754254",
+                        "assignee": 40,
+                        "waybillNo": "aute consequat est",
+                        "id": 32,
+                        "address": "内蒙古自治区新余市宁洱哈尼族彝族自治县",
+                        "manifestId": 67743157,
+                        "packageId": 8972271
+                      },
+                      {
+                        "assignee": 10,
+                        "assigneeName": "便总确而",
+                        "address": "河南省厦门市灌阳县",
+                        "manifestId": 86196284,
+                        "arrived": true,
+                        "packageId": 94653137,
+                        "assigneePhone": "18666281278",
+                        "id": 40,
+                        "waybillNo": "est Lorem Ut ullamco",
+                        "type": 0
+                      },
+                      {
+                        "assignee": 77,
+                        "packageId": 48811505,
+                        "waybillNo": "qui minim consectetur Duis nulla",
+                        "arrived": true,
+                        "assigneePhone": "19823457777",
+                        "assigneeName": "府信运开",
+                        "type": 0,
+                        "id": 27,
+                        "address": "甘肃省重庆市闵行区",
+                        "manifestId": 91814107
+                      },
+                      {
+                        "waybillNo": "dolore",
+                        "arrived": false,
+                        "address": "四川省庆阳市察隅县",
+                        "assigneePhone": "18652243117",
+                        "assigneeName": "多代支回",
+                        "packageId": 63009238,
+                        "assignee": 36,
+                        "manifestId": 30379471,
+                        "id": 51,
+                        "type": 2
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is incorrect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Manifest or package does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{user_id}": {
+      "get": {
+        "summary": "GetUser",
+        "x-apifox-folder": "Users",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserItem"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "name": "二治眼由",
+                      "title": "复权两火平",
+                      "identity": "10",
+                      "phone": "18671530383",
+                      "email": "h.gsliaqs@qq.com",
+                      "id": 78
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies": {
+      "post": {
+        "summary": "CreateCompany",
+        "x-apifox-folder": "Companies",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Companies"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCompanyItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyItem"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "listCompanies",
+        "x-apifox-folder": "Companies",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Companies"
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "公司类别",
+            "required": false,
+            "example": "LOGISTICS,SHIPPER_RECEIVER",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "description": "经营范围",
+            "required": false,
+            "example": "INLAND,INTERNATION",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    },
+                    "results": {
+                      "$ref": "#/components/schemas/CompanyItem"
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "pagination",
+                    "results"
+                  ],
+                  "required": [
+                    "pagination",
+                    "results"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects": {
+      "get": {
+        "summary": "ListProjects",
+        "x-apifox-folder": "Projects",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "User could query projects with query string\n",
+        "operationId": "getProject",
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "owner",
+            "in": "query",
+            "description": "Add owner id to filter projects by owner",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "To filter projects by status",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "To filter by part of project name, at least 3 words",
+            "required": false,
+            "example": "abc",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Max number of project items, 100 by default",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "For pagination query, 0 by default\n",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success, query projects with query string",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ProjectItem"
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "results",
+                    "pagination"
+                  ],
+                  "required": [
+                    "results",
+                    "pagination"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "results": [
+                        {
+                          "id": 54,
+                          "name": "己影工场",
+                          "owner": "dolor reprehenderit occaecat",
+                          "ownerId": 2,
+                          "receiver": "elit cupidatat",
+                          "receiverId": 91,
+                          "status": "ACTIVE",
+                          "hidden": true,
+                          "endedAt": "2006-02-25 05:18:29",
+                          "createdAt": "1971-04-18 05:49:31"
+                        },
+                        {
+                          "id": 94,
+                          "name": "今影只满",
+                          "owner": "mollit",
+                          "ownerId": 42,
+                          "receiver": "in et adipisicing dolor anim",
+                          "receiverId": 17,
+                          "status": "INACTIVE",
+                          "hidden": false,
+                          "endedAt": "2004-06-22 21:07:44",
+                          "createdAt": "2017-04-11 10:04:15"
+                        },
+                        {
+                          "id": 47,
+                          "name": "约及果系金大",
+                          "owner": "elit in sit cillum",
+                          "ownerId": 46,
+                          "receiver": "dolore",
+                          "receiverId": 65,
+                          "status": "ACTIVE",
+                          "hidden": true,
+                          "endedAt": "2017-04-29 11:26:44",
+                          "createdAt": "1971-03-17 13:51:25"
+                        },
+                        {
+                          "id": 11,
+                          "name": "制争气自速工",
+                          "owner": "minim fugiat",
+                          "ownerId": 93,
+                          "receiver": "enim aliqua",
+                          "receiverId": 46,
+                          "status": "ACTIVE",
+                          "hidden": false,
+                          "endedAt": "1988-09-21 09:01:37",
+                          "createdAt": "1995-06-17 00:59:43"
+                        },
+                        {
+                          "id": 46,
+                          "name": "近结利矿",
+                          "owner": "ullamco labore aute elit",
+                          "ownerId": 20,
+                          "receiver": "cillum in eiusmod",
+                          "receiverId": 92,
+                          "status": "ACTIVE",
+                          "hidden": false,
+                          "endedAt": "2011-02-22 03:58:33",
+                          "createdAt": "1986-12-12 20:25:49"
+                        }
+                      ],
+                      "pagination": {
+                        "next": "http://jjpjptcoc.lu/dou",
+                        "offset": 96,
+                        "limit": 27,
+                        "totalResults": 17
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "CreateProject",
+        "x-apifox-folder": "Projects",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "User should create a project to manage all of packages and cargos.\n",
+        "operationId": "addProject",
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatedProjectItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created, return the created project item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectItem"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "id": 20,
+                      "name": "才步声百前流",
+                      "owner": "et",
+                      "ownerId": 57,
+                      "receiver": "dolor ex ea et",
+                      "receiverId": 23,
+                      "status": "INACTIVE",
+                      "hidden": true,
+                      "endedAt": "2018-06-03 06:10:08",
+                      "createdAt": "2010-08-24 14:33:32"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{project_id}": {
+      "get": {
+        "summary": "GetProject",
+        "x-apifox-folder": "Projects",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "Get a project with id\n",
+        "operationId": "getProjectById",
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success, one single project payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectItem"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "id": 76,
+                      "name": "手局包打说业",
+                      "owner": "occaecat reprehenderit",
+                      "ownerId": 87,
+                      "receiver": "ea officia",
+                      "receiverId": 54,
+                      "status": "ACTIVE",
+                      "hidden": false,
+                      "endedAt": "1996-03-15 03:47:22",
+                      "createdAt": "1978-08-26 20:33:35"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception Example",
+                    "value": {
+                      "code": "16",
+                      "title": "团认传东却",
+                      "details": "ipsum"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "UpdateProject",
+        "x-apifox-folder": "Projects",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "Update a project with id, including its status\n",
+        "operationId": "patchProjectById",
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success to update project",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-ignore-properties": [],
+                  "x-apifox-orders": []
+                },
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "DeleteProject",
+        "x-apifox-folder": "Projects",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "Delete a project with id, soft delete WITHOUT GDPR\n",
+        "operationId": "deleteProjectById",
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success, no content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-orders": [],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/manifests/{manifest_id}/cargos": {
+      "get": {
+        "summary": "ListCargos",
+        "x-apifox-folder": "Cargos",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Cargos"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "packageId",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CargoItem"
+                      }
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "pagination",
+                    "results"
+                  ],
+                  "required": [
+                    "pagination",
+                    "results"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "CreateCargos",
+        "x-apifox-folder": "Cargos",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Cargos"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCargoItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CargoItem"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/manifests/{manifest_id}": {
+      "patch": {
+        "summary": "UpdateManifest",
+        "x-apifox-folder": "Manifests",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "Update a manifest with id, including its status\n",
+        "operationId": "patchConsignmentById",
+        "tags": [
+          "Manifests"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateManifestItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success, manifest has been updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-ignore-properties": [],
+                  "x-apifox-orders": []
+                },
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Manifest not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "DeleteManifiest",
+        "x-apifox-folder": "Manifests",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "Delete a manifest with id, #soft delete WITHOUT GDPR\n",
+        "operationId": "deleteConsignmentById",
+        "tags": [
+          "Manifests"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success, no content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-orders": [],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Manifest not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "GetManifest",
+        "x-apifox-folder": "Manifests",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "Get a manifest by id\n",
+        "operationId": "getConsignmentById",
+        "tags": [
+          "Manifests"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success, one single manifest payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManifestItem"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "amount": 98,
+                      "receiver": 36,
+                      "cargosAmount": 100,
+                      "endedAt": "1979-06-08 05:35:07",
+                      "projectId": 36,
+                      "status": "CREATED",
+                      "noteNo": "consequat voluptate",
+                      "creator": 46,
+                      "publishedAt": "2015-02-15 19:02:49",
+                      "projectName": "江断示务个",
+                      "id": 6,
+                      "createdAt": "1980-10-02 00:16:20"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Manifest not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/packages/{package_id}/arrived-info": {
+      "get": {
+        "summary": "GetArrivedInfo",
+        "x-apifox-folder": "PackageArrivedInfo",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "当package创建时该记录会自动创建。",
+        "tags": [
+          "PackageArrivedInfo"
+        ],
+        "parameters": [
+          {
+            "name": "package_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArrivedInfoItem"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "ModifyArrivedNode",
+        "x-apifox-folder": "PackageArrivedInfo",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "PackageArrivedInfo"
+        ],
+        "parameters": [
+          {
+            "name": "package_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "currentNode": {
+                      "type": "integer",
+                      "title": "当前节点index"
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "currentNode"
+                  ],
+                  "required": [
+                    "currentNode"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/manifests/{manifest_id}/cargos/{cargo_id}": {
+      "get": {
+        "summary": "GetCargo",
+        "x-apifox-folder": "Cargos",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Cargos"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cargo_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CargoItem"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "DeleteCargo",
+        "x-apifox-folder": "Cargos",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Cargos"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cargo_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-ignore-properties": [],
+                  "x-apifox-orders": []
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cargos": {
+      "get": {
+        "summary": "QueryCargos",
+        "x-apifox-folder": "Cargos",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Cargos"
+        ],
+        "parameters": [
+          {
+            "name": "creator",
+            "in": "query",
+            "description": "Query all cargos under the userids",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "packageId",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {},
+                        "x-apifox-ignore-properties": [],
+                        "x-apifox-orders": []
+                      }
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "pagination",
+                    "results"
+                  ],
+                  "required": [
+                    "pagination",
+                    "results"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/manifests/{manifest_id}/packages": {
+      "get": {
+        "summary": "ListPackages",
+        "x-apifox-folder": "Packages",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "List packages with filter\n",
+        "operationId": "searchPackages",
+        "tags": [
+          "Packages"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "returns all pacakges.",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "For pagination query, 0 by default",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Max number of project items, 100 by default",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success, query packages with query string",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "description": "Package array",
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PackageItem"
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "results",
+                    "pagination"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "pagination": {
+                        "next": "http://zvvh.fm/tldhp",
+                        "offset": 53,
+                        "limit": 30,
+                        "totalResults": 87
+                      },
+                      "results": [
+                        {
+                          "amount": 59,
+                          "wrappingType": "IronCase",
+                          "weight": 81,
+                          "packageNo": "cupidatat tempor laborum occaecat",
+                          "size": {
+                            "height": "ut aliqua",
+                            "width": "72",
+                            "length": "mollit"
+                          },
+                          "shippingType": "Container",
+                          "paths": {
+                            "id": 2,
+                            "packageId": 99,
+                            "manifestId": 48,
+                            "waybillNo": "ex magna nostrud",
+                            "from": {
+                              "address": "河北省林芝地区良庆区",
+                              "assignee": "deserunt",
+                              "arrived": false,
+                              "sequence": 28466231
+                            },
+                            "to": {
+                              "address": "新疆维吾尔自治区三沙市利通区",
+                              "assignee": "ea sed eiusmod reprehenderit",
+                              "arrived": false,
+                              "sequence": 44133371
+                            },
+                            "mid": [
+                              {
+                                "address": "北京三亚市玛多县",
+                                "assignee": "veniam velit do dolore",
+                                "arrived": true,
+                                "sequence": 37500974
+                              }
+                            ]
+                          },
+                          "id": 51,
+                          "manifestId": 98,
+                          "status": "FINISHED"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "CreatePackage",
+        "x-apifox-folder": "Packages",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "User should create a package.\n",
+        "operationId": "addPackage",
+        "tags": [
+          "Packages"
+        ],
+        "parameters": [
+          {
+            "name": "manifest_id",
+            "in": "path",
+            "description": "Create a package under the project",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePackageItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created, return the created package item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PackageItem"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "creator": 37,
+                      "manifestId": 45,
+                      "packageNo": "non pariatur eiusmod in eu",
+                      "weight": {
+                        "scale": 20,
+                        "unit": "Ut dolore laboris dolor anim"
+                      },
+                      "paths": {
+                        "id": 69,
+                        "packageId": 75,
+                        "manifestId": 2,
+                        "waybillNo": "dolore amet ut elit ex",
+                        "from": {
+                          "address": "甘肃省金门县沂源县",
+                          "assignee": "quis occaecat dolore Excepteur",
+                          "arrived": true,
+                          "sequence": 92321695
+                        },
+                        "to": {
+                          "address": "广东省亳州市麻山区",
+                          "assignee": "reprehenderit ex aute officia veniam",
+                          "arrived": false,
+                          "sequence": 82681951
+                        },
+                        "mid": [
+                          {
+                            "address": "浙江省张家界市南开区",
+                            "assignee": "labore ut reprehenderit esse",
+                            "arrived": false,
+                            "sequence": 85590642
+                          },
+                          {
+                            "address": "山西省宣城市阿拉善右旗",
+                            "assignee": "in anim",
+                            "arrived": true,
+                            "sequence": 21308511
+                          },
+                          {
+                            "address": "广东省乌海市东乡族自治县",
+                            "assignee": "mollit dolore",
+                            "arrived": true,
+                            "sequence": 12803269
+                          }
+                        ]
+                      },
+                      "wrappingType": "UNWRAPPED",
+                      "amount": 68,
+                      "id": 48,
+                      "shippingType": "CONTAINER",
+                      "size": {
+                        "length": 87022301.33985873,
+                        "width": 5903004.30204862,
+                        "unit": "proident",
+                        "height": 21422519.919077266
+                      },
+                      "status": "INTRANSIT"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Cannot Get Manifest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-ignore-properties": [],
+                  "x-apifox-orders": []
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projcets/{project_id}/users": {
+      "get": {
+        "summary": "ListProjectUsers",
+        "x-apifox-folder": "Users",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-ignore-properties": [],
+                  "x-apifox-orders": []
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/packages": {
+      "get": {
+        "summary": "QueryPackages",
+        "x-apifox-folder": "Packages",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "Packages"
+        ],
+        "parameters": [
+          {
+            "name": "creator",
+            "in": "query",
+            "description": "按userId查询",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "按当前包装状态查询",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "packageNo",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "manifestId",
+            "in": "query",
+            "description": "按发货单号查询，-1为未关联发货单",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "最大100",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PackageItem"
+                      }
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "pagination",
+                    "results"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "pagination": {
+                        "next": "http://keun.gov/mvwe",
+                        "offset": 76,
+                        "limit": 88,
+                        "totalResults": 60
+                      },
+                      "results": [
+                        {
+                          "creator": 19,
+                          "size": {
+                            "height": 68237728.33285217,
+                            "width": 30278905.272760935,
+                            "length": 80031123.00404039,
+                            "unit": "eu irure pariatur ipsum"
+                          },
+                          "id": 8,
+                          "wrappingType": "UNWRAPPED",
+                          "status": "CREATED",
+                          "amount": 50,
+                          "packageNo": "nisi eiusmod",
+                          "weight": {
+                            "scale": 30,
+                            "unit": "amet magna"
+                          },
+                          "paths": {
+                            "id": 41,
+                            "packageId": 85,
+                            "manifestId": 36,
+                            "waybillNo": "esse",
+                            "from": {
+                              "address": "吉林省清远市-",
+                              "assignee": "ullamco veniam consectetur incididunt sit",
+                              "arrived": false,
+                              "sequence": 72143627
+                            },
+                            "to": {
+                              "address": "甘肃省毕节市清新区",
+                              "assignee": "non aute sit anim irure",
+                              "arrived": false,
+                              "sequence": 30287725
+                            },
+                            "mid": [
+                              {
+                                "address": "辽宁省随州市新城区",
+                                "assignee": "velit",
+                                "arrived": true,
+                                "sequence": 8242776
+                              },
+                              {
+                                "address": "澳门特别行政区重庆市召陵区",
+                                "assignee": "ex incididunt",
+                                "arrived": true,
+                                "sequence": 69587069
+                              },
+                              {
+                                "address": "山东省潮州市南安市",
+                                "assignee": "ea eu in officia",
+                                "arrived": true,
+                                "sequence": 25424756
+                              }
+                            ]
+                          },
+                          "shippingType": "BULK",
+                          "manifestId": 98
+                        },
+                        {
+                          "creator": 86,
+                          "manifestId": 33,
+                          "shippingType": "BULK",
+                          "amount": 92,
+                          "wrappingType": "TRAY",
+                          "id": 94,
+                          "paths": {
+                            "id": 40,
+                            "packageId": 69,
+                            "manifestId": 21,
+                            "waybillNo": "enim Ut incididunt aliqua",
+                            "from": {
+                              "address": "澳门特别行政区鞍山市顺义区",
+                              "assignee": "anim",
+                              "arrived": true,
+                              "sequence": 79701907
+                            },
+                            "to": {
+                              "address": "青海省七台河市其它区",
+                              "assignee": "laborum",
+                              "arrived": false,
+                              "sequence": 98670177
+                            },
+                            "mid": [
+                              {
+                                "address": "江苏省离岛兴和县",
+                                "assignee": "dolore ipsum aute commodo consectetur",
+                                "arrived": true,
+                                "sequence": 66658622
+                              },
+                              {
+                                "address": "北京蚌埠市福绵区",
+                                "assignee": "aliqua occaecat ipsum laborum",
+                                "arrived": true,
+                                "sequence": 18402581
+                              }
+                            ]
+                          },
+                          "size": {
+                            "width": 19612501.448778976,
+                            "height": 86767509.56010772,
+                            "unit": "irure dolore voluptate velit officia",
+                            "length": 92498892.35409336
+                          },
+                          "weight": {
+                            "scale": 1,
+                            "unit": "laboris"
+                          },
+                          "packageNo": "consequat aliqua enim mollit",
+                          "status": "INTRANSIT"
+                        },
+                        {
+                          "creator": 74,
+                          "paths": {
+                            "id": 63,
+                            "packageId": 40,
+                            "manifestId": 9,
+                            "waybillNo": "fugiat nulla",
+                            "from": {
+                              "address": "香港特别行政区阿克苏地区尉氏县",
+                              "assignee": "consequat do ut culpa",
+                              "arrived": true,
+                              "sequence": 30639706
+                            },
+                            "to": {
+                              "address": "四川省宜春市吉隆县",
+                              "assignee": "elit ex minim",
+                              "arrived": true,
+                              "sequence": 31833792
+                            },
+                            "mid": [
+                              {
+                                "address": "澳门特别行政区佳木斯市且末县",
+                                "assignee": "Duis",
+                                "arrived": true,
+                                "sequence": 52393548
+                              },
+                              {
+                                "address": "澳门特别行政区重庆市沧县",
+                                "assignee": "enim esse anim in proident",
+                                "arrived": false,
+                                "sequence": 88773416
+                              },
+                              {
+                                "address": "贵州省雅安市嵊泗县",
+                                "assignee": "occaecat esse culpa cupidatat Ut",
+                                "arrived": false,
+                                "sequence": 25995404
+                              },
+                              {
+                                "address": "黑龙江省昌都地区兴庆区",
+                                "assignee": "ea Lorem deserunt velit non",
+                                "arrived": false,
+                                "sequence": 36855109
+                              }
+                            ]
+                          },
+                          "packageNo": "in sint commodo",
+                          "amount": 74,
+                          "shippingType": "BULK",
+                          "status": "FINISHED",
+                          "weight": {
+                            "scale": 29,
+                            "unit": "mollit aliqua"
+                          },
+                          "manifestId": 24,
+                          "size": {
+                            "unit": "aliquip",
+                            "height": 62926185.35128462,
+                            "width": 1331303.8869771976,
+                            "length": 68389535.5753752
+                          },
+                          "id": 97,
+                          "wrappingType": "IRONCASE"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/manifests": {
+      "get": {
+        "summary": "ListManifests",
+        "x-apifox-folder": "Manifests",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "To Query manifest note with filter 'status' and 'project'\n",
+        "operationId": "searchConsignment",
+        "tags": [
+          "Manifests"
+        ],
+        "parameters": [
+          {
+            "name": "noteNo",
+            "in": "query",
+            "description": "发货单编号",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "description": "Add owner id to filter",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "receiver",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "filter by status",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "For pagination query, 0 by default",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Max number of project items, 100 by default",
+            "required": false,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success, query manifest with query string",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "description": "Consignment array",
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ManifestItem"
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    }
+                  },
+                  "x-apifox-orders": [
+                    "results",
+                    "pagination"
+                  ],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "pagination": {
+                        "next": "http://fjey.sb/ovwcfcepfw",
+                        "offset": 59,
+                        "limit": 36,
+                        "totalResults": 78
+                      },
+                      "results": [
+                        {
+                          "amount": 93,
+                          "status": "CLOSED",
+                          "createdAt": "2016-08-19 15:54:52",
+                          "noteNo": "commodo eu",
+                          "id": 63,
+                          "endedAt": "2003-10-16 04:05:49",
+                          "projectId": 62
+                        },
+                        {
+                          "noteNo": "ut anim",
+                          "amount": 39,
+                          "id": 7,
+                          "endedAt": "2017-02-11 07:52:51",
+                          "projectId": 30,
+                          "status": "CLOSED",
+                          "createdAt": "1994-02-11 18:22:31"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "CreateManifest",
+        "x-apifox-folder": "Manifests",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "You can add a manifest in a project\n",
+        "operationId": "createConsignment",
+        "tags": [
+          "Manifests"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateManinfestItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created, return the created manifest note",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManifestItem"
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success Example",
+                    "value": {
+                      "projectName": "包制眼指即不",
+                      "endedAt": "1971-02-09 11:36:53",
+                      "noteNo": "labore",
+                      "id": 57,
+                      "projectId": 66,
+                      "status": "CLOSED",
+                      "createdAt": "2000-08-14 17:33:57",
+                      "amount": 56,
+                      "creator": 19,
+                      "cargosAmount": 78,
+                      "receiver": 48,
+                      "publishedAt": "2017-04-08 11:51:28"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-apifox-orders": [],
+                  "x-apifox-ignore-properties": []
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PackageItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "包装id"
+          },
+          "manifestId": {
+            "type": "integer",
+            "title": "发货单号"
+          },
+          "creator": {
+            "type": "integer",
+            "title": "创建人"
+          },
+          "packageNo": {
+            "type": "string",
+            "example": "PK001",
+            "title": "包裹单号"
+          },
+          "wrappingType": {
+            "type": "string",
+            "enum": [
+              "WOODENCASE",
+              "IRONCASE",
+              "TRAY",
+              "UNWRAPPED"
+            ],
+            "title": "包装方式",
+            "x-apifox": {
+              "enumDescriptions": {
+                "WOODENCASE": "木箱",
+                "IRONCASE": "铁箱",
+                "TRAY": "托盘",
+                "UNWRAPPED": "裸装"
+              }
+            }
+          },
+          "shippingType": {
+            "type": "string",
+            "enum": [
+              "CONTAINER",
+              "BULK"
+            ],
+            "title": "运输方式",
+            "x-apifox": {
+              "enumDescriptions": {
+                "CONTAINER": "集装箱",
+                "BULK": "散装"
+              }
+            }
+          },
+          "size": {
+            "$ref": "#/components/schemas/PackageSize"
+          },
+          "weight": {
+            "$ref": "#/components/schemas/packageWeight"
+          },
+          "amount": {
+            "type": "integer",
+            "title": "货物数量"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CREATED",
+              "INTRANSIT",
+              "FINISHED"
+            ],
+            "x-apifox": {
+              "enumDescriptions": {
+                "CREATED": "",
+                "INTRANSIT": "",
+                "FINISHED": ""
+              }
+            },
+            "title": "状态"
+          },
+          "paths": {
+            "$ref": "#/components/schemas/PathItem"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "x-apifox-orders": [
+          "id",
+          "manifestId",
+          "creator",
+          "packageNo",
+          "wrappingType",
+          "shippingType",
+          "size",
+          "weight",
+          "amount",
+          "status",
+          "paths",
+          "createdAt"
+        ],
+        "required": [
+          "createdAt"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Packages"
+      },
+      "ProjectUserItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Primer Key",
+            "type": "integer"
+          },
+          "userId": {
+            "type": "integer"
+          },
+          "projectId": {
+            "type": "integer"
+          },
+          "projectRole": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "userTitle": {
+            "type": "string"
+          },
+          "identity": {
+            "type": "string",
+            "description": "ID Card of user"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "x-apifox-orders": [
+          "id",
+          "userId",
+          "projectId",
+          "projectRole",
+          "userName",
+          "userTitle",
+          "identity",
+          "phone",
+          "email"
+        ],
+        "required": [
+          "id",
+          "userId",
+          "projectId",
+          "projectRole",
+          "userName",
+          "userTitle",
+          "identity",
+          "phone",
+          "email"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Projects"
+      },
+      "ManifestItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1,
+            "title": "主键"
+          },
+          "projectId": {
+            "type": "integer",
+            "example": 1
+          },
+          "projectName": {
+            "type": "string",
+            "title": ""
+          },
+          "noteNo": {
+            "type": "string",
+            "example": "fhd001",
+            "title": "发货单号"
+          },
+          "amount": {
+            "type": "integer",
+            "example": 24,
+            "title": "包裹数"
+          },
+          "cargosAmount": {
+            "type": "integer",
+            "title": "货物总数"
+          },
+          "creator": {
+            "type": "integer",
+            "title": ""
+          },
+          "receiver": {
+            "type": "integer",
+            "title": "接收企业"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CREATED",
+              "PUBLISHED",
+              "ENDED",
+              "CONFIRMED",
+              "SHIPPING"
+            ],
+            "x-apifox": {
+              "enumDescriptions": {
+                "CREATED": "创建",
+                "PUBLISHED": "发货单发布",
+                "ENDED": "完成收货",
+                "CONFIRMED": "物流商确认",
+                "SHIPPING": "开始配送"
+              }
+            },
+            "title": "状态"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-05-19T05:20:54.024Z"
+          },
+          "endedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-05-19T05:20:54.024Z"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "x-apifox-orders": [
+          "id",
+          "projectId",
+          "projectName",
+          "noteNo",
+          "amount",
+          "cargosAmount",
+          "creator",
+          "receiver",
+          "status",
+          "createdAt",
+          "endedAt",
+          "publishedAt"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Manifests"
+      },
+      "CreatePathItem": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/PathNode"
+        },
+        "x-apifox-folder": "Paths"
+      },
+      "loginPayload": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "title": "应当加密"
+          },
+          "captcha": {
+            "type": "string",
+            "title": "验证码"
+          }
+        },
+        "x-apifox-orders": [
+          "userId",
+          "password",
+          "captcha"
+        ],
+        "required": [
+          "userId",
+          "password",
+          "captcha"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Register"
+      },
+      "CompanyItem": {
+        "x-apifox-overrides": {},
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "公司ID"
+          },
+          "name": {
+            "title": "企业名称",
+            "type": "string"
+          },
+          "type": {
+            "title": "企业类型",
+            "type": "string",
+            "enum": [
+              "LOGISTICS",
+              "SHIPPER_RECEIVER"
+            ],
+            "x-apifox": {
+              "enumDescriptions": {
+                "LOGISTICS": "物流",
+                "SHIPPER_RECEIVER": "收/发货方"
+              }
+            }
+          },
+          "scope": {
+            "title": "运营范围",
+            "type": "string",
+            "enum": [
+              "INTERNATION",
+              "INLAND"
+            ],
+            "x-apifox": {
+              "enumDescriptions": {
+                "INTERNATION": "国际",
+                "INLAND": "国内"
+              }
+            }
+          },
+          "contactInfo": {
+            "$ref": "#/components/schemas/UserItem"
+          },
+          "license": {
+            "title": "营业执照",
+            "type": "string"
+          },
+          "capability": {
+            "title": "运营资质",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "transport": {
+            "title": "运营方向",
+            "type": "string",
+            "enum": [
+              "HIGHWAY",
+              "RAILWAY",
+              "AIR",
+              "SEA"
+            ],
+            "x-apifox": {
+              "enumDescriptions": {
+                "HIGHWAY": "公路",
+                "RAILWAY": "铁路",
+                "AIR": "空运",
+                "SEA": "海运"
+              }
+            }
+          }
+        },
+        "x-apifox-refs": {},
+        "x-apifox-orders": [
+          "id",
+          "name",
+          "type",
+          "scope",
+          "contactInfo",
+          "license",
+          "capability",
+          "transport"
+        ],
+        "required": [
+          "id"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Companies"
+      },
+      "CreatedProjectItem": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "receiverId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE"
+            ],
+            "x-apifox": {
+              "enumDescriptions": {
+                "ACTIVE": "",
+                "INACTIVE": ""
+              }
+            }
+          }
+        },
+        "x-apifox-orders": [
+          "name",
+          "ownerId",
+          "receiverId",
+          "status"
+        ],
+        "required": [
+          "name",
+          "ownerId"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Projects"
+      },
+      "CreateCompanyItem": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "企业名称",
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "title": "企业类型",
+            "type": "string",
+            "enum": [
+              "LOGISTICS",
+              "SHIPPER_RECEIVER"
+            ],
+            "x-apifox": {
+              "enumDescriptions": {
+                "LOGISTICS": "物流",
+                "SHIPPER_RECEIVER": "收/发货方"
+              }
+            }
+          },
+          "scope": {
+            "title": "运营范围",
+            "type": "string",
+            "enum": [
+              "INTERNATION",
+              "INLAND"
+            ],
+            "x-apifox": {
+              "enumDescriptions": {
+                "INTERNATION": "国际",
+                "INLAND": "国内"
+              }
+            }
+          },
+          "transport": {
+            "title": "运营方向",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "HIGHWAY",
+                "RAILWAY",
+                "SEA",
+                "AIR"
+              ],
+              "x-apifox": {
+                "enumDescriptions": {
+                  "HIGHWAY": "公路",
+                  "RAILWAY": "铁路",
+                  "SEA": "海运",
+                  "AIR": "空运"
+                }
+              }
+            }
+          },
+          "contactId": {
+            "title": "管理员",
+            "description": "如果系统没有，则需要提供contactInfo",
+            "type": "integer"
+          },
+          "contactInfo": {
+            "$ref": "#/components/schemas/CreateUserItem"
+          },
+          "license": {
+            "title": "营业执照",
+            "type": "string"
+          },
+          "capability": {
+            "title": "运营资质",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          }
+        },
+        "x-apifox-orders": [
+          "name",
+          "type",
+          "scope",
+          "transport",
+          "contactId",
+          "contactInfo",
+          "license",
+          "capability"
+        ],
+        "required": [
+          "name",
+          "type",
+          "scope",
+          "transport",
+          "license"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Companies"
+      },
+      "ProjectItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "integer"
+          },
+          "receiver": {
+            "type": "string"
+          },
+          "receiverId": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "COMPLETED",
+              "HOLD"
+            ],
+            "x-apifox": {
+              "enumDescriptions": {
+                "ACTIVE": "",
+                "INACTIVE": "",
+                "COMPLETED": "",
+                "HOLD": ""
+              }
+            }
+          },
+          "hidden": {
+            "type": "boolean"
+          },
+          "endedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "x-apifox-orders": [
+          "id",
+          "name",
+          "owner",
+          "ownerId",
+          "receiver",
+          "receiverId",
+          "status",
+          "hidden",
+          "endedAt",
+          "createdAt"
+        ],
+        "required": [
+          "id",
+          "name",
+          "owner",
+          "ownerId",
+          "receiver",
+          "receiverId",
+          "status",
+          "hidden",
+          "endedAt",
+          "createdAt"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Projects"
+      },
+      "UserItem": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "identity": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer"
+          }
+        },
+        "x-apifox-orders": [
+          "01G3QM9ANEFWWF0Y34FJA2CT3Q",
+          "id"
+        ],
+        "required": [
+          "name",
+          "title",
+          "identity",
+          "phone",
+          "email",
+          "id"
+        ],
+        "x-apifox-refs": {
+          "01G3QM9ANEFWWF0Y34FJA2CT3Q": {
+            "$ref": "#/components/schemas/CreateUserItem",
+            "x-apifox-overrides": {}
+          }
+        },
+        "x-apifox-ignore-properties": [
+          "name",
+          "title",
+          "identity",
+          "phone",
+          "email"
+        ],
+        "x-apifox-folder": "Users"
+      },
+      "CreateManinfestItem": {
+        "type": "object",
+        "required": [
+          "noteNo",
+          "creator"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "integer",
+            "example": 1
+          },
+          "noteNo": {
+            "type": "string",
+            "example": "note001"
+          },
+          "creator": {
+            "type": "integer"
+          },
+          "receiver": {
+            "type": "integer"
+          }
+        },
+        "x-apifox-orders": [
+          "projectId",
+          "noteNo",
+          "creator",
+          "receiver"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Manifests"
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "details": {
+            "type": "string"
+          }
+        },
+        "x-apifox-orders": [
+          "code",
+          "title",
+          "details"
+        ],
+        "required": [
+          "code",
+          "title",
+          "details"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "PackageSize": {
+        "type": "object",
+        "properties": {
+          "length": {
+            "title": "长",
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": 0
+          },
+          "width": {
+            "title": "宽",
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": 0
+          },
+          "height": {
+            "title": "高",
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": 0
+          },
+          "unit": {
+            "type": "string",
+            "title": "单位",
+            "minLength": 1
+          }
+        },
+        "x-apifox-orders": [
+          "length",
+          "width",
+          "height",
+          "unit"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Packages"
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "next": {
+            "type": "string",
+            "format": "uri",
+            "title": "下一个offset url",
+            "description": "若已到结尾，则next为空字串"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "totalResults": {
+            "type": "integer",
+            "title": "总数"
+          }
+        },
+        "x-apifox-orders": [
+          "next",
+          "offset",
+          "limit",
+          "totalResults"
+        ],
+        "required": [
+          "next",
+          "offset",
+          "limit",
+          "totalResults"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "CargoItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "主键",
+            "type": "integer"
+          },
+          "name": {
+            "title": "货物名称",
+            "type": "string"
+          },
+          "model": {
+            "type": "string",
+            "title": "型号"
+          },
+          "amount": {
+            "type": "integer",
+            "title": "数量"
+          },
+          "packageId": {
+            "type": "integer",
+            "title": "包装ID"
+          },
+          "packageName": {
+            "type": "string",
+            "title": "包装名字"
+          },
+          "creator": {
+            "type": "integer",
+            "title": "创建者"
+          },
+          "manifestId": {
+            "type": "integer",
+            "title": "发货单ID"
+          },
+          "createdAt": {
+            "type": "string",
+            "title": "创建日期"
+          }
+        },
+        "x-apifox-orders": [
+          "id",
+          "name",
+          "model",
+          "amount",
+          "packageId",
+          "packageName",
+          "creator",
+          "manifestId",
+          "createdAt"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Cargos"
+      },
+      "CreatePackageItem": {
+        "type": "object",
+        "required": [
+          "creator",
+          "wrappingType",
+          "shippingType",
+          "size",
+          "weight"
+        ],
+        "properties": {
+          "packageNo": {
+            "type": "string",
+            "example": "PK001",
+            "title": "包装编号"
+          },
+          "creator": {
+            "type": "integer",
+            "title": "创建者"
+          },
+          "wrappingType": {
+            "type": "string",
+            "enum": [
+              "WOODENCASE",
+              "IRONCASE",
+              "TRAY",
+              "UNWRAPPED"
+            ],
+            "title": "包装方式",
+            "x-apifox": {
+              "enumDescriptions": {
+                "WOODENCASE": "木箱",
+                "IRONCASE": "铁箱",
+                "TRAY": "托盘",
+                "UNWRAPPED": "裸装"
+              }
+            }
+          },
+          "shippingType": {
+            "type": "string",
+            "enum": [
+              "CONTAINER",
+              "BULK"
+            ],
+            "title": "运输方式",
+            "x-apifox": {
+              "enumDescriptions": {
+                "CONTAINER": "集装箱",
+                "BULK": "散装"
+              }
+            }
+          },
+          "size": {
+            "$ref": "#/components/schemas/PackageSize"
+          },
+          "weight": {
+            "$ref": "#/components/schemas/packageWeight"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CREATED",
+              "INTRANSIT",
+              "FINISHED"
+            ],
+            "x-apifox": {
+              "enumDescriptions": {
+                "CREATED": "",
+                "INTRANSIT": "",
+                "FINISHED": ""
+              }
+            },
+            "title": "当前状态",
+            "description": "默认：CREATED"
+          }
+        },
+        "x-apifox-orders": [
+          "packageNo",
+          "creator",
+          "wrappingType",
+          "shippingType",
+          "size",
+          "weight",
+          "status"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Packages"
+      },
+      "Manufacturer": {
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "ACME Corporation"
+          },
+          "homePage": {
+            "type": "string",
+            "format": "url",
+            "example": "https://www.acme-corp.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "408-867-5309"
+          }
+        },
+        "x-apifox-orders": [
+          "name",
+          "homePage",
+          "phone"
+        ],
+        "type": "object",
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Schemas"
+      },
+      "packageWeight": {
+        "type": "object",
+        "properties": {
+          "scale": {
+            "type": "number",
+            "title": "重量"
+          },
+          "unit": {
+            "type": "string",
+            "title": "单位"
+          }
+        },
+        "x-apifox-orders": [
+          "scale",
+          "unit"
+        ],
+        "required": [
+          "scale",
+          "unit"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Packages"
+      },
+      "CreateProjectItem": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Food To Shandong"
+          },
+          "ownerId": {
+            "type": "integer",
+            "example": 1
+          },
+          "receiverId": {
+            "type": "integer",
+            "example": 2
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "COMPLETED",
+              "VOID",
+              "HOLD"
+            ]
+          }
+        },
+        "x-apifox-orders": [
+          "name",
+          "ownerId",
+          "receiverId",
+          "status"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Schemas"
+      },
+      "CreateCargoItem": {
+        "x-apifox-overrides": {},
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "货物名称",
+            "type": "string"
+          },
+          "model": {
+            "type": "string",
+            "title": "型号"
+          },
+          "amount": {
+            "type": "integer",
+            "title": "数量"
+          },
+          "creator": {
+            "title": "创建者",
+            "type": "integer"
+          },
+          "packageId": {
+            "type": "integer",
+            "title": "包装ID"
+          }
+        },
+        "x-apifox-refs": {},
+        "x-apifox-orders": [
+          "name",
+          "model",
+          "amount",
+          "creator",
+          "packageId"
+        ],
+        "required": [
+          "name",
+          "amount",
+          "creator",
+          "packageId"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Cargos"
+      },
+      "UpdateManifestItem": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "noteNo": {
+            "type": "string",
+            "minLength": 1
+          },
+          "creator": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "receiver": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CREATED",
+              "PUBLISHED",
+              "ENDED",
+              "CONFIRMED",
+              "SHIPPING"
+            ],
+            "x-apifox": {
+              "enumDescriptions": {
+                "CREATED": "创建",
+                "PUBLISHED": "发货单发布",
+                "ENDED": "完成收货",
+                "CONFIRMED": "物流商确认",
+                "SHIPPING": "开始配送"
+              }
+            }
+          }
+        },
+        "x-apifox-orders": [
+          "projectId",
+          "noteNo",
+          "creator",
+          "receiver",
+          "status"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Manifests"
+      },
+      "ArrivedInfoItem": {
+        "type": "object",
+        "properties": {
+          "wayBillNo": {
+            "type": "string",
+            "title": "运单号"
+          },
+          "currentNode": {
+            "type": "integer",
+            "title": "当前节点Index"
+          }
+        },
+        "x-apifox-orders": [
+          "wayBillNo",
+          "currentNode"
+        ],
+        "required": [
+          "wayBillNo",
+          "currentNode"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "ArrivedInfo"
+      },
+      "UpdatePackageItem": {
+        "x-apifox-overrides": {},
+        "type": "object",
+        "properties": {
+          "packageNo": {
+            "type": "string",
+            "example": "PK001",
+            "title": "包装编号"
+          },
+          "wrappingType": {
+            "type": "string",
+            "enum": [
+              "WOODENCASE",
+              "IRONCASE",
+              "TRAY",
+              "UNWRAPPED"
+            ],
+            "title": "包装方式",
+            "x-apifox": {
+              "enumDescriptions": {
+                "WOODENCASE": "木箱",
+                "IRONCASE": "铁箱",
+                "TRAY": "托盘",
+                "UNWRAPPED": "裸装"
+              }
+            }
+          },
+          "shippingType": {
+            "type": "string",
+            "enum": [
+              "CONTAINER",
+              "BULK"
+            ],
+            "title": "运输方式",
+            "x-apifox": {
+              "enumDescriptions": {
+                "CONTAINER": "集装箱",
+                "BULK": "散装"
+              }
+            }
+          },
+          "size": {
+            "$ref": "#/components/schemas/PackageSize"
+          },
+          "weight": {
+            "$ref": "#/components/schemas/packageWeight"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CREATED",
+              "INTRANSIT",
+              "FINISHED"
+            ],
+            "x-apifox": {
+              "enumDescriptions": {
+                "CREATED": "",
+                "INTRANSIT": "",
+                "FINISHED": ""
+              }
+            },
+            "title": "当前状态",
+            "description": "默认：CREATED"
+          }
+        },
+        "x-apifox-refs": {},
+        "x-apifox-orders": [
+          "packageNo",
+          "wrappingType",
+          "shippingType",
+          "size",
+          "weight",
+          "status"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Packages"
+      },
+      "CreateUserItem": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "identity": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "x-apifox-orders": [
+          "name",
+          "title",
+          "identity",
+          "phone",
+          "email"
+        ],
+        "required": [
+          "name",
+          "title",
+          "identity",
+          "phone",
+          "email"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Users"
+      },
+      "PathNode": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "title": "地址"
+          },
+          "assignee": {
+            "title": "指派企业",
+            "type": "integer"
+          },
+          "type": {
+            "title": "节点类型",
+            "description": "起始节点为0，结束节点为1，中间节点为2",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2
+          }
+        },
+        "x-apifox-orders": [
+          "address",
+          "assignee",
+          "type"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Paths"
+      },
+      "InventoryItem": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "releaseDate",
+          "manufacturer"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "name": {
+            "type": "string",
+            "example": "Widget Adapter"
+          },
+          "releaseDate": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-05-19T05:20:54.025Z"
+          },
+          "manufacturer": {
+            "$ref": "#/components/schemas/Manufacturer"
+          }
+        },
+        "x-apifox-orders": [
+          "id",
+          "name",
+          "releaseDate",
+          "manufacturer"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": "Schemas"
+      },
+      "PathItem": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/PathNode"
+        },
+        "x-apifox-folder": "Paths"
+      }
+    }
+  }
+}

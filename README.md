@@ -30,14 +30,8 @@ Create a model and a script:
 - Cargos
 > npx sequelize model:generate --name cargos --attributes name:string,model:string,amount:integer,package_id:bigint,manifest_id:bigint,creator:bigint
 
-- PackageShippings
-> npx sequelize model:generate --name packages_shippings --attributes package_id:bigint,shipping_id:bigint,status:string
-
-- ShippingPaths
-> npx sequelize model:generate --name shipping_paths --attributes node_name:string,from:string,to:string,owner:bigint,shipping_type:string
-
 - Paths
-> npx sequelize model:generate --name paths --attributes manifest_id:bigint,package_id:bigint,address:string,assignee:bigint,waybill_no:string,arrived:boolean,type:integer,sequence_no:integer
+> npx sequelize model:generate --name paths --attributes manifest_id:bigint,paths:json
 
 - Companies
 > npx sequelize model:generate --name companies --attributes name:string,type:string,license:string,scope:string,transport:json,contact:bigint,capability:integer,memo:string
@@ -47,7 +41,10 @@ Create a model and a script:
 
 - Permissions
 > npx sequelize model:generate --name permissions --attributes name:string,authority:string,description:string,user_id:bigint,path_id:bigint
-
+- 
+- packageShippings
+> npx sequelize model:generate --name package_shippings --attributes manifest_id:bigint,package_id:bigint,path_id:bigint,current_node:integer,way_bill_no:string,arrived:boolean,assignee:bigint
+ 
 Create a schema:
 > npx sequelize db:create
 

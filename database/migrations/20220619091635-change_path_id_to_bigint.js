@@ -29,26 +29,6 @@ module.exports = {
       onDelete: 'CASCADE',
       defaultValue: null, after: 'can_maintain_system'
     });
-    await queryInterface.changeColumn('paths', 'package_id', {
-      type: Sequelize.BIGINT,
-      references: {
-        model: 'packages',
-        key: 'id',
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE',
-      defaultValue: null, after: 'can_maintain_system'
-    });
-    await queryInterface.changeColumn('paths', 'assignee', {
-      type: Sequelize.BIGINT,
-      references: {
-        model: 'companies',
-        key: 'id',
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE',
-      defaultValue: null, after: 'can_maintain_system'
-    });
   },
 
   down: async (queryInterface, Sequelize) => {

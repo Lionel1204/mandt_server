@@ -9,28 +9,11 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       manifest_id: {
-        type: Sequelize.BIGINT
+        type: Sequelize.BIGINT,
+        unique: true
       },
-      package_id: {
-        type: Sequelize.BIGINT
-      },
-      address: {
-        type: Sequelize.STRING
-      },
-      assignee: {
-        type: Sequelize.BIGINT
-      },
-      waybill_no: {
-        type: Sequelize.STRING
-      },
-      arrived: {
-        type: Sequelize.BOOLEAN
-      },
-      type: {
-        type: Sequelize.INTEGER
-      },
-      sequence_no: {
-        type: Sequelize.INTEGER
+      paths: {
+        type: Sequelize.JSON
       },
       createdAt: {
         allowNull: false,

@@ -357,31 +357,19 @@ class DataService {
   }
 
   // ------ Paths
-  async createPaths(manifestId, payload) {
-    const paths = _.map(payload.pathList, (p, ind)=> {
-      return {
-        manifest_id: manifestId,
-        package_id: payload.packageId,
-        address: p.address,
-        assignee: p.assignee,
-        waybill_no: p.waybillNo,
-        arrived: p.arrived,
-        type: p.type,
-        sequence_no: ind
-      };
-    });
-
-    return this.dbService.createPaths(paths);
+  async createPaths(manifestId, paths) {
+    const payload = {
+      manifest_id: manifestId,
+      paths
+    }
+    return this.dbService.createPaths( payload);
   }
 
-  async listPaths(manifestId, packageId) {
+  async getPaths(manifestId) {
     const options = {
-      manifest_id: manifestId,
-      package_id: packageId,
-      limit: 50,
-      offset: 0
+      manifest_id: manifestId
     };
-    return await this.dbService.listPaths(options)
+    return await this.dbService.getPaths(options)
   }
 
   async updatePathsArrived(manifestId, payload) {

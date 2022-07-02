@@ -25,14 +25,12 @@ class PathsController extends BaseController {
     }
   }
 
-  async list(req, res) {
+  async get(req, res) {
     try {
       this.validateParam(manifestPathSchema, req.params);
-      this.validateQuery(listPathQuerySchema, req.query);
       const { manifestId } = req.params;
-      const { packageId } = req.query;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
-      const paths = await dataService.listPaths(manifestId, packageId);
+      const paths = await dataService.getPaths(manifestId);
       const output = serializerService.serializePaths(paths);
       res.json(output);
     } catch (ex) {

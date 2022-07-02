@@ -243,25 +243,16 @@ class DBService {
     const result = await db.cargos.destroy({ where: { id: cargoId, manifest_id: manifestId } });
     return result > 0;
   }
-  //----- Shipping paths:
-  async createPaths(paths) {
-    return db.paths.bulkCreate(paths, {
-      updateOnDuplicate: ['sequence_no'],
-      returning: true
-    });
+  //----- Paths:
+  async createPaths(payload) {
+    return db.paths.create(payload);
   }
 
-  async listPaths(options) {
-    const { limit, offset } = options;
-
+  async getPaths(options) {
     const where = {
-      package_id: options.package_id,
       manifest_id: options.manifest_id
     };
-
-    const order = [['sequence_no', 'ASC']];
-
-    return db.paths.findAll({ where, limit, offset, order });
+    return db.paths.findOne({ where });
   }
 
   async updatePathsArrived(manifestId, packageId, pathIdList, arrived) {

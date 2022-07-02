@@ -196,28 +196,15 @@ class SerializerService {
     });
   }
 
-  serializePath(path) {
-    if (!path) throw new ResourceNotExistException('Path does not exist')
+  serializePaths(pathRec) {
+    if (!pathRec) throw new ResourceNotExistException('Path does not exist')
 
     const output = {
-      id: path.id,
-      manifestId: path.manifest_id,
-      waybillNo: path.waybill_no,
-      packageId: path.package_id,
-      address: path.address,
-      assignee: path.assignee,
-      arrived: !!path.arrived,
-      type: path.type
+      id: pathRec.id,
+      manifestId: pathRec.manifest_id,
+      pathList: pathRec.paths
     }
     return output;
-  }
-
-  serializePaths(paths) {
-    if (!Array.isArray(paths) || paths.length === 0) return [];
-
-    return _.map(paths, (p) => {
-      return this.serializePath(p)
-    });
   }
 }
 module.exports = SerializerService;

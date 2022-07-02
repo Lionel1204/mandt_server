@@ -1,5 +1,5 @@
 # Get paths
-GET http://{{host}}/{{api_prefix}}/manifests/1/paths?packageId=1
+GET http://{{host}}/{{api_prefix}}/manifests/1/paths
 Content-Type: application/json
 
 ###
@@ -7,28 +7,19 @@ Content-Type: application/json
 POST http://{{host}}/{{api_prefix}}/manifests/1/paths
 Content-Type: application/json
 
-{
-  "packageId": 1,
-  "pathList": [{
-    "waybillNo": "SF0001",
-    "address": "内蒙古自治区",
-    "assignee": 1,
-    "arrived": true,
-    "type": 0
-  }, {
-    "waybillNo": "SF0002",
-    "address": "河南省",
-    "assignee": 1,
-    "arrived": false,
-    "type": 2
-  }, {
-    "waybillNo": "SF0003",
-    "address": "甘肃省",
-    "assignee": 1,
-    "arrived": false,
-    "type": 1
-  }]
-}
+[{
+  "address": "内蒙古自治区",
+  "assignee": 1,
+  "type": 0
+}, {
+  "address": "河南省",
+  "assignee": 1,
+  "type": 2
+}, {
+  "address": "甘肃省",
+  "assignee": 1,
+  "type": 1
+}]
 
 ###
 PATCH http://{{host}}/{{api_prefix}}/manifests/1/paths
