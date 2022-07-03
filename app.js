@@ -6,6 +6,7 @@ var logger = require('morgan');
 
 var routes = require('./routes');
 var cors = require('cors');
+var session = require('express-session');
 
 var app = express();
 
@@ -22,8 +23,14 @@ app.use(cors({
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser('SessionM&T'));
 app.use(express.static(path.join(__dirname, './controllers')));
+app.use(session({
+  secret: 'SessionM&T',
+  maxAge: 1000 * 60 * 60, // 1 hour session
+  resave: false, //Reset the session cookie every request
+  saveUninitialized: true //Set session cookie for every request
+}));
 
 routes(app);
 

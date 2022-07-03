@@ -41,10 +41,13 @@ Create a model and a script:
 
 - Permissions
 > npx sequelize model:generate --name permissions --attributes name:string,authority:string,description:string,user_id:bigint,path_id:bigint
-- 
+
 - packageShippings
 > npx sequelize model:generate --name package_shippings --attributes manifest_id:bigint,package_id:bigint,path_id:bigint,path_node:integer,way_bill_no:string,arrived:boolean,assignee:bigint
- 
+
+- Login
+- npx sequelize model:generate --name logins --attributes user_id:bigint,user_phone:string,password:string,captcha:string,login_time:date
+
 Create a schema:
 > npx sequelize db:create
 

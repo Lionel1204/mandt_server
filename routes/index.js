@@ -25,7 +25,8 @@ const {
   packagesController,
   cargosController,
   pathsController,
-  packageArrivedController
+  packageArrivedController,
+  registerController
 } = controllers;
 
 module.exports = function(app) {
@@ -84,4 +85,8 @@ module.exports = function(app) {
   // Package Arrived
   app.get(`${apiPrefix}/packages/:packageId/arrived-info`, createControllerFunction(packageArrivedController, 'list'));
   app.patch(`${apiPrefix}/packages/:packageId/arrived-info`, createControllerFunction(packageArrivedController, 'patch'));
+
+  // Register & Login
+  app.get(`${apiPrefix}/captcha`, createControllerFunction(registerController, 'getCaptcha'));
+  app.post(`${apiPrefix}/user`, createControllerFunction(registerController, 'action'));
 };

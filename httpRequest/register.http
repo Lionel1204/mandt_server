@@ -1,0 +1,21 @@
+# Get captcha
+GET http://{{host}}/{{api_prefix}}/captcha
+Content-Type: application/svg+xml
+
+###
+POST http://{{host}}/{{api_prefix}}/user?action=login
+Content-Type: application/json
+
+{
+  "userId": "13564536791",
+  "password": "User0",
+  "captcha": "kfju"
+}
+
+###
+POST http://{{host}}/{{api_prefix}}/user?action=logout
+Content-Type: application/json
+
+{
+  "userId": "13564536791"
+}

@@ -18,6 +18,7 @@
     "debug": "~2.6.9",
     "ejs": "~2.6.1",
     "express": "~4.16.1",
+    "express-session": "^1.17.3",
     "http-errors": "~1.6.3",
     "lodash": "^4.17.21",
     "morgan": "~1.9.1",
@@ -25,9 +26,11 @@
     "qrcode": "^1.5.0",
     "sequelize": "^6.12.0-alpha.1",
     "sequelize-cli": "^6.3.0",
+    "svg-captcha": "^1.4.0",
     "url-parse": "^1.5.10"
   },
   "devDependencies": {
+    "crypto": "^1.0.1",
     "eslint": "^8.16.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",

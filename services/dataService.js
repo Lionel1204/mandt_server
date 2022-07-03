@@ -99,8 +99,7 @@ class DataService {
 
   // ---------- User:
   async getUser(userId) {
-    const id = parseInt(userId);
-    return await this.dbService.getUserById(id);
+    return await this.dbService.getUserById(userId);
   }
 
   async getUsersByIds(ids) {
@@ -466,6 +465,11 @@ class DataService {
       wayBillNo: body.wayBillNo || null
     }
     return this.dbService.updateArrivedInfo(options);
+  }
+
+  // -- Login
+  async getLogin(phone) {
+    return this.dbService.getLogin(phone)
   }
 }
 

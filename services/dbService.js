@@ -270,7 +270,7 @@ class DBService {
 
   // Arrived Info
   async bulkCreateArrivedInfo(records) {
-    // TODO: try to use transaction;
+    // TODO: try to use transaction
     await db.package_shippings.bulkCreate(records,{ updateOnDuplicate: ['package_id', 'path_node'] });
   }
 
@@ -293,6 +293,11 @@ class DBService {
       where
     });
     return result[0] > 0;
+  }
+
+  // Login
+  async getLogin(phone) {
+    return await db.logins.findOne({ where: {user_phone: phone}});
   }
 }
 module.exports = DBService;
