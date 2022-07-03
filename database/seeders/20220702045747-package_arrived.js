@@ -18,7 +18,7 @@ module.exports = {
       {
         attributes: ['id', 'manifest_id'],
         where: {
-          package_no: 'test003',
+          package_no: 'test001',
         },
         logging: console.log
       }
