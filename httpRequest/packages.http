@@ -1,14 +1,13 @@
 # Get packages
-GET http://{{host}}/{{api_prefix}}/packages?packageNo=test
+GET http://{{host}}/{{api_prefix}}/packages
 Content-Type: application/json
 
 ###
 # Create packages
-POST http://{{host}}/{{api_prefix}}/manifests/3/packages
+POST http://{{host}}/{{api_prefix}}/manifests/2/packages
 Content-Type: application/json
 
 {
-  "packageNo": "test001",
   "wrappingType": "WOODENCASE",
   "shippingType": "BULK",
   "size": {

@@ -27,8 +27,10 @@
     "qrcode": "^1.5.0",
     "sequelize": "^6.12.0-alpha.1",
     "sequelize-cli": "^6.3.0",
+    "shortid": "^2.2.16",
     "svg-captcha": "^1.4.0",
-    "url-parse": "^1.5.10"
+    "url-parse": "^1.5.10",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "crypto": "^1.0.1",

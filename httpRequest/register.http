@@ -9,7 +9,7 @@ Content-Type: application/json
 {
   "userId": "13564536791",
   "password": "User0",
-  "captcha": "r8em"
+  "captcha": "nkfp"
 }
 
 ###
@@ -17,5 +17,5 @@ POST http://{{host}}/{{api_prefix}}/user?action=logout
 Content-Type: application/json
 
 {
-  "userId": "13564536791"
+  "userId": "13564536792"
 }

@@ -1,6 +1,7 @@
 const _ = require('lodash');
+const shortid = require("shortid");
 const { ProjectStatus, ManifestStatus, PackageStatus, PathType } = require('../helper/constants');
-const { ResourceNotExistException, InternalServerException } = require('../exceptions/commonExceptions');
+const { ResourceNotExistException, InternalServerException, NotAllowedException } = require('../exceptions/commonExceptions');
 
 class DataService {
   constructor(dbService) {
@@ -235,9 +236,11 @@ class DataService {
 
   // ---------- Package
   async createPackage(manifestId, payload) {
+    const _pkgNo = shortid.generate();
+    _pkgNo.replace("_", "Z").replace("-", "z");
     const packagePayload = {
       manifest_id: manifestId,
-      package_no: payload.packageNo,
+      package_no: `PKG_${_pkgNo}`,
       wrapping_type: payload.wrappingType,
       shipping_type: payload.shippingType,
       amount: 0,
@@ -262,8 +265,10 @@ class DataService {
   }
 
   async updatePackage(manifestId, packageId, payload) {
+    const manifest = await this.getManifestById(manifestId);
+    if (manifest.status === ManifestStatus.Shipping) throw new NotAllowedException('Cannot change the Shipping Manifest');
+
     const updatePackagePayload = {
-      package_no: payload.packageNo,
       wrapping_type: payload.wrappingType,
       shipping_type: payload.shippingType,
       size: payload.size,
