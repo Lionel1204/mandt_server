@@ -2,10 +2,10 @@ const _ = require('lodash');
 const BaseController = require('./baseController');
 const serviceFactory = require('../services/serviceFactory');
 const svgCaptcha = require('svg-captcha');
-const {loginQuerySchema, loginBodySchema} = require("../validateSchemas/registerSchemas");
-const {RegisterAction, RegisterError, SALT} = require('../helper/constants');
-const {ResourceNotExistException} = require("../exceptions/commonExceptions");
-const {encrypt} = require('../helper/utils');
+const { loginQuerySchema, loginBodySchema } = require('../validateSchemas/registerSchemas');
+const { RegisterAction, RegisterError, SALT } = require('../helper/constants');
+const { ResourceNotExistException, NotAllowedException } = require('../exceptions/commonExceptions');
+const { encrypt } = require('../helper/utils');
 
 class RegisterController extends BaseController {
   constructor() {
@@ -32,14 +32,16 @@ class RegisterController extends BaseController {
       this.validateBody(loginBodySchema, req.body);
 
       const { action } = req.query;
-      const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
+      const dataService = await serviceFactory.getService('DataService');
 
       if (action === RegisterAction.LOGIN) {
         // Login
-        const output = await this.checkUsers(req, dataService)
+        const output = await this.checkUsers(req, dataService);
         res.json(output);
       } else if (action === RegisterAction.LOGOUT) {
         // Logout
+        const { userId: phone } = req.body;
+        if (req.session.phone !== phone) throw new NotAllowedException('Wrong User Id');
         await req.session.destroy();
         res.status(204).end();
       }
@@ -49,28 +51,27 @@ class RegisterController extends BaseController {
   }
 
   async checkUsers(req, dataService) {
-    const {userId: phone, password, captcha} = req.body;
+    const { userId: phone, password, captcha } = req.body;
     const sessionCaptcha = req.session.captcha;
     const output = {
       result: false,
       error: null,
       id: 0,
       company: 0
-    }
-    if(sessionCaptcha?.toLowerCase() != captcha.toLowerCase()) {
+    };
+    if (sessionCaptcha?.toLowerCase() != captcha.toLowerCase()) {
       output.error = RegisterError.ERR_CAPTCHA;
     } else {
       const loginData = await dataService.getLogin(phone);
-      if (!loginData) throw new ResourceNotExistException('No User');
+      if (!loginData) throw new ResourceNotExistException('No User found');
       const encryptPassword = encrypt('sha1', password, 'base64', SALT);
       if (loginData.password !== encryptPassword) {
         output.error = RegisterError.ERR_PASSWORD;
-      }
-      else {
+      } else {
         const user = await dataService.getUser(loginData.user_id);
         output.result = true;
         output.id = user.id;
-        output.company = user.company_id
+        output.company = user.company_id;
 
         this.setSession(req, user);
       }
@@ -79,14 +80,13 @@ class RegisterController extends BaseController {
     return output;
   }
 
-  setSession(req, user ) {
+  setSession(req, user) {
     req.session.userid = user.id;
     req.session.companyid = user.company_id;
     req.session.username = user.name;
     req.session.phone = user.phone;
-    req.session.useremail = user.email
+    req.session.useremail = user.email;
   }
 }
-
 
 module.exports = RegisterController;
