@@ -6,6 +6,7 @@ const {loginQuerySchema, loginBodySchema} = require("../validateSchemas/register
 const {RegisterAction, RegisterError, SALT} = require('../helper/constants');
 const {ResourceNotExistException} = require("../exceptions/commonExceptions");
 const {encrypt} = require('../helper/utils');
+
 class RegisterController extends BaseController {
   constructor() {
     super();
@@ -19,6 +20,7 @@ class RegisterController extends BaseController {
       color: true,
       background: '#CFCFCF'
     });
+    this.logger.info(cap.text);
     req.session.captcha = cap.text;
     res.type('svg');
     res.send(cap.data);
@@ -35,7 +37,6 @@ class RegisterController extends BaseController {
       if (action === RegisterAction.LOGIN) {
         // Login
         const output = await this.checkUsers(req, dataService)
-        //this.setCookies(req, res, output.id);
         res.json(output);
       } else if (action === RegisterAction.LOGOUT) {
         // Logout
@@ -56,7 +57,7 @@ class RegisterController extends BaseController {
       id: 0,
       company: 0
     }
-    if(sessionCaptcha?.toLowerCase() != captcha?.toLowerCase()){
+    if(sessionCaptcha?.toLowerCase() != captcha.toLowerCase()) {
       output.error = RegisterError.ERR_CAPTCHA;
     } else {
       const loginData = await dataService.getLogin(phone);

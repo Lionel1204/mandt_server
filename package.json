@@ -21,6 +21,7 @@
     "express-session": "^1.17.3",
     "http-errors": "~1.6.3",
     "lodash": "^4.17.21",
+    "log4js": "^6.5.2",
     "morgan": "~1.9.1",
     "mysql2": "^2.3.3",
     "qrcode": "^1.5.0",

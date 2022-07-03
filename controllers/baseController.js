@@ -1,5 +1,5 @@
 const Ajv = require("ajv");
-
+const logger = require('../helper/loggerHelper')
 const Exceptions = require('../exceptions');
 
 class BaseController {
@@ -12,6 +12,7 @@ class BaseController {
     this.bodyAjv = new Ajv(defaultOptions);
     this.queryAjv = new Ajv(defaultOptions);
     this.paramsAjv = new Ajv(defaultOptions);
+    this.logger = logger.getLogger();
   }
 
   validateParam(schema, params) {
