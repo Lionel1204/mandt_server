@@ -56,7 +56,7 @@ class RegisterController extends BaseController {
       id: 0,
       company: 0
     }
-    if(sessionCaptcha.toLowerCase() != captcha.toLowerCase()){
+    if(sessionCaptcha?.toLowerCase() != captcha?.toLowerCase()){
       output.error = RegisterError.ERR_CAPTCHA;
     } else {
       const loginData = await dataService.getLogin(phone);

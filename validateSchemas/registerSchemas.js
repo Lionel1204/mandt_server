@@ -26,7 +26,8 @@ const loginQuerySchema = {
       type: 'string',
       pattern: 'login|logout'
     }
-  }
+  },
+  required: ['action']
 }
 
 module.exports = {
