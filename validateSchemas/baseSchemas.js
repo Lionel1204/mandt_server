@@ -34,6 +34,10 @@ const manifestPathSchema = {
     cargoId: {
       type: 'integer',
       minimum: 1
+    },
+    pathId: {
+      type: 'integer',
+      minimum: 1
     }
   }
 }

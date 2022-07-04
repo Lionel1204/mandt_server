@@ -1,5 +1,5 @@
 
-const createPathNodeSchema = {
+const pathNodeSchema = {
   type: 'object',
   properties: {
     address: {
@@ -20,30 +20,13 @@ const createPathNodeSchema = {
 };
 
 const updatePathBodySchema = {
-  type: 'object',
-  properties: {
-    packageId: {
-      type: 'integer',
-      minimum: 1
-    },
-    arrived: {
-      type: 'boolean'
-    },
-    pathIdList: {
-      type: 'array',
-      items: {
-        type: 'integer',
-        minimum: 1,
-        uniqueItems: true
-      }
-    }
-  },
-  required: ['packageId', 'pathIdList', 'arrived']
+  type: 'array',
+  items: pathNodeSchema
 };
 
 const createPathBodySchema = {
   type: 'array',
-  items: createPathNodeSchema
+  items: pathNodeSchema
 };
 
 module.exports = {

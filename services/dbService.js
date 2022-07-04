@@ -254,18 +254,13 @@ class DBService {
     return db.paths.findOne({ where });
   }
 
-  async updatePathsArrived(manifestId, packageId, pathIdList, arrived) {
+  async updatePaths(pathId, paths) {
     const where = {
-      id: pathIdList
-    };
+      id: pathId
+    }
 
-    const result = await db.paths.update(
-      { arrived },
-      {
-        where
-      }
-    );
-    return result > 0;
+    const result = await db.paths.update({ paths }, { where });
+    return result[0] > 0;
   }
 
   // Arrived Info

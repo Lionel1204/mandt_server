@@ -382,32 +382,9 @@ class DataService {
     return await this.dbService.getPaths(options)
   }
 
-  /**
-   * updatePathsArrived
-   * @Deprecated
-   * @param manifestId
-   * @param payload
-   * @returns {Promise<*|boolean>}
-   */
-  async updatePathsArrived(manifestId, payload) {
-    const {packageId, pathIdList, arrived} = payload;
-
-    const result = await this.dbService.updatePathsArrived(manifestId, packageId, pathIdList, arrived);
-
-    // update the package status
-    const paths = await this.listPaths(manifestId, packageId);
-    const finishedEndNode = _.find(paths, (p) => (p.type === PathType.End) && p.arrived);
-    const finishedMidNode = _.find(paths, (p) => (p.type === PathType.Middle) && p.arrived);
-
-    if (finishedEndNode) {
-      // Finished
-      await this.updatePackage(manifestId, packageId, { status: PackageStatus.Finished });
-    } else if (finishedMidNode) {
-      // InTransit
-      await this.updatePackage(manifestId, packageId, { status: PackageStatus.InTransit });
-    } else {}
-
-    return result;
+  async updatePaths(manifestId, pathId, paths) {
+    const result = this.dbService.updatePaths(pathId, paths);
+    return result ? await this.dbService.getPaths({manifest_id: manifestId}) : null;
   }
 
   // arrived info

@@ -38,17 +38,21 @@ class PathsController extends BaseController {
     }
   }
 
-  async patch(req, res) {
+  async put(req, res) {
     try {
       this.validateParam(manifestPathSchema, req.params);
       this.validateBody(updatePathBodySchema, req.body);
 
       const payload = req.body;
-      const { manifestId } = req.params;
+      const { manifestId, pathId } = req.params;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
-      const result = await dataService.updatePathsArrived(manifestId, payload);
-      if (result) res.status(200).end();
-      else res.status(404).end();
+      const paths = await dataService.updatePaths(manifestId, pathId, payload);
+      if (paths) {
+        const output = serializerService.serializePaths(paths);
+        res.json(output);
+      } else {
+        res.status(200).end();
+      }
     } catch (ex) {
       this.errorResponse(res, ex);
     }
