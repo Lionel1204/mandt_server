@@ -3,6 +3,10 @@ GET http://{{host}}/{{api_prefix}}/captcha
 Content-Type: application/svg+xml
 
 ###
+GET http://{{host}}/{{api_prefix}}/captcha?base64=true
+Content-Type: application/json
+
+###
 POST http://{{host}}/{{api_prefix}}/user?action=login
 Content-Type: application/json
 

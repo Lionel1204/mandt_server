@@ -6,6 +6,7 @@ const { loginQuerySchema, loginBodySchema } = require('../validateSchemas/regist
 const { RegisterAction, RegisterError, SALT } = require('../helper/constants');
 const { ResourceNotExistException, NotAllowedException } = require('../exceptions/commonExceptions');
 const { encrypt } = require('../helper/utils');
+const svg64 = require('svg64');
 
 class RegisterController extends BaseController {
   constructor() {
@@ -22,6 +23,10 @@ class RegisterController extends BaseController {
     });
     this.logger.info(cap.text);
     req.session.captcha = cap.text;
+    if (req.query.base64) {
+      const base64fromSVG = svg64(cap.data);
+      res.json({image: base64fromSVG});
+    }
     res.type('svg');
     res.send(cap.data);
   }
