@@ -28,10 +28,11 @@ class PackageArrivedController extends BaseController {
     this.validateBody(updateArrivedInfoBodySchema, req.body)
     const body = req.body;
     const { packageId } = req.params;
-    const [dataService] = await serviceFactory.getService('DataService', 'SerializerService');
+    const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
     const result = await dataService.updateArrivedInfo(packageId, body);
-    if (result) res.status(200).end();
-    else res.status(404).end();
+    if (!result) res.status(404).end();
+    const output = serializerService.serializeArriveInfoNode(result);
+    res.json(output);
   }
 }
 

@@ -287,7 +287,11 @@ class DBService {
     const result = await db.package_shippings.update(data, {
       where
     });
-    return result[0] > 0;
+    if (result[0] > 0) {
+      return await db.package_shippings.findOne({ where });
+    } else {
+      return null;
+    }
   }
 
   // Login

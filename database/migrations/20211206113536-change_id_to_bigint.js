@@ -34,11 +34,6 @@ module.exports = {
       autoIncrement: true,
     });
 
-    await queryInterface.changeColumn('packages_shippings', 'id', {
-      type: Sequelize.BIGINT,
-      autoIncrement: true,
-    });
-
     await queryInterface.changeColumn('shipping_paths', 'id', {
       type: Sequelize.BIGINT,
       autoIncrement: true,
@@ -75,20 +70,11 @@ module.exports = {
       type: Sequelize.INTEGER
     });
 
-    /*
-    await queryInterface.changeColumn('manifest_notes', 'id', {
-      type: Sequelize.INTEGER
-    });*/
-
     await queryInterface.changeColumn('packages', 'id', {
       type: Sequelize.INTEGER
     });
 
     await queryInterface.changeColumn('cargos', 'id', {
-      type: Sequelize.INTEGER
-    });
-
-    await queryInterface.changeColumn('packages_shippings', 'id', {
       type: Sequelize.INTEGER
     });
 

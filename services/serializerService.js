@@ -207,20 +207,22 @@ class SerializerService {
     return output;
   }
 
+  serializeArriveInfoNode(record) {
+    return {
+      id: record.id,
+      manifestId: record.manifest_id,
+      packageId: record.package_id,
+      pathId: record.path_id,
+      wayBillNo: record.way_bill_no,
+      pathNode: record.path_node,
+      arrived: record.arrived,
+      assignee: record.assignee
+    }
+  }
+
   serializeArriveInfo(records) {
     if (!Array.isArray(records) || records.length === 0) return [];
-    return _.map(records, (r) => {
-      return {
-        id: r.id,
-        manifestId: r.manifest_id,
-        packageId: r.package_id,
-        pathId: r.path_id,
-        wayBillNo: r.way_bill_no,
-        pathNode: r.path_node,
-        arrived: r.arrived,
-        assignee: r.assignee
-      }
-    })
+    return _.map(records, this.serializeArriveInfoNode);
   }
 }
 module.exports = SerializerService;

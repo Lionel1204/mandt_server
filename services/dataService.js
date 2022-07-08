@@ -444,7 +444,7 @@ class DataService {
       package_id: packageId,
       path_node: body.pathNode,
       arrived: !!body.arrived,
-      wayBillNo: body.wayBillNo || null
+      way_bill_no: body.wayBillNo || null
     }
     return this.dbService.updateArrivedInfo(options);
   }
