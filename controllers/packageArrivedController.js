@@ -37,8 +37,10 @@ class PackageArrivedController extends BaseController {
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const result = await dataService.updateArrivedInfo(packageId, body);
       if (!result) res.status(404).end();
-      const output = serializerService.serializeArriveInfoNode(result);
-      res.json(output);
+      else {
+        const output = serializerService.serializeArriveInfoNode(result);
+        res.json(output);
+      }
     } catch (ex) {
       this.errorResponse(res, ex);
     }
