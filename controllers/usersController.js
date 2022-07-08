@@ -16,35 +16,42 @@ class UsersController extends BaseController {
   }
 
   async post(req, res) {
-    const payload = {
-      name: req.body.name,
-      title: req.body.title,
-      identity: req.body.identity,
-      phone: req.body.phone,
-      email: req.body.email
-    };
-    const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
-    const user = await dataService.createUser(payload);
-    const output = serializerService.serializeUser(user);
-    res.status(201).json(output);
+    try {
+      const payload = {
+        name: req.body.name,
+        title: req.body.title,
+        identity: req.body.identity,
+        phone: req.body.phone,
+        email: req.body.email
+      };
+      const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
+      const user = await dataService.createUser(payload);
+      const output = serializerService.serializeUser(user);
+      res.status(201).json(output);
+    } catch (ex) {
+      this.errorResponse(res, ex);
+    }
   }
 
   async list(req, res) {
-    const limit = parseInt(req.query.limit) || 100;
-    const offset = parseInt(req.query.offset) || 0;
-    const company = parseInt(req.query.company);
-    const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
+    try {
+      const limit = parseInt(req.query.limit) || 100;
+      const offset = parseInt(req.query.offset) || 0;
+      const company = parseInt(req.query.company);
+      const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
 
-    const options = {
-      limit,
-      offset
+      const options = {
+        limit,
+        offset
+      }
+      if (company) options.company = company;
+      const [count, users] = await dataService.listUsers(options);
+      const output = serializerService.serializeUsers(users);
+      const paginationOut = paginateResult(output, req, limit, offset, count);
+      res.json(paginationOut);
+    } catch (ex) {
+      this.errorResponse(res, ex);
     }
-    if (company) options.company = company;
-    const [count, users] = await dataService.listUsers(options);
-    const output = serializerService.serializeUsers(users);
-    const paginationOut = paginateResult(output, req, limit, offset, count);
-    res.json(paginationOut);
-
   }
 }
 

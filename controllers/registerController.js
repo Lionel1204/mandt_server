@@ -14,22 +14,26 @@ class RegisterController extends BaseController {
   }
 
   async getCaptcha(req, res) {
-    this.validateQuery(captchaQuerySchema, req.query);
-    const cap = svgCaptcha.create({
-      size: 4,
-      ignoreChars: '0Oo1iIlL',
-      noise: 3,
-      color: true,
-      background: '#CFCFCF'
-    });
-    this.logger.info(cap.text);
-    req.session.captcha = cap.text;
-    if (req.query.base64) {
-      const base64fromSVG = svg64(cap.data);
-      res.json({image: base64fromSVG});
-    } else {
-      res.type('svg');
-      res.send(cap.data);
+    try {
+      this.validateQuery(captchaQuerySchema, req.query);
+      const cap = svgCaptcha.create({
+        size: 4,
+        ignoreChars: '0Oo1iIlL',
+        noise: 3,
+        color: true,
+        background: '#CFCFCF'
+      });
+      this.logger.info(cap.text);
+      req.session.captcha = cap.text;
+      if (req.query.base64) {
+        const base64fromSVG = svg64(cap.data);
+        res.json({image: base64fromSVG});
+      } else {
+        res.type('svg');
+        res.send(cap.data);
+      }
+    } catch (ex) {
+      this.errorResponse(res, ex);
     }
   }
 

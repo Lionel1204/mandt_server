@@ -208,6 +208,7 @@ class SerializerService {
   }
 
   serializeArriveInfoNode(record) {
+    if (!record) return null;
     return {
       id: record.id,
       manifestId: record.manifest_id,

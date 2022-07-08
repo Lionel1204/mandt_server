@@ -99,18 +99,26 @@ class ProjectsController extends BaseController {
   }
 
   async listProjectUsers(req, res) {
-    const { projectId } = req.params;
-    const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
-    const projectUsers = await dataService.listProjectUsers(projectId);
-    res.json(projectUsers[projectId]);
+    try {
+      const { projectId } = req.params;
+      const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
+      const projectUsers = await dataService.listProjectUsers(projectId);
+      res.json(projectUsers[projectId]);
+    } catch (ex) {
+      this.errorResponse(res, ex);
+    }
   }
 
   async addProjectUsers(req, res) {
-    const { projectId, userId } = req.params;
-    const payload = req.body;
-    const dataService = await serviceFactory.getService('DataService');
-    const result = await dataService.addProjectUser(projectId, userId, payload);
-    res.status(201).json(result);
+    try {
+      const { projectId, userId } = req.params;
+      const payload = req.body;
+      const dataService = await serviceFactory.getService('DataService');
+      const result = await dataService.addProjectUser(projectId, userId, payload);
+      res.status(201).json(result);
+    } catch (ex) {
+      this.errorResponse(res, ex);
+    }
   }
 }
 

@@ -10,19 +10,22 @@ class CompaniesController extends BaseController {
   }
 
   async list(req, res) {
-    this.validateBody(listCompaniesQuerySchema, req.query);
-    const options = req.query;
-    const { limit, offset } = options;
+    try {
+      this.validateBody(listCompaniesQuerySchema, req.query);
+      const options = req.query;
+      const { limit, offset } = options;
 
-    const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
-    const [count, companies] = await dataService.listCompanies(options);
-    const contactIds = _.map(companies, (c) => c.contactId);
-    const contactList = await dataService.getUsersByIds(contactIds);
-    const contactMap = _.keyBy(contactList, 'id');
-    const output = serializerService.serializeCompanies(companies, contactMap);
-    const paginationOut = paginateResult(output, req, limit, offset, count);
-    res.json(paginationOut);
-
+      const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
+      const [count, companies] = await dataService.listCompanies(options);
+      const contactIds = _.map(companies, (c) => c.contactId);
+      const contactList = await dataService.getUsersByIds(contactIds);
+      const contactMap = _.keyBy(contactList, 'id');
+      const output = serializerService.serializeCompanies(companies, contactMap);
+      const paginationOut = paginateResult(output, req, limit, offset, count);
+      res.json(paginationOut);
+    } catch (ex) {
+      this.errorResponse(res, ex);
+    }
   }
 
   async post(req, res) {
