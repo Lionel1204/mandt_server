@@ -1,10 +1,13 @@
 const db = require('../database/models');
 const _ = require('lodash');
 const Sequelize = require('sequelize');
+const logger = require("../helper/loggerHelper");
 const Op = Sequelize.Op;
 
 class DBService {
-  constructor() {}
+  constructor() {
+    this.logger = logger.getLogger();
+  }
   initialize() {
     return Promise.resolve();
   }
@@ -266,7 +269,7 @@ class DBService {
   // Arrived Info
   async bulkCreateArrivedInfo(records) {
     // TODO: try to use transaction
-    await db.package_shippings.bulkCreate(records,{ updateOnDuplicate: ['package_id', 'path_node'] });
+    await db.package_shippings.bulkCreate(records,{ updateOnDuplicate: ['package_id', 'path_id', 'path_node'] });
   }
 
   async listArrivedInfo(options) {

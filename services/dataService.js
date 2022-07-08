@@ -1,11 +1,14 @@
 const _ = require('lodash');
 const shortid = require("shortid");
-const { ProjectStatus, ManifestStatus, PackageStatus, PathType } = require('../helper/constants');
+const logger = require('../helper/loggerHelper');
+
+const { ProjectStatus, ManifestStatus, PackageStatus } = require('../helper/constants');
 const { ResourceNotExistException, InternalServerException, NotAllowedException } = require('../exceptions/commonExceptions');
 
 class DataService {
   constructor(dbService) {
     this.dbService = dbService;
+    this.logger = logger.getLogger();
   }
 
   initialize() {
@@ -174,7 +177,8 @@ class DataService {
     const result = await this.dbService.updateManifest(manifestId, manifest)
     if (createShippingFlag && result) {
       // Manifest is ready, start to create shipping record
-      await this.createArrivedInfo(manifestId)
+      await this.createArrivedInfo(manifestId);
+      this.logger.info(`Manifest ${manifestId}, Arrived Info is created`);
     }
     return result
   }

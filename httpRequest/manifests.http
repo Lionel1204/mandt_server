@@ -21,7 +21,7 @@ Content-Type: application/jsons
 
 ###
 
-PATCH http://{{host}}/{{api_prefix}}/manifests/3
+PATCH http://{{host}}/{{api_prefix}}/manifests/1
 Content-Type: application/json
 
 {

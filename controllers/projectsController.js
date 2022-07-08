@@ -92,6 +92,7 @@ class ProjectsController extends BaseController {
       const [dataService] = await serviceFactory.getService('DataService', 'SerializerService');
 
       await dataService.deleteProject(projectId);
+      this.logger.info(`Project ${projectId} has been deleted`);
       res.status(204).end();
     } catch (ex) {
       this.errorResponse(res, ex);

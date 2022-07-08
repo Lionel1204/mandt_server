@@ -81,6 +81,7 @@ class ManifestsController extends BaseController {
       const { manifestId } = req.params;
       const [dataService] = await serviceFactory.getService('DataService', 'SerializerService');
       const result = await dataService.deleteManifest(manifestId);
+      this.logger.info(`Manifest ${manifestId} has been deleted`);
       if (result) res.status(204).end();
       else res.status(404).end();
     } catch (ex) {

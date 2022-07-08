@@ -52,6 +52,12 @@ module.exports = {
       onDelete: 'CASCADE',
       defaultValue: null, after: 'can_maintain_system'
     });
+
+    await queryInterface.addConstraint('package_shippings', {
+        fields: ['manifest_id','package_id', 'path_id', 'path_node'],
+        name: 'id_node_uniq_ind',
+        type: 'unique'
+      });
   },
 
   down: async (queryInterface, Sequelize) => {

@@ -74,6 +74,7 @@ class CargosController extends BaseController {
       const { manifestId, cargoId } = req.params;
       const [dataService] = await serviceFactory.getService('DataService', 'SerializerService');
       const result = await dataService.deleteCargo(manifestId, cargoId);
+      this.logger.info(`Cargo ${cargoId} has been deleted`);
       if (result) res.status(204).end();
       else res.status(404).end();
     } catch (ex) {

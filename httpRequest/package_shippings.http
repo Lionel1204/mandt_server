@@ -7,7 +7,7 @@ PATCH http://{{host}}/{{api_prefix}}/packages/1/arrived-info
 Content-Type: application/json
 
 {
-  "pathNode": 1,
+  "pathNode": 0,
   "wayBillNo": "test111",
   "arrived": true
 }
