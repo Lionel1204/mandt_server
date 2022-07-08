@@ -2,7 +2,7 @@ const _ = require('lodash');
 const BaseController = require('./baseController');
 const serviceFactory = require('../services/serviceFactory');
 const svgCaptcha = require('svg-captcha');
-const { loginQuerySchema, loginBodySchema } = require('../validateSchemas/registerSchemas');
+const { loginQuerySchema, loginBodySchema, captchaQuerySchema } = require('../validateSchemas/registerSchemas');
 const { RegisterAction, RegisterError, SALT } = require('../helper/constants');
 const { ResourceNotExistException, NotAllowedException } = require('../exceptions/commonExceptions');
 const { encrypt } = require('../helper/utils');
@@ -14,6 +14,7 @@ class RegisterController extends BaseController {
   }
 
   async getCaptcha(req, res) {
+    this.validateQuery(captchaQuerySchema, req.query);
     const cap = svgCaptcha.create({
       size: 4,
       ignoreChars: '0Oo1iIlL',
@@ -26,9 +27,10 @@ class RegisterController extends BaseController {
     if (req.query.base64) {
       const base64fromSVG = svg64(cap.data);
       res.json({image: base64fromSVG});
+    } else {
+      res.type('svg');
+      res.send(cap.data);
     }
-    res.type('svg');
-    res.send(cap.data);
   }
 
   async action(req, res) {

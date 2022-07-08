@@ -30,7 +30,16 @@ const loginQuerySchema = {
   required: ['action']
 }
 
+const captchaQuerySchema = {
+  type: 'object',
+  properties: {
+    base64: {
+      type: 'boolean'
+    }
+  }
+}
 module.exports = {
   loginBodySchema,
-  loginQuerySchema
+  loginQuerySchema,
+  captchaQuerySchema
 };
