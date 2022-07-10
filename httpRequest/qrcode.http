@@ -1,0 +1,7 @@
+POST http://{{host}}/{{api_prefix}}/qrcode
+Content-Type: application/json
+
+{
+  "content": "test"
+}
+
