@@ -9,7 +9,7 @@ Content-Type: application/json
 
 {
   "projectId": 1,
-  "noteNo": "test001",
+  "noteNo": "test002",
   "creator": 3,
   "receiver": 1
 }
@@ -21,7 +21,7 @@ Content-Type: application/jsons
 
 ###
 
-PATCH http://{{host}}/{{api_prefix}}/manifests/1
+PATCH http://{{host}}/{{api_prefix}}/manifests/2
 Content-Type: application/json
 
 {

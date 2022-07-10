@@ -2,7 +2,7 @@ const BaseController = require('./baseController');
 const serviceFactory = require('../services/serviceFactory');
 const _ = require('lodash');
 const { manifestPathSchema } = require('../validateSchemas/baseSchemas');
-const { createPathBodySchema, listPathQuerySchema, updatePathBodySchema} = require('../validateSchemas/pathSchemas');
+const { createPathBodySchema, updatePathBodySchema} = require('../validateSchemas/pathSchemas');
 
 class PathsController extends BaseController {
   constructor() {

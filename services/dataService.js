@@ -3,7 +3,7 @@ const shortid = require("shortid");
 const logger = require('../helper/loggerHelper');
 
 const { ProjectStatus, ManifestStatus, PackageStatus } = require('../helper/constants');
-const { ResourceNotExistException, InternalServerException, NotAllowedException } = require('../exceptions/commonExceptions');
+const { ResourceNotExistException, InternalServerException, NotAllowedException, BadRequestException} = require('../exceptions/commonExceptions');
 
 class DataService {
   constructor(dbService) {
@@ -151,10 +151,24 @@ class DataService {
     return await this.dbService.createManifest(manifest);
   }
 
+  async validateManifestResources(manifestId) {
+    // Validate the resources
+    const pkgCount = await this.dbService.countPackages(manifestId);
+    if (pkgCount === 0) throw new ResourceNotExistException(`There is no package in manifest ${manifestId}`);
+    const path = await this.dbService.getPaths(manifestId);
+    if (!path) throw new ResourceNotExistException(`There is no path in manifest ${manifestId}`);
+    const assigneeIds = _.uniq(path.map((p) => p.assignee));
+    const assignees = await this.dbService.getCompaniesByIds(assigneeIds);
+    if (assignees.length === 0 || assignees.length !== assigneeIds.length)
+      throw new BadRequestException(`The assignees in path are not available`);
+  }
+
   async updateManifest(manifestId, payload) {
     let publishedAt = undefined;
     let endedAt = undefined;
     let createShippingFlag = payload?.status === ManifestStatus.Shipping;
+
+    if (createShippingFlag) await this.validateManifestResources(manifestId);
 
     if (payload?.status === ManifestStatus.Published) {
       publishedAt = new Date();
@@ -376,6 +390,10 @@ class DataService {
       manifest_id: manifestId,
       paths
     }
+    const assigneeIds = _.uniq(paths.map((p) => p.assignee));
+    const assignee = await this.dbService.getCompaniesByIds(assigneeIds);
+    if (assignee.length === 0 || assignee.length !== assigneeIds.length)
+      throw new BadRequestException(`Assignees are not available`);
     return this.dbService.createPaths( payload);
   }
 
@@ -393,39 +411,45 @@ class DataService {
 
   // arrived info
   async createArrivedInfo(manifestId) {
-    // infinite loading:
-    let offset = 0;
-    const limit = 50;
-    let packages = [];
-    while (true) {
-      const { count, rows } = await this.queryPackages({ manifestId, offset, limit });
-      packages = [...packages, ...rows];
-      offset += rows.length;
-      if (packages.length >= count) break;
-    }
+    try {
+      // infinite loading:
+      let offset = 0;
+      const limit = 50;
+      let packages = [];
+      while (true) {
+        const { count, rows } = await this.queryPackages({ manifestId, offset, limit });
+        packages = [...packages, ...rows];
+        offset += rows.length;
+        if (packages.length >= count) break;
+      }
 
-    if (packages.length === 0) return;
+      if (packages.length === 0) return;
 
-    const pathRec = await this.getPaths(manifestId);
-    if (!pathRec) return;
+      const pathRec = await this.getPaths(manifestId);
+      if (!pathRec) return;
 
-    const arrivedInfoList = packages.map((p) => {
-      return pathRec.paths.map((path, index) => {
-        const payload = {
-          manifest_id: manifestId,
-          package_id: p.id,
-          path_id: pathRec.id,
-          way_bill_no: null,
-          arrived: index === 0,
-          path_node: index,
-          assignee: path.assignee,
-        };
-        return payload;
+      const arrivedInfoList = packages.map((p) => {
+        return pathRec.paths.map((path, index) => {
+          const payload = {
+            manifest_id: manifestId,
+            package_id: p.id,
+            path_id: pathRec.id,
+            way_bill_no: null,
+            arrived: index === 0,
+            path_node: index,
+            assignee: path.assignee,
+          };
+          return payload;
+        });
       });
-    });
 
-    for (const arrivedInfo of arrivedInfoList) {
-      await this.dbService.bulkCreateArrivedInfo(arrivedInfo);
+      for (const arrivedInfo of arrivedInfoList) {
+        await this.dbService.bulkCreateArrivedInfo(arrivedInfo);
+      }
+
+    } catch (ex) {
+      this.logger.error(`Cannot add arrived info with error: ${ex.message}`);
+      throw ex;
     }
   }
 

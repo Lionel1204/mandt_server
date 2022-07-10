@@ -140,6 +140,10 @@ class DBService {
     return db.companies.create(company);
   }
 
+  async getCompaniesByIds(companyIds) {
+    return db.companies.findAll({ where: {id: companyIds }});
+  }
+
   async getCompanies(opt) {
     const options = {
       order: [[db.sequelize.fn('lower', db.sequelize.col('createdAt')), 'DESC']],

@@ -12,7 +12,7 @@ Content-Type: application/json
 
 ###
 # Get a user
-GET http://{{host}}/{{api_prefix}}/users/3
+GET http://{{host}}/{{api_prefix}}/users/1
 Content-Type: application/json
 
 # List users

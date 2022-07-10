@@ -8,11 +8,15 @@ class UsersController extends BaseController {
   }
 
   async get(req, res) {
-    const { userId } = req.params;
-    const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
-    const user = await dataService.getUser(userId);
-    const output = serializerService.serializeUser(user);
-    res.json(output);
+    try {
+      const { userId } = req.params;
+      const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
+      const user = await dataService.getUser(userId);
+      const output = serializerService.serializeUser(user);
+      res.json(output);
+    } catch (ex) {
+      this.errorResponse(res, ex);
+    }
   }
 
   async post(req, res) {

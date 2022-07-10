@@ -4,7 +4,7 @@ Content-Type: application/json
 
 ###
 # Create a path
-POST http://{{host}}/{{api_prefix}}/manifests/1/paths
+POST http://{{host}}/{{api_prefix}}/manifests/2/paths
 Content-Type: application/json
 
 [{

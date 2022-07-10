@@ -17,6 +17,7 @@ const controllers = require('../controllers');
 const {createControllerFunction} = require('../helper/routerHelper');
 const apiPrefix = '/api/v1'
 const {
+  mainController,
   projectsController,
   usersController,
   qrController,
@@ -30,6 +31,9 @@ const {
 } = controllers;
 
 module.exports = function(app) {
+  // Health
+  app.get(`${apiPrefix}/health`, createControllerFunction(mainController, 'health'));
+
   // Projects
   app.get(`${apiPrefix}/projects`, createControllerFunction(projectsController, 'list'));
   app.get(`${apiPrefix}/projects/:projectId`, createControllerFunction(projectsController, 'get'));

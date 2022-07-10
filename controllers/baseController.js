@@ -1,5 +1,5 @@
 const Ajv = require("ajv");
-const logger = require('../helper/loggerHelper')
+const logger = require('../helper/loggerHelper');
 const Exceptions = require('../exceptions');
 
 class BaseController {

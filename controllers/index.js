@@ -1,4 +1,5 @@
 module.exports = {
+    mainController: require('./mainController'),
     projectsController: require('./projectsController'),
     usersController: require('./usersController'),
     manifestsController: require('./manifestsController'),

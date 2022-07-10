@@ -14,6 +14,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+// TODO: use config instead of const
 app.use(cors({
   origin: ['http://localhost:8080'],
   method: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
