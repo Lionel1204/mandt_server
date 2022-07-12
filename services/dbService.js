@@ -255,10 +255,7 @@ class DBService {
   }
 
   async getPaths(options) {
-    const where = {
-      manifest_id: options.manifest_id
-    };
-    return db.paths.findOne({ where });
+    return db.paths.findOne({ where: options });
   }
 
   async updatePaths(pathId, paths) {

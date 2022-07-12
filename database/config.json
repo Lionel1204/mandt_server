@@ -1,9 +1,21 @@
 {
-  "development": {
+  "local": {
     "username": "root",
     "password": "Passw0rd1",
     "database": "mandt_development",
     "host": "127.0.0.1",
+    "port": 3306,
+    "dialect": "mysql",
+    "dialectOptions": {
+      "supportBigNumbers": true
+    }
+  },
+  "development": {
+    "username": "root",
+    "password": "ge%LAi*PZ6#X@y&",
+    "database": "mandt_development",
+    "host": "sh-cynosdbmysql-grp-p8711imo.sql.tencentcdb.com",
+    "port": 23803,
     "dialect": "mysql",
     "dialectOptions": {
       "supportBigNumbers": true
@@ -11,9 +23,20 @@
   },
   "test": {
     "username": "root",
-    "password": "Passw0rd1",
+    "password": "",
     "database": "mandt_test",
-    "host": "127.0.0.1",
+    "host": "",
+    "dialect": "mysql",
+    "dialectOptions": {
+      "supportBigNumbers": true
+    }
+  },
+  "staging": {
+    "username": "root",
+    "password": "ge%LAi*PZ6#X@y&",
+    "database": "mandt_staging",
+    "host": "10.0.4.8",
+    "port": 3306,
     "dialect": "mysql",
     "dialectOptions": {
       "supportBigNumbers": true

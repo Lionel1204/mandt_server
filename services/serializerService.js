@@ -207,7 +207,7 @@ class SerializerService {
     return output;
   }
 
-  serializeArriveInfoNode(record) {
+  serializeArriveInfoNode(record, index, pathRec) {
     if (!record) return null;
     return {
       id: record.id,
@@ -217,13 +217,18 @@ class SerializerService {
       wayBillNo: record.way_bill_no,
       pathNode: record.path_node,
       arrived: record.arrived,
-      assignee: record.assignee
+      assignee: record.assignee,
+      takeOver: record.take_over,
+      from: pathRec[index].address,
+      next: record.next
     }
   }
 
-  serializeArriveInfo(records) {
+  serializeArriveInfo(records, pathRec) {
     if (!Array.isArray(records) || records.length === 0) return [];
-    return _.map(records, this.serializeArriveInfoNode);
+    return _.map(records, (r, index) => {
+      return this.serializeArriveInfoNode(r, index, pathRec);
+    });
   }
 }
 module.exports = SerializerService;

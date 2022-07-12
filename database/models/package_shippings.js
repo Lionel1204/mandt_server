@@ -21,6 +21,8 @@ module.exports = (sequelize, DataTypes) => {
     way_bill_no: DataTypes.STRING,
     arrived: DataTypes.BOOLEAN,
     assignee: DataTypes.BIGINT,
+    take_over: DataTypes.BOOLEAN,
+    next: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'package_shippings',

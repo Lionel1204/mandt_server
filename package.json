@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start-local": "NODE_ENV=local node ./bin/www",
     "start-dev": "NODE_ENV=development node ./bin/www",
+    "start-staging": "NODE_ENV=staging node ./bin/www",
     "start": "NODE_ENV=production node ./bin/www",
-    "db:create": "npx sequelize db:create",
-    "db:migrate": "npx sequelize db:migrate",
-    "db:migrate:undo": "npx sequelize db:migrate:undo",
-    "db:drop": "npx sequelize db:drop",
-    "db:seeds": "npx sequelize db:seed:all",
-    "db:seed": "npx sequelize db:seed --seed=20220702045747-package_arrived"
+    "db:create": "npx sequelize db:create --env local",
+    "db:migrate": "npx sequelize db:migrate --env local",
+    "db:migrate:undo": "npx sequelize db:migrate:undo --env local",
+    "db:drop": "npx sequelize db:drop --env local",
+    "db:seeds": "npx sequelize db:seed:all --env local"
   },
   "dependencies": {
     "ajv": "^8.11.0",

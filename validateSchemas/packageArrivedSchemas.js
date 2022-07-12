@@ -27,6 +27,9 @@ const updateArrivedInfoBodySchema = {
     wayBillNo: {
       type: 'string',
       minLength: 1
+    },
+    takeOver: {
+      type: 'boolean'
     }
   },
   required: ['pathNode', 'arrived']

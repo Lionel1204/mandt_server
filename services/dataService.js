@@ -155,9 +155,9 @@ class DataService {
     // Validate the resources
     const pkgCount = await this.dbService.countPackages(manifestId);
     if (pkgCount === 0) throw new ResourceNotExistException(`There is no package in manifest ${manifestId}`);
-    const path = await this.dbService.getPaths(manifestId);
-    if (!path) throw new ResourceNotExistException(`There is no path in manifest ${manifestId}`);
-    const assigneeIds = _.uniq(path.map((p) => p.assignee));
+    const pathRec = await this.dbService.getPaths({manifest_id: manifestId});
+    if (!pathRec) throw new ResourceNotExistException(`There is no path in manifest ${manifestId}`);
+    const assigneeIds = _.uniq(pathRec.paths.map((p) => p.assignee));
     const assignees = await this.dbService.getCompaniesByIds(assigneeIds);
     if (assignees.length === 0 || assignees.length !== assigneeIds.length)
       throw new BadRequestException(`The assignees in path are not available`);
@@ -429,6 +429,8 @@ class DataService {
       if (!pathRec) return;
 
       const arrivedInfoList = packages.map((p) => {
+        const addressList = pathRec.paths.map((p) => p.address);
+        addressList.push(null);
         return pathRec.paths.map((path, index) => {
           const payload = {
             manifest_id: manifestId,
@@ -438,6 +440,8 @@ class DataService {
             arrived: index === 0,
             path_node: index,
             assignee: path.assignee,
+            take_over: false,
+            next: addressList[index+1]
           };
           return payload;
         });
@@ -472,6 +476,7 @@ class DataService {
       package_id: packageId,
       path_node: body.pathNode,
       arrived: !!body.arrived,
+      take_over: !!body.takeOver,
       way_bill_no: body.wayBillNo || null
     }
     return this.dbService.updateArrivedInfo(options);
