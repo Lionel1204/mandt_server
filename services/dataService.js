@@ -136,6 +136,9 @@ class DataService {
     return this.dbService.getManifests(opt, options.limit, options.offset);
   }
 
+  async getManifestsByIds(mids) {
+    return this.dbService.getManifestsByIds(_.uniq(mids));
+  }
   async createManifest(payload) {
     const manifest = {
       project_id: payload?.projectId,

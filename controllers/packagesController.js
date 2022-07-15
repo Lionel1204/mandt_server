@@ -23,7 +23,8 @@ class PackagesController extends BaseController {
       const payload = req.body;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const pkg = await dataService.createPackage(manifestId, payload);
-      const output = serializerService.serializePackage(pkg);
+      const manifest = await dataService.getManifestById(manifestId);
+      const output = serializerService.serializePackage(pkg, manifest?.status);
       res.status(201).json(output);
     } catch (ex) {
       this.errorResponse(res, ex);
@@ -36,7 +37,8 @@ class PackagesController extends BaseController {
       const { manifestId, packageId } = req.params;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const pkg = await dataService.getPackage(manifestId, packageId);
-      const output = serializerService.serializePackage(pkg);
+      const manifest = await dataService.getManifestById(manifestId);
+      const output = serializerService.serializePackage(pkg, manifest?.status);
       res.status(200).json(output);
     } catch (ex) {
       this.errorResponse(res, ex);
@@ -53,7 +55,9 @@ class PackagesController extends BaseController {
       options.manifestId = manifestId;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const { count, rows } = await dataService.queryPackages(options);
-      const output = serializerService.serializePackages(rows, {});
+      const manifest = await dataService.getManifestById(manifestId);
+      const manifestMap = { [manifest.id]: manifest };
+      const output = serializerService.serializePackages(rows, manifestMap);
       const paginationOut = paginateResult(output, req, limit, offset, count);
       res.status(200).json(paginationOut);
     } catch (ex) {
@@ -95,7 +99,10 @@ class PackagesController extends BaseController {
       const { limit, offset } = req.query;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const { count, rows } = await dataService.queryPackages(req.query);
-      const output = serializerService.serializePackages(rows);
+      const manifestIds = _.map(rows, (r) => r.manifest_id);
+      const manifests = await dataService.getManifestsByIds(manifestIds);
+      const manifestMap = _.keyBy(manifests, 'id');
+      const output = serializerService.serializePackages(rows, manifestMap);
       const paginationOut = paginateResult(output, req, limit, offset, count);
       res.status(200).json(paginationOut);
     } catch (ex) {

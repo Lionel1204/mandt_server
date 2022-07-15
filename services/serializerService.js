@@ -147,7 +147,7 @@ class SerializerService {
     return output;
   }
 
-  serializePackage(pkg, paths = {}) {
+  serializePackage(pkg, manifestStatus = undefined) {
     if (!pkg) throw new ResourceNotExistException('Package does not exist')
     const output = {
       id: pkg.id,
@@ -160,16 +160,18 @@ class SerializerService {
       status: pkg.status,
       amount: pkg.amount,
       creator: pkg.creator,
-      paths,
+      manifestStatus: manifestStatus,
       createAt: pkg.createdAt
     };
     return output;
   }
 
-  serializePackages(packages) {
+  serializePackages(packages, manifestMap = {}) {
     if (!Array.isArray(packages) || packages.length === 0) return [];
+
     return _.map(packages, (p) => {
-      return this.serializePackage(p)
+      const manifest = manifestMap[p.manifest_id];
+      return this.serializePackage(p, manifest?.status);
     });
   }
 

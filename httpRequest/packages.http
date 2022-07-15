@@ -25,7 +25,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://{{host}}/{{api_prefix}}/manifests/1/packages/2
+GET http://{{host}}/{{api_prefix}}/manifests/1/packages/1
 Content-Type: application/json
 
 ###

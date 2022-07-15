@@ -1,9 +1,9 @@
 const db = require('../database/models');
 const _ = require('lodash');
 const Sequelize = require('sequelize');
-const logger = require("../helper/loggerHelper");
-const {encrypt} = require("../helper/utils");
-const {SALT} = require("../helper/constants");
+const logger = require('../helper/loggerHelper');
+const { encrypt } = require('../helper/utils');
+const { SALT } = require('../helper/constants');
 const Op = Sequelize.Op;
 
 class DBService {
@@ -87,7 +87,7 @@ class DBService {
   }
 
   async getUserByPhone(phone) {
-    const where = {phone};
+    const where = { phone };
     return db.users.findOne({ where });
   }
 
@@ -120,6 +120,10 @@ class DBService {
     return await db.manifest_notes.findAndCountAll({ where, order, limit, offset });
   }
 
+  async getManifestsByIds(mids) {
+    return db.manifest_notes.findAll({ where: { id: mids } });
+  }
+
   async createManifest(manifest) {
     return db.manifest_notes.create(manifest);
   }
@@ -148,7 +152,7 @@ class DBService {
   }
 
   async getCompaniesByIds(companyIds) {
-    return db.companies.findAll({ where: {id: companyIds }});
+    return db.companies.findAll({ where: { id: companyIds } });
   }
 
   async getCompanyById(companyId) {
@@ -284,7 +288,7 @@ class DBService {
   async updatePaths(pathId, paths) {
     const where = {
       id: pathId
-    }
+    };
 
     const result = await db.paths.update({ paths }, { where });
     return result[0] > 0;
@@ -293,15 +297,18 @@ class DBService {
   // Arrived Info
   async bulkCreateArrivedInfo(records) {
     // TODO: try to use transaction
-    await db.package_shippings.bulkCreate(records,{ updateOnDuplicate: ['package_id', 'path_id', 'path_node'] });
+    await db.package_shippings.bulkCreate(records, { updateOnDuplicate: ['package_id', 'path_id', 'path_node'] });
   }
 
   async listArrivedInfo(options) {
     const where = options;
     const opt = {
-      order: [['package_id', 'ASC'], ['path_id', 'ASC']],
+      order: [
+        ['package_id', 'ASC'],
+        ['path_id', 'ASC']
+      ],
       where
-    }
+    };
     return await db.package_shippings.findAll({ where });
   }
 
@@ -327,7 +334,7 @@ class DBService {
 
   // Login
   async getLogin(phone) {
-    return await db.logins.findOne({ where: {user_phone: phone}});
+    return await db.logins.findOne({ where: { user_phone: phone } });
   }
 
   async setLogin(user, password) {
@@ -339,7 +346,7 @@ class DBService {
       login_time: null,
       createdAt: new Date(),
       updatedAt: new Date()
-    }
+    };
     return db.logins.upsert(payload);
   }
 }
