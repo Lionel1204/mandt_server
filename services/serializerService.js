@@ -18,18 +18,16 @@ class SerializerService {
    * @param data
    * @returns {*}
    */
-  serializeProject(project, users) {
+  serializeProject(project, user, company) {
     if (!project) throw new ResourceNotExistException('Project does not exist')
-
-    const uniqUsers = _.keyBy(_.uniq(users), 'userId');
 
     const output = {
       id: project.id,
       name: project.name,
       ownerId: project.owner,
       receiverId: project.receiver,
-      owner: uniqUsers[project.owner]?.userName,
-      receiver: uniqUsers[project.receiver]?.userName,
+      owner: user?.name,
+      receiver: company.name,
       status: project.status,
       hidden: project.hidden,
       endedAt: project.ended_at,
@@ -38,12 +36,15 @@ class SerializerService {
     return output;
   }
 
-  serializeProjects(projects, projectUsersMap = []) {
+  serializeProjects(projects, userList, companyList) {
     if (!Array.isArray(projects) || projects.length === 0) return [];
+    const userMap = _.keyBy(userList, 'id');
+    const companyMap = _.keyBy(companyList, 'id');
 
     const output = _.map(projects, (project) => {
-      const users = projectUsersMap[project.id];
-      return this.serializeProject(project, users);
+      const user = userMap[project.owner];
+      const company = companyMap[project.receiver];
+      return this.serializeProject(project, user, company);
     });
     return output;
   }

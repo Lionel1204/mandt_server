@@ -2,6 +2,8 @@ const db = require('../database/models');
 const _ = require('lodash');
 const Sequelize = require('sequelize');
 const logger = require("../helper/loggerHelper");
+const {encrypt} = require("../helper/utils");
+const {SALT} = require("../helper/constants");
 const Op = Sequelize.Op;
 
 class DBService {
@@ -84,6 +86,11 @@ class DBService {
     return db.users.findOne({ where });
   }
 
+  async getUserByPhone(phone) {
+    const where = {phone};
+    return db.users.findOne({ where });
+  }
+
   async getUserById(userId) {
     return db.users.findByPk(userId);
   }
@@ -144,6 +151,10 @@ class DBService {
     return db.companies.findAll({ where: {id: companyIds }});
   }
 
+  async getCompanyById(companyId) {
+    return db.companies.findByPk(companyId);
+  }
+
   async getCompanies(opt) {
     const options = {
       order: [[db.sequelize.fn('lower', db.sequelize.col('createdAt')), 'DESC']],
@@ -195,7 +206,13 @@ class DBService {
     );
 
     if (package_no) where.package_no = { [Op.like]: `%${package_no}%` };
-    return db.packages.findAndCountAll({ where, limit, offset });
+    const opt = {
+      where,
+      order: [[db.sequelize.fn('lower', db.sequelize.col('createdAt')), 'DESC']],
+      limit,
+      offset
+    };
+    return db.packages.findAndCountAll(opt);
   }
 
   async countPackages(manifestId) {
@@ -242,7 +259,13 @@ class DBService {
     );
 
     if (name) where.name = { [Op.like]: `%${name}%` };
-    return db.cargos.findAndCountAll({ where, limit, offset });
+    const opt = {
+      where,
+      order: [[db.sequelize.fn('lower', db.sequelize.col('createdAt')), 'DESC']],
+      limit,
+      offset
+    };
+    return db.cargos.findAndCountAll(opt);
   }
 
   async deleteCargo(manifestId, cargoId) {
@@ -275,6 +298,10 @@ class DBService {
 
   async listArrivedInfo(options) {
     const where = options;
+    const opt = {
+      order: [['package_id', 'ASC'], ['path_id', 'ASC']],
+      where
+    }
     return await db.package_shippings.findAll({ where });
   }
 
@@ -301,6 +328,19 @@ class DBService {
   // Login
   async getLogin(phone) {
     return await db.logins.findOne({ where: {user_phone: phone}});
+  }
+
+  async setLogin(user, password) {
+    const payload = {
+      user_id: user.id,
+      user_phone: user.phone,
+      password: encrypt('sha1', password, 'base64', SALT),
+      captcha: '',
+      login_time: null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+    return db.logins.upsert(payload);
   }
 }
 module.exports = DBService;

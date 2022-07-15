@@ -17,8 +17,13 @@ class ProjectsController extends BaseController {
       const { limit, offset } = req.query;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const [count, projects] = await dataService.listProjects({ limit, offset });
-      const projectUsers = await dataService.listProjectUsers(projects.map((p) => p.id));
-      const output = serializerService.serializeProjects(projects, projectUsers);
+      const userIds = _.map(projects, (p) => p.owner);
+      const companyIds = _.map(projects, (p) => p.receiver);
+
+      const users = await dataService.getUsersByIds(_.uniq(userIds));
+      const companies = await dataService.getComaniesByIds(_.uniq(companyIds));
+
+      const output = serializerService.serializeProjects(projects, users, companies);
       const paginationOut = paginateResult(output, req, limit, offset, count);
       res.json(paginationOut);
     } catch (ex) {
@@ -37,9 +42,10 @@ class ProjectsController extends BaseController {
       };
 
       const project = await dataService.getProjectById(projectId, options);
+      const user = await dataService.getUser(project.owner);
+      const company = await dataService.getCompany(project.receiver)
 
-      const projectUsers = await dataService.listProjectUsers([project.id]);
-      const output = serializerService.serializeProject(project, projectUsers[project.id]);
+      const output = serializerService.serializeProject(project, user, company);
       res.json(output);
     } catch (ex) {
       this.errorResponse(res, ex);
@@ -61,8 +67,9 @@ class ProjectsController extends BaseController {
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
 
       const project = await dataService.createProject(payload);
-      const projectUsers = await dataService.listProjectUsers([project.id]);
-      const output = serializerService.serializeProject(project, projectUsers[project.id]);
+      const user = await dataService.getUser(project.owner);
+      const company = await dataService.getCompany(project.receiver)
+      const output = serializerService.serializeProject(project, user, company);
       res.status(201).json(output);
     } catch (ex) {
       this.errorResponse(res, ex);
@@ -76,10 +83,14 @@ class ProjectsController extends BaseController {
       const { projectId } = req.params;
       const payload = req.body;
 
-      const [dataService] = await serviceFactory.getService('DataService', 'SerializerService');
+      const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
 
-      await dataService.updateProject(projectId, payload);
-      res.status(200).end();
+      const newPrj = await dataService.updateProject(projectId, payload);
+      const user = await dataService.getUser(newPrj.owner);
+      const company = await dataService.getCompany(newPrj.receiver)
+
+      const output = serializerService.serializeProject(newPrj, user, company);
+      res.status(200).json(output);
     } catch (ex) {
       this.errorResponse(res, ex);
     }

@@ -18,7 +18,7 @@ DELETE http://{{host}}/{{api_prefix}}/manifests/1/cargos/9
 Content-Type: application/json
 
 ###
-GET http://{{host}}/{{api_prefix}}/manifests/1/cargos?limit=10&offset=0&name=aaa&filter[test]=
+GET http://{{host}}/{{api_prefix}}/manifests/1/cargos?limit=10&offset=0
 Content-Type: application/json
 
 ###

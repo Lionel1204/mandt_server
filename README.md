@@ -92,3 +92,7 @@ Reverts a migration
 
 Start MySQL
 > mysql.server start
+
+# PM2
+> pm2 start npm -- start
+> pm2 start <json>

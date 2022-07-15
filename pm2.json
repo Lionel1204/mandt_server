@@ -1,0 +1,9 @@
+{
+  "name": "mandt_server",
+  "script": "./bin/www",
+  "log_file": "./logs/pm2_err.log",
+  "cwd":"./",
+  "env": {
+    "NODE_ENV": "staging"
+  }
+}

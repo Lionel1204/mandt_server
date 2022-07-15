@@ -36,6 +36,14 @@ module.exports = {
       email: 'kevin@163.com',
       createdAt: new Date(),
       updatedAt: new Date()
+    }, {
+      name: 'Fangyi Du',
+      title: 'Project Manager',
+      id_card: '345634563456',
+      phone: '17737720115',
+      email: 'fangyi@163.com',
+      createdAt: new Date(),
+      updatedAt: new Date()
     }];
     await queryInterface.bulkInsert('users', records, {
       updateOnDuplicate: ['updatedAt']

@@ -18,7 +18,7 @@ module.exports = {
       'users',
       {
         where: {
-          phone: ['13564536791', '18001693299', '18654652911']
+          phone: ['13564536791', '18001693299', '18654652911', '17737720115']
         },
         logging: console.log
       }
@@ -35,17 +35,6 @@ module.exports = {
         updatedAt: new Date()
       }
     });
-
-    /*
-    const records = [{
-      user_id: 1, //user id
-      user_phone: '1', // user phone
-      password: encrypt('sha1', `User${index}`, 'base64', SALT), //第二个参数为密码
-      captcha: '',
-      login_time: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }];*/
 
     await queryInterface.bulkInsert('logins', records, { updateOnDuplicate: ['user_id']});
   },

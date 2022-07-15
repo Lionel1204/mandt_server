@@ -14,14 +14,14 @@ module.exports = {
 
     const ownerId = await queryInterface.rawSelect('users', {
       where: {
-        name: 'Lionel Shen'
+        phone: '13564536791'
       },
       logging: console.log
     }, ['id']);
 
-    const receiverId = await queryInterface.rawSelect('users', {
+    const receiverId = await queryInterface.rawSelect('companies', {
       where: {
-        name: 'Aric Liu'
+        license: '123456778910'
       },
       logging: console.log
     }, ['id']);

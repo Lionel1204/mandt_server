@@ -12,7 +12,7 @@ Content-Type: application/json
 {
   "name": "testprj1",
   "ownerId": 2,
-  "receiverId": 3,
+  "receiverId": 1,
   "status": "ACTIVE"
 }
 
@@ -23,7 +23,7 @@ Content-Type: application/jsons
 
 ###
 # Get Projects
-GET http://{{host}}/{{api_prefix}}/projects/10
+GET http://{{host}}/{{api_prefix}}/projects/1
 Content-Type: application/json
 
 ###
@@ -32,7 +32,7 @@ PATCH http://{{host}}/{{api_prefix}}/projects/1
 Content-Type: application/json
 
 {
-  "receiverId": 3,
+  "ownerId": 2,
   "status": "COMPLETED"
 }
 

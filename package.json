@@ -1,6 +1,6 @@
 {
   "name": "mandt-server",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "start-local": "NODE_ENV=local node ./bin/www",
@@ -11,7 +11,8 @@
     "db:migrate": "npx sequelize db:migrate --env local",
     "db:migrate:undo": "npx sequelize db:migrate:undo --env local",
     "db:drop": "npx sequelize db:drop --env local",
-    "db:seeds": "npx sequelize db:seed:all --env local"
+    "db:seeds": "npx sequelize db:seed:all --env local",
+    "db:seed": "npx sequelize db:seed --seed=20220703060234-login_records.js --env local"
   },
   "dependencies": {
     "ajv": "^8.11.0",
@@ -43,6 +44,7 @@
     "eslint": "^8.16.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "minimist": "^1.2.6",
     "prettier": "^2.6.2"
   }
 }

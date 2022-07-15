@@ -59,7 +59,7 @@ class DataService {
 
     const result = await this.dbService.updateProject(id, project);
     if (!result) throw new ResourceNotExistException('Cannot find project');
-    return result;
+    return await this.dbService.getProjectById(id);
   }
 
   async deleteProject(projectId) {
@@ -250,6 +250,14 @@ class DataService {
 
   async listCompanies(options) {
     return this.dbService.getCompanies(options);
+  }
+
+  async getCompany(companyId) {
+    return this.dbService.getCompanyById(companyId);
+  }
+
+  async getComaniesByIds(companyIds) {
+    return this.dbService.getCompaniesByIds(companyIds);
   }
 
   // ---------- Package
@@ -484,7 +492,12 @@ class DataService {
 
   // -- Login
   async getLogin(phone) {
-    return this.dbService.getLogin(phone)
+    return this.dbService.getLogin(phone);
+  }
+
+  async setLogin(phone, password) {
+    const user = await this.dbService.getUserByPhone(phone);
+    return this.dbService.setLogin(user, password);
   }
 }
 
