@@ -1,5 +1,3 @@
-
-const { paginationSchema } = require('./baseSchemas');
 const listArrivedInfoQuerySchema = {
   type: 'object',
   properties: {
@@ -32,7 +30,7 @@ const updateArrivedInfoBodySchema = {
       type: 'boolean'
     }
   },
-  required: ['pathNode', 'arrived']
+  required: ['pathNode']
 }
 
 module.exports = {
