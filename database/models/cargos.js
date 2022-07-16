@@ -19,7 +19,9 @@ module.exports = (sequelize, DataTypes) => {
     amount: DataTypes.INTEGER,
     package_id: DataTypes.BIGINT,
     creator: DataTypes.BIGINT,
-    manifest_id: DataTypes.BIGINT
+    manifest_id: DataTypes.BIGINT,
+    size: DataTypes.JSON,
+    weight: DataTypes.JSON
   }, {
     sequelize,
     modelName: 'cargos',

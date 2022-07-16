@@ -213,6 +213,8 @@ class SerializerService {
       creator: cargo.creator,
       amount: cargo.amount,
       model: cargo.model,
+      size: cargo.size,
+      weight: cargo.weight,
       createdAt: cargo.createdAt
     }, _.isUndefined);
     return output;

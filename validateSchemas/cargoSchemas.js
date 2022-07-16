@@ -1,4 +1,4 @@
-const { paginationSchema } = require('./baseSchemas');
+const { paginationSchema, sizeSchema, weightSchema } = require('./baseSchemas');
 
 const listCargoQuerySchema = {
   allOf: [
@@ -35,7 +35,6 @@ const queryCargoSchema = {
         }
       }
     }
-
   ]
 }
 
@@ -62,7 +61,9 @@ const createCargoBodySchema = {
     packageId: {
       type: 'integer',
       minimum: 1
-    }
+    },
+    size: sizeSchema,
+    weight: weightSchema
   },
   required: ['name', 'model', 'amount', 'creator', 'packageId']
 };

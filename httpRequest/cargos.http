@@ -1,5 +1,5 @@
 ###
-POST http://{{host}}/{{api_prefix}}/manifests/3/cargos
+POST http://{{host}}/{{api_prefix}}/manifests/2/cargos
 Content-Type: application/json
 
 {
@@ -7,7 +7,9 @@ Content-Type: application/json
   "model": "acm-1",
   "amount": 12,
   "creator": 1,
-  "packageId": 7
+  "packageId": 3,
+  "size": {"unit": "cm", "width": 20, "height": 20, "length": 20},
+  "weight": {"unit": "kg", "scale": 10}
 }
 ###
 GET http://{{host}}/{{api_prefix}}/manifests/1/cargos/6

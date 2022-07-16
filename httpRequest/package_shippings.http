@@ -9,6 +9,6 @@ Content-Type: application/json
 {
   "pathNode": 1,
   "wayBillNo": "test111",
-  "arrived": false
+  "takeOver": false
 }
 ###

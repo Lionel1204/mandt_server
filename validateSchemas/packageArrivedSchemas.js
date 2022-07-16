@@ -10,7 +10,7 @@ const listArrivedInfoQuerySchema = {
       minimum: 1
     }
   }
-}
+};
 
 const updateArrivedInfoBodySchema = {
   type: 'object',

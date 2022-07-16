@@ -1,5 +1,41 @@
 const MAX_NUMBER = Math.pow(2, 31) - 1;
 
+const weightSchema = {
+  type: 'object',
+  properties: {
+    scale: {
+      type: 'number',
+      exclusiveMinimum: 0
+    },
+    unit: {
+      type: 'string',
+      minLength: 1
+    }
+  }
+};
+
+const sizeSchema = {
+  type: 'object',
+  properties: {
+    length: {
+      type: 'number',
+      exclusiveMinimum: 0
+    },
+    width: {
+      type: 'number',
+      exclusiveMinimum: 0
+    },
+    height: {
+      type: 'number',
+      exclusiveMinimum: 0
+    },
+    unit: {
+      type: 'string',
+      minLength: 1
+    }
+  }
+};
+
 const paginationSchema = {
   type: 'object',
   properties: {
@@ -44,5 +80,7 @@ const manifestPathSchema = {
 
 module.exports = {
   paginationSchema,
-  manifestPathSchema
+  manifestPathSchema,
+  weightSchema,
+  sizeSchema
 };

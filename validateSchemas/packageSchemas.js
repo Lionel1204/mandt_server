@@ -1,40 +1,4 @@
-const { paginationSchema } = require('./baseSchemas');
-
-const packageSizeSchema = {
-  type: 'object',
-  properties: {
-    length: {
-      type: 'number',
-      exclusiveMinimum: 0
-    },
-    width: {
-      type: 'number',
-      exclusiveMinimum: 0
-    },
-    height: {
-      type: 'number',
-      exclusiveMinimum: 0
-    },
-    unit: {
-      type: 'string',
-      minLength: 1
-    }
-  }
-}
-
-const packageWeightSchema = {
-  type: 'object',
-  properties: {
-    scale: {
-      type: 'number',
-      exclusiveMinimum: 0
-    },
-    unit: {
-      type: 'string',
-      minLength: 1
-    }
-  }
-}
+const { paginationSchema, weightSchema, sizeSchema} = require('./baseSchemas');
 
 const createPackageBodySchema = {
   type: 'object',
@@ -59,8 +23,8 @@ const createPackageBodySchema = {
       type: 'integer',
       minimum: 1
     },
-    size: packageSizeSchema,
-    weight: packageWeightSchema
+    size: sizeSchema,
+    weight: weightSchema
   },
   required: ['wrappingType', 'shippingType', 'size', 'weight', 'creator']
 }
@@ -126,8 +90,8 @@ const updatePackageBodySchema = {
       type: 'string',
       enum: ['CREATED', 'INTRANSIT', 'FINISHED']
     },
-    size: packageSizeSchema,
-    weight: packageWeightSchema
+    size: sizeSchema,
+    weight: weightSchema
   }
 }
 

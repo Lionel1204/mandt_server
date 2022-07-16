@@ -348,7 +348,9 @@ class DataService {
       amount: payload.amount,
       package_id: payload.packageId,
       manifest_id: manifestId,
-      creator: payload.creator
+      creator: payload.creator,
+      weight: payload.weight || {},
+      size: payload.size || {},
     };
 
     const result = await this.dbService.createCargo(cargo);
