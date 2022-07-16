@@ -1,5 +1,6 @@
 const url = require('url');
 const crypto = require('crypto');
+const {ManifestStatusFlow, ManifestStatus} = require("./constants");
 
 const apiPrefix = 'api/v1';
 
@@ -54,7 +55,12 @@ const encrypt = (method, string, format, salt) => {
   return sum.update(`${string}:${salt}`).digest(format || 'base64');
 };
 
+const manifestStartShipping = (manifestStatus) => {
+  return ManifestStatusFlow.indexOf(manifestStatus) >= ManifestStatusFlow.indexOf(ManifestStatus.Shipping);
+};
+
 module.exports = {
   paginateResult,
-  encrypt
+  encrypt,
+  manifestStartShipping
 };

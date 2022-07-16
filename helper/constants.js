@@ -15,6 +15,14 @@ const ManifestStatus = {
   Shipping: 'SHIPPING'
 };
 
+const ManifestStatusFlow = [
+  ManifestStatus.Created,
+  ManifestStatus.Published,
+  ManifestStatus.Confirmed,
+  ManifestStatus.Shipping,
+  ManifestStatus.Ended
+]
+
 const PackageStatus = {
   Created: 'CREATED',
   InTransit: 'INTRANSIT',
@@ -42,6 +50,7 @@ const SALT = '1bf94fe5-0068-453c-b3a6-10b6e0a0a5cb';
 module.exports = {
   ProjectStatus,
   ManifestStatus,
+  ManifestStatusFlow,
   PackageStatus,
   PathType,
   RegisterAction,

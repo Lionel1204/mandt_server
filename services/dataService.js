@@ -2,7 +2,7 @@ const _ = require('lodash');
 const shortid = require("shortid");
 const logger = require('../helper/loggerHelper');
 
-const { ProjectStatus, ManifestStatus, PackageStatus } = require('../helper/constants');
+const { ProjectStatus, ManifestStatus, PackageStatus, ManifestStatusFlow} = require('../helper/constants');
 const { ResourceNotExistException, InternalServerException, NotAllowedException, BadRequestException} = require('../exceptions/commonExceptions');
 
 class DataService {
@@ -468,7 +468,7 @@ class DataService {
     }
   }
 
-  async listArrivedInfo(packageId, payload) {
+  async listArrivedInfo(packageId, payload = {}) {
     let assigneeId = payload.assignee;
     if (payload.userId) {
       const user = await this.getUser(payload.userId);
@@ -480,6 +480,20 @@ class DataService {
     }
     if (assigneeId) options.assignee = assigneeId;
     return this.dbService.listArrivedInfo(options);
+  }
+
+  async getArrivedInfoOfPackages(packages) {
+    const manifestIds = _.map(packages, (p) => p.manifest_id);
+    const pathsList = await this.dbService.getPathsByManifestIds(manifestIds);
+
+    const packageIds = _.map(packages, (p) => p.id);
+    const options = {
+      package_id: packageIds,
+      manifest_id: manifestIds
+    }
+    const arrivedInfoList = await this.dbService.listArrivedInfo(options);
+
+    return {pathsList, arrivedInfoList};
   }
 
   async updateArrivedInfo(packageId, body) {

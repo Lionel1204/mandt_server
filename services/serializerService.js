@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const {ResourceNotExistException} = require("../exceptions/commonExceptions");
-
+const {ResourceNotExistException} = require('../exceptions/commonExceptions');
+const { manifestStartShipping } = require('../helper/utils');
 class SerializerService {
   constructor() {}
 
@@ -147,7 +147,7 @@ class SerializerService {
     return output;
   }
 
-  serializePackage(pkg, manifestStatus = undefined) {
+  serializePackage(pkg, manifestStatus = undefined, arrivedInfo = {}) {
     if (!pkg) throw new ResourceNotExistException('Package does not exist')
     const output = {
       id: pkg.id,
@@ -161,17 +161,43 @@ class SerializerService {
       amount: pkg.amount,
       creator: pkg.creator,
       manifestStatus: manifestStatus,
-      createAt: pkg.createdAt
+      createAt: pkg.createdAt,
+      pathInfo: _.get(arrivedInfo, `${pkg.id}`, {})
     };
     return output;
   }
 
-  serializePackages(packages, manifestMap = {}) {
+  serializePackages(packages, manifestMap = {}, arrivedInfoResult = {}) {
     if (!Array.isArray(packages) || packages.length === 0) return [];
+
+    const {pathsList, arrivedInfoList} = arrivedInfoResult;
+    const pathsMap = _.keyBy(pathsList, 'manifest_id');
+
+    // aggregate all of arrivedInfo
+    const arrivedInfoMap = _.reduce(arrivedInfoList, (result, ai) => {
+      const arrivedInfo = {
+        pathNode: ai.path_node,
+        wayBillNo: ai.way_bill_no,
+        next: ai.next,
+        from: pathsMap[ai.manifest_id]?.paths[ai.path_node]?.address,
+        arrived: ai.arrived,
+        takeOver: ai.take_over,
+        assignee: ai.assignee,
+        type: pathsMap[ai.manifest_id]?.paths[ai.path_node]?.type
+      }
+
+      const pkgMap = _.get(result, `${ai.manifest_id}`, {});
+      const info = _.get(pkgMap, `${ai.package_id}`, []);
+      pkgMap[ai.package_id] = [...info, arrivedInfo];
+      result[ai.manifest_id] = pkgMap;
+      return result;
+    }, {})
 
     return _.map(packages, (p) => {
       const manifest = manifestMap[p.manifest_id];
-      return this.serializePackage(p, manifest?.status);
+      let arrivedInfo = {};
+      if (manifestStartShipping(manifest.status)) arrivedInfo = arrivedInfoMap[p.manifest_id]
+      return this.serializePackage(p, manifest?.status, arrivedInfo);
     });
   }
 

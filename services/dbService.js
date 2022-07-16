@@ -285,6 +285,10 @@ class DBService {
     return db.paths.findOne({ where: options });
   }
 
+  async getPathsByManifestIds(manifestIds) {
+    return db.paths.findAll({where: {manifest_id: manifestIds}})
+  }
+
   async updatePaths(pathId, paths) {
     const where = {
       id: pathId
@@ -309,7 +313,13 @@ class DBService {
       ],
       where
     };
-    return await db.package_shippings.findAll({ where });
+    return await db.package_shippings.findAll(opt);
+  }
+
+  async findPackagesArrivedInfo(packageIds) {
+    const opt = {
+
+    }
   }
 
   async updateArrivedInfo(options) {
