@@ -2,8 +2,9 @@ const _ = require('lodash');
 const shortid = require("shortid");
 const logger = require('../helper/loggerHelper');
 
-const { ProjectStatus, ManifestStatus, PackageStatus, ManifestStatusFlow} = require('../helper/constants');
-const { ResourceNotExistException, InternalServerException, NotAllowedException, BadRequestException} = require('../exceptions/commonExceptions');
+const { ProjectStatus, ManifestStatus, PackageStatus } = require('../helper/constants');
+const { ResourceNotExistException, InternalServerException, BadRequestException} = require('../exceptions/commonExceptions');
+const { manifestStartShipping } = require('../helper/utils');
 
 class DataService {
   constructor(dbService) {
@@ -295,15 +296,19 @@ class DataService {
 
   async updatePackage(manifestId, packageId, payload) {
     const manifest = await this.getManifestById(manifestId);
-    if (manifest.status === ManifestStatus.Shipping) throw new NotAllowedException('Cannot change the Shipping Manifest');
+    let updatePackagePayload = {};
 
-    const updatePackagePayload = {
-      wrapping_type: payload.wrappingType,
-      shipping_type: payload.shippingType,
-      size: payload.size,
-      weight: payload.weight,
-      status: payload.status
-    };
+    if (manifestStartShipping(manifest.status)) {
+      updatePackagePayload = {status: payload.status}
+    } else {
+      updatePackagePayload = _.omitBy({
+        wrapping_type: payload.wrappingType,
+        shipping_type: payload.shippingType,
+        size: payload.size,
+        weight: payload.weight,
+        status: payload.status
+      }, _.isUndefined);
+    }
     return await this.dbService.updatePackage(manifestId, packageId, updatePackagePayload);
   }
 

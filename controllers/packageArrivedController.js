@@ -1,12 +1,10 @@
 const BaseController = require('./baseController');
 const serviceFactory = require('../services/serviceFactory');
 const _ = require('lodash');
-const {
-  listArrivedInfoQuerySchema,
-  updateArrivedInfoBodySchema
-} = require('../validateSchemas/packageArrivedSchemas');
+const { listArrivedInfoQuerySchema, updateArrivedInfoBodySchema } = require('../validateSchemas/packageArrivedSchemas');
 const { manifestPathSchema } = require('../validateSchemas/baseSchemas');
-const {ResourceNotExistException} = require("../exceptions/commonExceptions");
+const { ResourceNotExistException } = require('../exceptions/commonExceptions');
+const { PackageStatus, PathType } = require('../helper/constants');
 
 class PackageArrivedController extends BaseController {
   constructor() {
@@ -15,7 +13,7 @@ class PackageArrivedController extends BaseController {
 
   async list(req, res) {
     try {
-      this.validateParam(manifestPathSchema, req.params)
+      this.validateParam(manifestPathSchema, req.params);
       this.validateQuery(listArrivedInfoQuerySchema, req.query);
       const options = req.query;
       const { packageId } = req.params;
@@ -36,8 +34,8 @@ class PackageArrivedController extends BaseController {
 
   async patch(req, res) {
     try {
-      this.validateParam(manifestPathSchema, req.params)
-      this.validateBody(updateArrivedInfoBodySchema, req.body)
+      this.validateParam(manifestPathSchema, req.params);
+      this.validateBody(updateArrivedInfoBodySchema, req.body);
       const body = req.body;
       const { packageId } = req.params;
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
@@ -45,6 +43,15 @@ class PackageArrivedController extends BaseController {
       if (!result) res.status(404).end();
       else {
         const pathRec = await dataService.getPaths(result.manifest_id);
+        if (body.pathNode === 0) {
+          await dataService.updatePackage(result.manifest_id, result.package_id, {
+            status: PackageStatus.InTransit
+          });
+        } else if (pathRec.paths[body.pathNode].type === PathType.End) {
+          await dataService.updatePackage(result.manifest_id, result.package_id, {
+            status: PackageStatus.Finished
+          });
+        }
         const output = serializerService.serializeArriveInfoNode(result, 0, [pathRec]);
         res.json(output);
       }

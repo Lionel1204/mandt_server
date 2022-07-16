@@ -147,8 +147,13 @@ class SerializerService {
     return output;
   }
 
+  calculateArrived(arrivedInfo) {
+    return _.findIndex(arrivedInfo, (p) => !p.takeOver);
+  }
+
   serializePackage(pkg, manifestStatus = undefined, arrivedInfo = {}) {
-    if (!pkg) throw new ResourceNotExistException('Package does not exist')
+    if (!pkg) throw new ResourceNotExistException('Package does not exist');
+    const pathInfo = _.get(arrivedInfo, `${pkg.id}`, {});
     const output = {
       id: pkg.id,
       manifestId: pkg.manifest_id,
@@ -162,7 +167,8 @@ class SerializerService {
       creator: pkg.creator,
       manifestStatus: manifestStatus,
       createAt: pkg.createdAt,
-      pathInfo: _.get(arrivedInfo, `${pkg.id}`, {})
+      pathInfo: pathInfo,
+      arrivedNode: this.calculateArrived(pathInfo)
     };
     return output;
   }
