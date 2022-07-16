@@ -328,10 +328,11 @@ class DBService {
       path_node: options.path_node
     };
 
-    const data = {
+    const data = _.omitBy({
       arrived: options.arrived,
-      way_bill_no: options.way_bill_no
-    };
+      way_bill_no: options.way_bill_no,
+      take_over: options.take_over
+    }, _.isUndefined);
     const result = await db.package_shippings.update(data, {
       where
     });

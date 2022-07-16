@@ -44,7 +44,8 @@ class PackageArrivedController extends BaseController {
       const result = await dataService.updateArrivedInfo(packageId, body);
       if (!result) res.status(404).end();
       else {
-        const output = serializerService.serializeArriveInfoNode(result);
+        const pathRec = await dataService.getPaths(result.manifest_id);
+        const output = serializerService.serializeArriveInfoNode(result, 0, [pathRec]);
         res.json(output);
       }
     } catch (ex) {

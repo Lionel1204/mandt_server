@@ -500,9 +500,9 @@ class DataService {
     const options = {
       package_id: packageId,
       path_node: body.pathNode,
-      arrived: !!body.arrived,
-      take_over: !!body.takeOver,
-      way_bill_no: body.wayBillNo || null
+      arrived: body.arrived,
+      take_over: body.takeOver,
+      way_bill_no: body.wayBillNo
     }
     return this.dbService.updateArrivedInfo(options);
   }
