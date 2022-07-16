@@ -41,7 +41,7 @@ class PackagesController extends BaseController {
       const manifest = await dataService.getManifestById(manifestId);
       const arrivedInfoResult = await dataService.getArrivedInfoOfPackages([pkg]);
       const output = serializerService.serializePackages([pkg], {[manifest.id]: manifest}, arrivedInfoResult);
-      res.status(200).json(output);
+      res.status(200).json(output[0]);
     } catch (ex) {
       this.errorResponse(res, ex);
     }
