@@ -22,7 +22,7 @@ module.exports = {
       ['id']
     );
 
-    const phones = ['13564536791', '18001693299', '18654652911'];
+    const phones = ['13564536791', '18001693299', '18654652911', '17737720115'];
 
     await queryInterface.bulkUpdate(
       'users',
