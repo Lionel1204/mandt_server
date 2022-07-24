@@ -24,6 +24,12 @@ module.exports = {
       }
     );
 
+    // User0: puEaYEjUufa0AiUTLhAmjhaCLkk=
+    // User1: ftLC6BBBoOCU/2EQ0c2ok8mRNUg=
+    // User2: W+IcfxLxTBhXuR7gt9tERaXvggs=
+    // User3: KGjNd3MyBGBbJrdV4PQ8TKvfljU=
+    // User4: puEaYEjUufa0AiUTLhAmjhaCLkk=
+
     const records = _.map(users, (u, index) => {
       return {
         user_id: u.id,

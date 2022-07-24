@@ -8,7 +8,8 @@ const loginBodySchema = {
     },
     password: {
       type: 'string',
-      minLength: 1
+      minLength: 6,
+      pattern: '[\\w!@#$%^&*,.]+'
     },
     captcha: {
       type: 'string',
@@ -28,7 +29,7 @@ const loginQuerySchema = {
     }
   },
   required: ['action']
-}
+};
 
 const captchaQuerySchema = {
   type: 'object',
@@ -37,9 +38,22 @@ const captchaQuerySchema = {
       type: 'boolean'
     }
   }
-}
+};
+
+const updatePasswordSchema = {
+  type: 'object',
+  properties: {
+    password: {
+      type: 'string',
+      minLength: 6,
+      pattern: '[\\w!@#$%^&*,.]+'
+    }
+  }
+};
+
 module.exports = {
   loginBodySchema,
   loginQuerySchema,
-  captchaQuerySchema
+  captchaQuerySchema,
+  updatePasswordSchema
 };

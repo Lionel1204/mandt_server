@@ -287,7 +287,9 @@ class DataService {
   }
 
   async getPackage(manifestId, packageId) {
-    return await this.dbService.getPackage(packageId);
+    const pkg = await this.dbService.getPackage(packageId);
+    if (!pkg) throw new ResourceNotExistException(`Package does not exists`);
+    return pkg;
   }
 
   async getPackagesByIds(packageIds) {
@@ -519,9 +521,13 @@ class DataService {
     return this.dbService.getLogin(phone);
   }
 
-  async setLogin(phone, password) {
+  async setLogin(phone, password, captcha = '') {
     const user = await this.dbService.getUserByPhone(phone);
-    return this.dbService.setLogin(user, password);
+    return this.dbService.setLogin(user, password, captcha);
+  }
+
+  async updateLogin(phone, password, captcha='') {
+    return this.dbService.patchLogin(phone, password, captcha);
   }
 }
 

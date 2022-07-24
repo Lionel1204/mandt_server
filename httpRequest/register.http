@@ -23,3 +23,12 @@ Content-Type: application/json
 {
   "userId": "13564536792"
 }
+
+###
+PATCH http://{{host}}/{{api_prefix}}/user/13600000000
+Content-Type: application/json
+
+{
+  "oldPassword": "User4",
+  "newPassword": "User0"
+}

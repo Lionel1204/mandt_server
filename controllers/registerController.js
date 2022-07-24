@@ -2,11 +2,12 @@ const _ = require('lodash');
 const BaseController = require('./baseController');
 const serviceFactory = require('../services/serviceFactory');
 const svgCaptcha = require('svg-captcha');
-const { loginQuerySchema, loginBodySchema, captchaQuerySchema } = require('../validateSchemas/registerSchemas');
-const { RegisterAction, RegisterError, SALT } = require('../helper/constants');
+const { loginQuerySchema, loginBodySchema, captchaQuerySchema, updatePasswordSchema} = require('../validateSchemas/registerSchemas');
+const { RegisterAction, RegisterError } = require('../helper/constants');
 const { ResourceNotExistException, NotAllowedException } = require('../exceptions/commonExceptions');
-const { encrypt } = require('../helper/utils');
+const { validatePassword } = require('../helper/utils');
 const svg64 = require('svg64');
+const {manifestPathSchema} = require("../validateSchemas/baseSchemas");
 
 class RegisterController extends BaseController {
   constructor() {
@@ -47,7 +48,7 @@ class RegisterController extends BaseController {
 
       if (action === RegisterAction.LOGIN) {
         // Login
-        const output = await this.checkUsers(req, dataService);
+        const output = await this.checkUser(req, dataService);
         res.json(output);
       } else if (action === RegisterAction.LOGOUT) {
         // Logout
@@ -61,7 +62,25 @@ class RegisterController extends BaseController {
     }
   }
 
-  async checkUsers(req, dataService) {
+  async patch(req, res) {
+    try {
+      this.validateParam(manifestPathSchema, req.params);
+      this.validateBody(updatePasswordSchema, req.body);
+      const { userId: phone } = req.params;
+      const { oldPassword, newPassword } = req.body;
+      const dataService = await serviceFactory.getService('DataService');
+
+      const loginInfo = await dataService.getLogin(phone);
+      if (!loginInfo) throw new ResourceNotExistException('Cannot find the User Login Record');
+      if (!validatePassword(oldPassword, loginInfo.password)) throw new NotAllowedException('Wrong password');
+      await dataService.updateLogin(phone, newPassword, loginInfo.captcha);
+      res.status(200).end();
+    } catch (ex) {
+      this.errorResponse(res, ex);
+    }
+  }
+
+  async checkUser(req, dataService) {
     const { userId: phone, password, captcha } = req.body;
     const sessionCaptcha = req.session.captcha;
     const output = {
@@ -75,8 +94,7 @@ class RegisterController extends BaseController {
     } else {
       const loginData = await dataService.getLogin(phone);
       if (!loginData) throw new ResourceNotExistException('No User found');
-      const encryptPassword = encrypt('sha1', password, 'base64', SALT);
-      if (loginData.password !== encryptPassword) {
+      if (!validatePassword(password, loginData.password)) {
         output.error = RegisterError.ERR_PASSWORD;
       } else {
         const user = await dataService.getUser(loginData.user_id);

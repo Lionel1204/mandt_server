@@ -1,6 +1,8 @@
 const BaseController = require('./baseController');
 const serviceFactory = require('../services/serviceFactory');
 const {paginateResult} = require("../helper/utils");
+const {RegisterAction} = require("../helper/constants");
+const shortid = require('shortid');
 
 class UsersController extends BaseController {
   constructor() {
@@ -30,7 +32,9 @@ class UsersController extends BaseController {
       };
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const user = await dataService.createUser(payload);
-      const output = serializerService.serializeUser(user);
+      const password = shortid.generate();
+      await dataService.setLogin(user.phone, password);
+      const output = serializerService.serializeUser(user, password);
       res.status(201).json(output);
     } catch (ex) {
       this.errorResponse(res, ex);

@@ -348,17 +348,26 @@ class DBService {
     return await db.logins.findOne({ where: { user_phone: phone } });
   }
 
-  async setLogin(user, password) {
+  async setLogin(user, password, captcha='') {
     const payload = {
       user_id: user.id,
       user_phone: user.phone,
       password: encrypt('sha1', password, 'base64', SALT),
-      captcha: '',
+      captcha,
       login_time: null,
       createdAt: new Date(),
       updatedAt: new Date()
     };
     return db.logins.upsert(payload);
+  }
+
+  async patchLogin(phone, password, captcha='') {
+    const payload = {
+      password: encrypt('sha1', password, 'base64', SALT),
+      captcha
+    };
+    const where = { user_phone: phone}
+    return db.logins.update(payload, { where });
   }
 }
 module.exports = DBService;

@@ -94,4 +94,5 @@ module.exports = function(app) {
   // Register & Login
   app.get(`${apiPrefix}/captcha`, createControllerFunction(registerController, 'getCaptcha'));
   app.post(`${apiPrefix}/user`, createControllerFunction(registerController, 'action'));
+  app.patch(`${apiPrefix}/user/:userId`, createControllerFunction(registerController, 'patch'));
 };

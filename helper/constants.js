@@ -37,7 +37,8 @@ const PathType = {
 
 const RegisterAction = {
   LOGIN: 'login',
-  LOGOUT: 'logout'
+  LOGOUT: 'logout',
+  CREATE: 'create'
 }
 
 const RegisterError = {

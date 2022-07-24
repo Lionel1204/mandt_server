@@ -62,7 +62,7 @@ class SerializerService {
    * @param data
    * @returns {*}
    */
-  serializeUser(data) {
+  serializeUser(data, password = undefined) {
     if (!data) throw new ResourceNotExistException('User does not exist')
 
     const output = {
@@ -71,7 +71,8 @@ class SerializerService {
       title: data.title,
       identity: data.id_card,
       phone: data.phone,
-      email: data.email
+      email: data.email,
+      password
     };
     return output;
   }
