@@ -22,7 +22,7 @@ const createUserSchema = {
       pattern: '^[a-z]([a-z0-9]*[-_]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\\.][a-z]{2,3}([\\.][a-z]{2})?$'
     }
   },
-  required: ['identity', 'name', 'phone']
+  required: ['name', 'phone']
 }
 
 
