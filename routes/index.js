@@ -27,7 +27,8 @@ const {
   cargosController,
   pathsController,
   packageArrivedController,
-  registerController
+  registerController,
+  adminController
 } = controllers;
 
 module.exports = function(app) {
@@ -95,4 +96,8 @@ module.exports = function(app) {
   app.get(`${apiPrefix}/captcha`, createControllerFunction(registerController, 'getCaptcha'));
   app.post(`${apiPrefix}/user`, createControllerFunction(registerController, 'action'));
   app.patch(`${apiPrefix}/user/:userId`, createControllerFunction(registerController, 'patch'));
+
+  // Admin (feedback)
+  app.get(`${apiPrefix}/feedbacks`, createControllerFunction(adminController, 'getFeedback'));
+  app.post(`${apiPrefix}/feedbacks`, createControllerFunction(adminController, 'postFeedback'));
 };

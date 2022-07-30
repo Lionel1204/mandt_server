@@ -1,0 +1,10 @@
+# Create packages
+POST http://{{host}}/{{api_prefix}}/feedbacks
+Content-Type: application/json
+
+{
+  "phone": "18758882222",
+  "problem": "test1",
+  "idea": "test2"
+}
+###

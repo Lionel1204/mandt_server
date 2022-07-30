@@ -369,5 +369,23 @@ class DBService {
     const where = { user_phone: phone}
     return db.logins.update(payload, { where });
   }
+
+  async setFeedback(userId, phone, problem, idea) {
+    const payload = {
+      user_id: userId,
+      user_phone: phone,
+      problem,
+      idea
+    };
+    return db.feedbacks.create(payload);
+  }
+
+  async getFeedBacks(limit, offset) {
+    return db.feedbacks.findAll({
+      order: [[db.sequelize.fn('lower', db.sequelize.col('createdAt')), 'DESC']],
+      limit,
+      offset
+    })
+  }
 }
 module.exports = DBService;

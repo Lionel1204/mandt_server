@@ -9,5 +9,6 @@ module.exports = {
     pathsController: require('./pathsController'),
     packageArrivedController: require('./packageArrivedController'),
     registerController: require('./registerController'),
+    adminController: require('./adminController'),
     qrController: require('./qrController')
 };

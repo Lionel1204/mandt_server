@@ -1,7 +1,6 @@
 const BaseController = require('./baseController');
 const serviceFactory = require('../services/serviceFactory');
 const {paginateResult} = require("../helper/utils");
-const {RegisterAction} = require("../helper/constants");
 const shortid = require('shortid');
 
 class UsersController extends BaseController {

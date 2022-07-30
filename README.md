@@ -46,7 +46,10 @@ Create a model and a script:
 > npx sequelize model:generate --name package_shippings --attributes manifest_id:bigint,package_id:bigint,path_id:bigint,path_node:integer,way_bill_no:string,arrived:boolean,assignee:bigint
 
 - Login
-- npx sequelize model:generate --name logins --attributes user_id:bigint,user_phone:string,password:string,captcha:string,login_time:date
+> npx sequelize model:generate --name logins --attributes user_id:bigint,user_phone:string,password:string,captcha:string,login_time:date
+
+- Feedback
+> npx sequelize model:generate --name feedbacks --attributes user_id:bigint,user_phone:string,problem:string,idea:string
 
 Create a schema:
 > npx sequelize db:create

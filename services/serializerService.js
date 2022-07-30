@@ -268,5 +268,23 @@ class SerializerService {
       return this.serializeArriveInfoNode(r, index, pathRec);
     });
   }
+
+  serializeFeedback(feedback) {
+    if (!feedback) return null;
+    return {
+      id: feedback.id,
+      userId: feedback.user_id,
+      phone: feedback.user_phone,
+      problem: feedback.problem,
+      idea: feedback.idea,
+    }
+  }
+
+  serializeFeedbacks(feedbacks) {
+    if (!Array.isArray(feedback) || feedback.length === 0) return [];
+    return _.map(feedbacks, (f) => {
+      return this.serializeFeedback(f);
+    });
+  }
 }
 module.exports = SerializerService;

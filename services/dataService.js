@@ -529,6 +529,13 @@ class DataService {
   async updateLogin(phone, password, captcha='') {
     return this.dbService.patchLogin(phone, password, captcha);
   }
+
+  // -- feedback
+  async addFeedback(phone, problem, idea) {
+    const user = await this.dbService.getUserByPhone(phone);
+    const userId = user ? user.id : null;
+    return this.dbService.setFeedback(userId, phone, problem, idea);
+  }
 }
 
 module.exports = DataService;

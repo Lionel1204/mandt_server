@@ -25,6 +25,7 @@ class RegisterController extends BaseController {
         background: '#CFCFCF'
       });
       this.logger.info(cap.text);
+      // TODO: use redis instead of session
       req.session.captcha = cap.text;
       if (req.query.base64) {
         const base64fromSVG = svg64(cap.data);
@@ -53,6 +54,7 @@ class RegisterController extends BaseController {
       } else if (action === RegisterAction.LOGOUT) {
         // Logout
         const { userId: phone } = req.body;
+        // TODO: use redis instead of session
         if (req.session.phone !== phone) throw new NotAllowedException('Wrong User Id');
         await req.session.destroy();
         res.status(204).end();
