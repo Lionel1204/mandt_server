@@ -89,6 +89,7 @@ class RegisterController extends BaseController {
       result: false,
       error: null,
       id: 0,
+      phone,
       company: 0
     };
     if (sessionCaptcha?.toLowerCase() != captcha.toLowerCase()) {
@@ -102,7 +103,6 @@ class RegisterController extends BaseController {
         const user = await dataService.getUser(loginData.user_id);
         output.result = true;
         output.id = user.id;
-        output.phone = user.phone;
         output.company = user.company_id;
 
         this.setSession(req, user);

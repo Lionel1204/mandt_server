@@ -20,6 +20,11 @@ const createUserSchema = {
       type: 'string',
       minLength: 3,
       pattern: '^[a-z]([a-z0-9]*[-_]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\\.][a-z]{2,3}([\\.][a-z]{2})?$'
+    },
+    password: {
+      type: 'string',
+      minLength: 5,
+      pattern: '[\\w!@#$%^&*,.]+'
     }
   },
   required: ['name', 'phone']

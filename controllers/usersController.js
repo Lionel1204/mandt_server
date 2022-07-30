@@ -2,6 +2,7 @@ const BaseController = require('./baseController');
 const serviceFactory = require('../services/serviceFactory');
 const {paginateResult} = require("../helper/utils");
 const shortid = require('shortid');
+const {createUserSchema} = require('../validateSchemas/userSchemas');
 
 class UsersController extends BaseController {
   constructor() {
@@ -22,6 +23,7 @@ class UsersController extends BaseController {
 
   async post(req, res) {
     try {
+      this.validateBody(createUserSchema, req.body);
       const payload = {
         name: req.body.name,
         title: req.body.title,
@@ -31,7 +33,7 @@ class UsersController extends BaseController {
       };
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const user = await dataService.createUser(payload);
-      const password = shortid.generate();
+      const password = req.body.password || shortid.generate();
       await dataService.setLogin(user.phone, password);
       const output = serializerService.serializeUser(user, password);
       res.status(201).json(output);
