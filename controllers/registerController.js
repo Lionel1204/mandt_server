@@ -102,6 +102,7 @@ class RegisterController extends BaseController {
         const user = await dataService.getUser(loginData.user_id);
         output.result = true;
         output.id = user.id;
+        output.phone = user.phone;
         output.company = user.company_id;
 
         this.setSession(req, user);

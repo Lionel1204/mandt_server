@@ -8,7 +8,7 @@ const loginBodySchema = {
     },
     password: {
       type: 'string',
-      minLength: 6,
+      minLength: 5,
       pattern: '[\\w!@#$%^&*,.]+'
     },
     captcha: {
