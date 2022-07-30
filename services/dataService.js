@@ -3,7 +3,7 @@ const shortid = require("shortid");
 const logger = require('../helper/loggerHelper');
 
 const { ProjectStatus, ManifestStatus, PackageStatus } = require('../helper/constants');
-const { ResourceNotExistException, InternalServerException, BadRequestException} = require('../exceptions/commonExceptions');
+const { ResourceNotExistException, InternalServerException, BadRequestException, NotAllowedException} = require('../exceptions/commonExceptions');
 const { manifestStartShipping } = require('../helper/utils');
 
 class DataService {
@@ -117,9 +117,14 @@ class DataService {
       title: payload.title,
       id_card: payload.identity,
       phone: payload.phone,
-      email: payload.email
+      email: payload.email,
+      company_id: payload.companyId
     };
-    return await this.dbService.createUser(user);
+    try {
+      return await this.dbService.createUser(user);
+    } catch (ex) {
+      throw new NotAllowedException(`Phone ${payload.phone} has been registered`);
+    }
   }
 
   async listUsers(options) {

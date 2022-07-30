@@ -29,7 +29,8 @@ class UsersController extends BaseController {
         title: req.body.title,
         identity: req.body.identity,
         phone: req.body.phone,
-        email: req.body.email
+        email: req.body.email,
+        companyId: req.body.companyId
       };
       const [dataService, serializerService] = await serviceFactory.getService('DataService', 'SerializerService');
       const user = await dataService.createUser(payload);

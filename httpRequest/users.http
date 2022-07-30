@@ -6,7 +6,7 @@ Content-Type: application/json
   "name": "testUser",
   "title": "CEO",
   "identity": "45678910123",
-  "phone": "13600000000",
+  "phone": "13600000001",
   "email": "test@163.com"
 }
 

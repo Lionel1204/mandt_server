@@ -72,6 +72,7 @@ class SerializerService {
       identity: data.id_card,
       phone: data.phone,
       email: data.email,
+      companyId: data.company_id,
       password
     };
     return output;
