@@ -150,12 +150,31 @@ class SerializerService {
   }
 
   calculateArrived(arrivedInfo) {
-    return _.findIndex(arrivedInfo, (p) => !p.arrived);
+    if (arrivedInfo.length === 0) return -1;
+    let arrivedInd = -1;
+    let currentInd = -1;
+    const length = arrivedInfo.length;
+    for (const [index, info] of arrivedInfo.entries()) {
+      if (!info.arrived) {
+        arrivedInd = index;
+        break;
+      } else currentInd = index;
+    }
+    if (arrivedInd === -1) {
+      if (currentInd >= arrivedInfo - 1) {
+        // Do not find any arrived node
+        return -1;
+      } else {
+        return length;
+      }
+    } else {
+      return arrivedInd;
+    }
   }
 
   serializePackage(pkg, manifestStatus = undefined, arrivedInfo = {}) {
     if (!pkg) throw new ResourceNotExistException('Package does not exist');
-    const pathInfo = _.get(arrivedInfo, `${pkg.id}`, {});
+    const pathInfo = _.get(arrivedInfo, `${pkg.id}`, []);
     const output = {
       id: pkg.id,
       manifestId: pkg.manifest_id,
