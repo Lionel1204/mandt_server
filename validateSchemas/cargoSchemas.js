@@ -52,7 +52,8 @@ const createCargoBodySchema = {
     },
     amount: {
       type: 'integer',
-      minimum: 0
+      minimum: 0,
+      maximum: 1000
     },
     creator: {
       type: 'integer',

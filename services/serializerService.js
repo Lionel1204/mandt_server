@@ -150,7 +150,7 @@ class SerializerService {
   }
 
   calculateArrived(arrivedInfo) {
-    return _.findIndex(arrivedInfo, (p) => !p.takeOver);
+    return _.findIndex(arrivedInfo, (p) => !p.arrived);
   }
 
   serializePackage(pkg, manifestStatus = undefined, arrivedInfo = {}) {

@@ -5,7 +5,8 @@ const weightSchema = {
   properties: {
     scale: {
       type: 'number',
-      exclusiveMinimum: 0
+      exclusiveMinimum: 0,
+      maximum: 100000
     },
     unit: {
       type: 'string',
@@ -19,15 +20,18 @@ const sizeSchema = {
   properties: {
     length: {
       type: 'number',
-      exclusiveMinimum: 0
+      exclusiveMinimum: 0,
+      maximum: 10000
     },
     width: {
       type: 'number',
-      exclusiveMinimum: 0
+      exclusiveMinimum: 0,
+      maximum: 10000
     },
     height: {
       type: 'number',
-      exclusiveMinimum: 0
+      exclusiveMinimum: 0,
+      maximum: 10000
     },
     unit: {
       type: 'string',
