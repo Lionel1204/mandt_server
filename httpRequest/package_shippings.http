@@ -8,7 +8,6 @@ Content-Type: application/json
 
 {
   "pathNode": 2,
-  "wayBillNo": "test111",
   "arrived": true
 }
 ###

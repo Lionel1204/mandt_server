@@ -316,12 +316,6 @@ class DBService {
     return await db.package_shippings.findAll(opt);
   }
 
-  async findPackagesArrivedInfo(packageIds) {
-    const opt = {
-
-    }
-  }
-
   async updateArrivedInfo(options) {
     const where = {
       package_id: options.package_id,

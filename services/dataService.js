@@ -511,11 +511,12 @@ class DataService {
   }
 
   async updateArrivedInfo(packageId, body) {
+    // If takeOver is true, arrived should be true as well
     const options = {
       package_id: packageId,
       path_node: body.pathNode,
-      arrived: body.arrived,
-      take_over: body.takeOver,
+      arrived: !!body.takeOver || !!body.arrived,
+      take_over: !!body.takeOver,
       way_bill_no: body.wayBillNo
     }
     return this.dbService.updateArrivedInfo(options);

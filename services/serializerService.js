@@ -155,17 +155,19 @@ class SerializerService {
     let currentInd = -1;
     const length = arrivedInfo.length;
     for (const [index, info] of arrivedInfo.entries()) {
-      if (!info.arrived) {
+      if (info.arrived) {
         arrivedInd = index;
+      } else {
+        currentInd = index;
         break;
-      } else currentInd = index;
+      }
     }
     if (arrivedInd === -1) {
       if (currentInd >= arrivedInfo - 1) {
         // Do not find any arrived node
         return -1;
       } else {
-        return length;
+        return length - 1;
       }
     } else {
       return arrivedInd;
