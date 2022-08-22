@@ -78,6 +78,10 @@ const manifestPathSchema = {
     pathId: {
       type: 'integer',
       minimum: 1
+    },
+    userId: {
+      type: 'integer',
+      minimum: 1
     }
   }
 }

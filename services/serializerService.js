@@ -308,5 +308,13 @@ class SerializerService {
       return this.serializeFeedback(f);
     });
   }
+
+  serializeLocation(location) {
+    if (!location) return null;
+    return {
+      userId: location.user_id,
+      location: location.current_pos
+    }
+  }
 }
 module.exports = SerializerService;

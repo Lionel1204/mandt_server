@@ -10,5 +10,6 @@ module.exports = {
     packageArrivedController: require('./packageArrivedController'),
     registerController: require('./registerController'),
     adminController: require('./adminController'),
-    qrController: require('./qrController')
+    qrController: require('./qrController'),
+    locationsController: require('./locationsController'),
 };

@@ -51,6 +51,9 @@ Create a model and a script:
 - Feedback
 > npx sequelize model:generate --name feedbacks --attributes user_id:bigint,user_phone:string,problem:string,idea:string
 
+- Position
+> npx sequelize model:generate --name locations --attributes user_id:bigint,current_pos:json
+
 Create a schema:
 > npx sequelize db:create
 

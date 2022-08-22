@@ -28,7 +28,8 @@ const {
   pathsController,
   packageArrivedController,
   registerController,
-  adminController
+  adminController,
+  locationsController
 } = controllers;
 
 module.exports = function(app) {
@@ -100,4 +101,8 @@ module.exports = function(app) {
   // Admin (feedback)
   app.get(`${apiPrefix}/feedbacks`, createControllerFunction(adminController, 'getFeedback'));
   app.post(`${apiPrefix}/feedbacks`, createControllerFunction(adminController, 'postFeedback'));
+
+  // Locations
+  app.post(`${apiPrefix}/users/:userId/locations`, createControllerFunction(locationsController, 'post'));
+  app.get(`${apiPrefix}/users/:userId/locations`, createControllerFunction(locationsController, 'get'));
 };

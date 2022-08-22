@@ -381,5 +381,23 @@ class DBService {
       offset
     })
   }
+
+  // -- Location
+  async addLocation(user_id, location) {
+    const payload = {
+      user_id,
+      current_pos: location
+    };
+    const result = await db.locations.upsert(payload, {user_id});
+    return {created: result[1], location: result[0]}
+  }
+
+  async getLocation(user_id) {
+    return db.locations.findOne({
+      where: {
+        user_id
+      }
+    });
+  }
 }
 module.exports = DBService;

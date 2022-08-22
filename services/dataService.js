@@ -542,6 +542,15 @@ class DataService {
     const userId = user ? user.id : null;
     return this.dbService.setFeedback(userId, phone, problem, idea);
   }
+
+  // -- location
+  async createUserLocation(userId, payload) {
+    return this.dbService.addLocation(userId, payload);
+  }
+
+  async getUserLocation(userId) {
+    return this.dbService.getLocation(userId)
+  }
 }
 
 module.exports = DataService;

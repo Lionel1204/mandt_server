@@ -1,0 +1,13 @@
+###
+
+POST http://{{host}}/{{api_prefix}}/users/1/locations
+Content-Type: application/json
+
+{
+  "longitude": 31.349,
+  "latitude": 52.344
+}
+
+###
+GET http://{{host}}/{{api_prefix}}/users/1/locations
+Content-Type: application/json
