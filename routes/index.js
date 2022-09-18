@@ -109,5 +109,6 @@ module.exports = function(app) {
 
   // Images
   app.post(`${apiPrefix}/manifests/:manifestId/packages/:packageId/images`, createControllerFunction(imagesController, 'upload'));
-  app.get(`${apiPrefix}/manifests/:manifestId/packages/:packageId/images`,  createControllerFunction(imagesController, 'list'))
+  app.get(`${apiPrefix}/manifests/:manifestId/packages/:packageId/images`,  createControllerFunction(imagesController, 'list'));
+  app.post(`${apiPrefix}/manifests/:manifestId/packages/:packageId/images-batchget`,  createControllerFunction(imagesController, 'getImages'));
 };

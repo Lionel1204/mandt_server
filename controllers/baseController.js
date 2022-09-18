@@ -1,4 +1,5 @@
 const Ajv = require("ajv");
+const ajvKeywords = require('ajv-keywords');
 const logger = require('../helper/loggerHelper');
 const Exceptions = require('../exceptions');
 
@@ -13,6 +14,10 @@ class BaseController {
     this.queryAjv = new Ajv(defaultOptions);
     this.paramsAjv = new Ajv(defaultOptions);
     this.logger = logger.getLogger();
+
+    ajvKeywords(this.bodyAjv, ['transform']);
+    ajvKeywords(this.queryAjv, ['transform']);
+    ajvKeywords(this.paramsAjv, ['transform']);
   }
 
   validateParam(schema, params) {
