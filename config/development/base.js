@@ -11,5 +11,9 @@ module.exports = {
     redisHost: 'localhost',
     redisPassword: null,
     redisPort: 6379
+  },
+  cos: {
+    bucket: 'mandt-photo-dev-1257621990',
+    region: 'ap-shanghai'
   }
 };

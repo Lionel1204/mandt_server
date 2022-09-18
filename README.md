@@ -75,7 +75,7 @@ Deletes data from the database
 Reverts a migration
 > npx sequelize db:migrate:undo
 
-#Commands:
+# Commands:
 > sequelize db:migrate                        Run pending migrations
 > sequelize db:migrate:schema:timestamps:add  Update migration table to have timestamps
 > sequelize db:migrate:status                 List the status of all migrations
@@ -96,9 +96,13 @@ Reverts a migration
 > sequelize model:generate                    Generates a model and its migration [aliases: model:create]
 > sequelize seed:generate                     Generates a new seed file           [aliases: seed:create]
 
-Start MySQL
+- Start MySQL
 > mysql.server start
 
-# PM2
+## PM2
 > pm2 start npm -- start
 > pm2 start <json>
+
+## Use COS of tencent //TODO: use CDN
+[link](https://cloud.tencent.com/document/product/436/8629)
+> npm i cos-nodejs-sdk-v5 --save

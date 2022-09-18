@@ -2,6 +2,8 @@ const DBService = require('./dbService');
 const DataService = require('./dataService');
 const SerializerService = require('./serializerService');
 const RedisService = require('./redisService');
+const UploadService = require('./uploadService');
+
 class ServiceFactory {
     constructor() {
         this._service = {}
@@ -55,5 +57,6 @@ const serviceFactory = new ServiceFactory();
 serviceFactory.registerService('DBService', [], DBService);
 serviceFactory.registerService('DataService', ['DBService'], DataService);
 serviceFactory.registerService('SerializerService', [], SerializerService);
-serviceFactory.registerService('RedisService', [], RedisService)
+serviceFactory.registerService('RedisService', [], RedisService);
+serviceFactory.registerService('UploadService', [], UploadService)
 module.exports = serviceFactory;

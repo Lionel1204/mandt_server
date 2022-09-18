@@ -12,4 +12,5 @@ module.exports = {
     adminController: require('./adminController'),
     qrController: require('./qrController'),
     locationsController: require('./locationsController'),
+    imagesController: require('./imagesController'),
 };

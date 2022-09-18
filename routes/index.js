@@ -29,7 +29,8 @@ const {
   packageArrivedController,
   registerController,
   adminController,
-  locationsController
+  locationsController,
+  imagesController
 } = controllers;
 
 module.exports = function(app) {
@@ -105,4 +106,8 @@ module.exports = function(app) {
   // Locations
   app.post(`${apiPrefix}/users/:userId/locations`, createControllerFunction(locationsController, 'post'));
   app.get(`${apiPrefix}/users/:userId/locations`, createControllerFunction(locationsController, 'get'));
+
+  // Images
+  app.post(`${apiPrefix}/manifests/:manifestId/packages/:packageId/images`, createControllerFunction(imagesController, 'upload'));
+  app.get(`${apiPrefix}/manifests/:manifestId/packages/:packageId/images`,  createControllerFunction(imagesController, 'list'))
 };

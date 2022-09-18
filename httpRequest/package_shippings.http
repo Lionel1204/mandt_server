@@ -1,9 +1,9 @@
 # Get arrivedinfo
-GET http://{{host}}/{{api_prefix}}/packages/2/arrived-info
+GET http://{{host}}/{{api_prefix}}/packages/3/arrived-info
 Content-Type: application/json
 
 ###
-PATCH http://{{host}}/{{api_prefix}}/packages/2/arrived-info
+PATCH http://{{host}}/{{api_prefix}}/packages/3/arrived-info
 Content-Type: application/json
 
 {

@@ -201,6 +201,7 @@ class DataService {
     if (createShippingFlag && result) {
       // Manifest is ready, start to create shipping record
       await this.createArrivedInfo(manifestId);
+      //await this.updatePacakgeStatus(manifestId, PackageStatus.InTransit);
       this.logger.info(`Manifest ${manifestId}, Arrived Info is created`);
     }
     return result
