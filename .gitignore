@@ -131,3 +131,7 @@ mandt_mobile/node_modules/*
 mandt_mobile/dist
 mandt_mobile/.vscode
 mandt_mobile/.DS_Store
+
+./idea/*
+./node_modules/*
+./config/cred.*
