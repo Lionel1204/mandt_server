@@ -13,28 +13,36 @@ class BaseController {
     this.bodyAjv = new Ajv(defaultOptions);
     this.queryAjv = new Ajv(defaultOptions);
     this.paramsAjv = new Ajv(defaultOptions);
+    this.filterAjv = new Ajv(defaultOptions);
     this.logger = logger.getLogger();
 
     ajvKeywords(this.bodyAjv, ['transform']);
     ajvKeywords(this.queryAjv, ['transform']);
     ajvKeywords(this.paramsAjv, ['transform']);
+    ajvKeywords(this.filterAjv, ['transform']);
   }
 
   validateParam(schema, params) {
     if (!this.paramsAjv.validate(schema, params)) {
-      throw new Exceptions.BadRequestException(this.paramsAjv.errorsText())
+      throw new Exceptions.BadRequestException(this.paramsAjv.errorsText());
     }
   }
 
   validateBody(schema, body) {
     if (!this.bodyAjv.validate(schema, body)) {
-      throw new Exceptions.BadRequestException(this.bodyAjv.errorsText())
+      throw new Exceptions.BadRequestException(this.bodyAjv.errorsText());
     }
   }
 
   validateQuery(schema, query) {
     if (!this.queryAjv.validate(schema, query)) {
-      throw new Exceptions.BadRequestException(this.queryAjv.errorsText())
+      throw new Exceptions.BadRequestException(this.queryAjv.errorsText());
+    }
+  }
+
+  validateFilter(schema, filter) {
+    if (!this.filterAjv.validate(schema, filter)) {
+      throw new Exceptions.BadRequestException(this.filterAjv.errorsText());
     }
   }
 

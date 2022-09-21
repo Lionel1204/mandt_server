@@ -1,6 +1,5 @@
 const cred = require('../config/cred.json');
 const COS = require('cos-nodejs-sdk-v5');
-const util = require('util');
 const STORAGE_CLASS = 'STANDARD';
 
 const createCOS = () => {
@@ -17,23 +16,24 @@ const createCOS = () => {
  * @param region
  * @param filepath
  * @param filename
+ * @param fileext
  * @param url
  * @param thumbnail
  * @returns {void | Promise<COS.PutObjectResult>}
  */
-const uploadBase64 = async (logger, cos, bucket, region, filepath, filename, url, thumbnail = false) => {
+const uploadBase64 = async (logger, cos, bucket, region, filepath, filename, fileext, url, thumbnail = false) => {
   const body = Buffer.from(url.split(',')[1], 'base64');
   return new Promise((resolve, reject) => {
     const options = {
       Bucket: bucket,
       Region: region,
-      Key: `${filepath}/${filename}`,
+      Key: `${filepath}/${filename}.${fileext}`,
       StorageClass: STORAGE_CLASS,
       Body: body
     };
     if (thumbnail) options.Headers =  {
       // Use imageMogr2 to resize the image, width=200
-      'Pic-Operations': `{"is_pic_info": 1, "rules": [{"fileid": "${filename}_thumbnail.jpg", "rule": "imageMogr2/thumbnail/200x/"}]}`
+      'Pic-Operations': `{"is_pic_info": 1, "rules": [{"fileid": "${filename}_thumbnail.${fileext}", "rule": "imageMogr2/thumbnail/200x/"}]}`
     }
     cos.putObject(
       options,
@@ -51,7 +51,6 @@ const listObjects = async (logger, cos, bucket, region, path) => {
       Bucket: bucket,
       Region: region,
       Prefix: `${path}/`,
-      Delimiter: '/',
       MaxKeys: 1000
     }, function(err, data) {
       if (err) return reject(err);

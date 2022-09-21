@@ -3,7 +3,7 @@ const serviceFactory = require('../services/serviceFactory');
 const { paginateResult } = require('../helper/utils');
 const _ = require('lodash');
 const {manifestPathSchema} = require("../validateSchemas/baseSchemas");
-const {createImageBodySchema, listImagesSchema, getImagesSchema} = require("../validateSchemas/imageSchemas");
+const {createImageBodySchema, listImagesSchema, getImagesSchema, listImagesFilterSchema} = require("../validateSchemas/imageSchemas");
 const nconf = require("nconf");
 
 class ImagesController extends BaseController {
@@ -17,10 +17,10 @@ class ImagesController extends BaseController {
       this.validateParam(manifestPathSchema, req.params);
       this.validateBody(createImageBodySchema, req.body);
 
-      const payload = req.body;
+      const {image, pathNode}= req.body;
       const { manifestId, packageId } = req.params;
       const [uploadService, serializerService] = await serviceFactory.getService('UploadService', 'SerializerService');
-      const url = await uploadService.upload(this.prefix, manifestId, packageId, payload.image);
+      const url = await uploadService.upload(this.prefix, manifestId, packageId, pathNode, image);
 
       res.status(201).json({url});
     } catch (ex) {
@@ -31,12 +31,12 @@ class ImagesController extends BaseController {
   async list(req, res) {
     try {
       this.validateParam(manifestPathSchema, req.params);
-      this.validateQuery(listImagesSchema, req.query);
+      //this.validateQuery(listImagesSchema, req.query);
+      this.validateFilter(listImagesFilterSchema, req.query.filter);
       const { manifestId, packageId } = req.params;
-      const { filter } = req.query;
       const [uploadService, serializerService] = await serviceFactory.getService('UploadService', 'SerializerService');
 
-      const url = await uploadService.listImageNames(this.prefix, manifestId, packageId, filter);
+      const url = await uploadService.listImageNames(this.prefix, manifestId, packageId, req.query.filter);
 
       res.status(200).json(url);
     } catch (ex) {
@@ -49,9 +49,9 @@ class ImagesController extends BaseController {
       this.validateParam(manifestPathSchema, req.params);
       this.validateBody(getImagesSchema, req.body);
       const { manifestId, packageId } = req.params;
-      const names = req.body;
+      const payload = req.body;
       const [uploadService, serializerService] = await serviceFactory.getService('UploadService', 'SerializerService');
-      const urls = await uploadService.getImages(this.prefix, manifestId, packageId, names);
+      const urls = await uploadService.getImages(this.prefix, manifestId, packageId, payload);
 
       res.status(200).json(urls);
     } catch (ex) {

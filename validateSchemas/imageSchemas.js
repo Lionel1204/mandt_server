@@ -3,9 +3,13 @@ const createImageBodySchema = {
   properties: {
     image: {
       type: 'string'
+    },
+    pathNode: {
+      type: 'integer',
+      minimum: 0
     }
   },
-  required: ['image']
+  required: ['image', 'pathNode']
 };
 
 const listImagesSchema = {
@@ -18,22 +22,41 @@ const listImagesSchema = {
   }
 };
 
+const listImagesFilterSchema = {
+  type: 'object',
+  properties: {
+    thumbnail: {
+      type: 'boolean'
+    },
+    pathnode: {
+      type: 'string'
+    }
+  }
+}
+
 const getImagesSchema = {
   type: 'array',
   items: {
     maxItems: 9,
     uniqueItems: true,
-    items: [{
-      type: 'string',
-      transform: ['trim'],
-      minLength: 1,
-      maxLength: 1024
-    }]
+    properties: {
+      pathNode: {
+        type: 'integer',
+        minimum: 0
+      },
+      imageName: {
+        type: 'string',
+        transform: ['trim'],
+        minLength: 1,
+        maxLength: 1024
+      }
+    }
   }
 }
 
 module.exports = {
   createImageBodySchema,
   listImagesSchema,
-  getImagesSchema
+  getImagesSchema,
+  listImagesFilterSchema
 };

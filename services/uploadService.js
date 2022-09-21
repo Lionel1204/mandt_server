@@ -4,7 +4,7 @@ const cosHelper = require('../helper/cosHelper');
 const nConfig = require('../config');
 const shortid = require('shortid');
 const logger = require('../helper/loggerHelper');
-const Exceptions = require("../exceptions");
+const Exceptions = require('../exceptions');
 
 const convertToCommonError = (err) => {
   switch (err.statusCode) {
@@ -23,7 +23,7 @@ const convertToCommonError = (err) => {
     default:
       return new Exceptions.InternalServerException(err.name, err);
   }
-}
+};
 
 /**
  * Redis service
@@ -53,12 +53,23 @@ class UploadService {
    * @param base64Url
    * @returns {Promise<void|COS.PutObjectResult>}
    */
-  async upload(prefix, manifestId, packageId, base64Url) {
+  async upload(prefix, manifestId, packageId, pathNode, base64Url) {
     try {
       const timestamp = new Date().getTime();
-      const uploadFilepath = `${prefix}/${manifestId}/${packageId}`
-      const uploadFilename = `${timestamp}_${shortid.generate()}.png`;
-      return await cosHelper.uploadBase64(this.logger, this._cos, this._bucket, this._region, uploadFilepath, uploadFilename, base64Url, true);
+      const filePath = `${prefix}/${manifestId}/${packageId}/${pathNode}`;
+      const fileName = `${timestamp}_${shortid.generate()}`;
+      const fileExt = 'png';
+      return await cosHelper.uploadBase64(
+        this.logger,
+        this._cos,
+        this._bucket,
+        this._region,
+        filePath,
+        fileName,
+        fileExt,
+        base64Url,
+        true
+      );
     } catch (ex) {
       if (ex.statusCode) {
         throw convertToCommonError(ex);
@@ -74,20 +85,36 @@ class UploadService {
    * @param filter
    * @returns {Promise<*>}
    */
-  async listImageNames(prefix, manifestId, packageId, filter = '') {
+  async listImageNames(prefix, manifestId, packageId, filter = {}) {
+    const THUMBNAIL_SUFFIX = 'thumbnail';
     const filepath = `${prefix}/${manifestId}/${packageId}`;
-
+    const { thumbnail, pathnode } = filter;
     const contents = await cosHelper.listObjects(this.logger, this._cos, this._bucket, this._region, filepath);
-    const imageNames = contents.map((c) => _.trimStart(c.Key, filepath));
-    if (filter) return imageNames.filter((n) => _.includes(n, filter));
-    return imageNames;
+    const imageNames = contents.map((c) => c.Key.replace(filepath + '/', ''));
+    let imageList = imageNames;
+    if (thumbnail) imageList = imageNames.filter((n) => _.includes(n, THUMBNAIL_SUFFIX));
+    const result = _.reduce(
+      imageList,
+      (acc, v) => {
+        const [key, name] = v.split('/');
+        if (!_.get(acc, key)) acc[key] = [name];
+        else acc[key] = [...acc[key], name];
+        return acc;
+      },
+      {}
+    );
+    if (!pathnode || !Number(pathnode)) return result;
+    else return { [pathnode]: _.get(result, pathnode) };
   }
 
-  async getImages(prefix, manifestId, packageId, names) {
+  async getImages(prefix, manifestId, packageId, payload) {
     const filepath = `${prefix}/${manifestId}/${packageId}`;
-    const imageUrls = await Promise.all(names.map(async (name) => {
-      return await cosHelper.getObjectUrl(this.logger, this._cos, this._bucket, this._region, filepath, name);
-    }));
+    const imageUrls = await Promise.all(
+      payload.map(async (p) => {
+        const fullPath = `${filepath}/${p.pathNode}`;
+        return await cosHelper.getObjectUrl(this.logger, this._cos, this._bucket, this._region, fullPath, p.imageName);
+      })
+    );
     return imageUrls;
   }
 }
