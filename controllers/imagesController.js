@@ -32,11 +32,12 @@ class ImagesController extends BaseController {
     try {
       this.validateParam(manifestPathSchema, req.params);
       //this.validateQuery(listImagesSchema, req.query);
-      this.validateFilter(listImagesFilterSchema, req.query.filter);
+      const filter = req.query?.filter || {};
+      this.validateFilter(listImagesFilterSchema, filter);
       const { manifestId, packageId } = req.params;
       const [uploadService, serializerService] = await serviceFactory.getService('UploadService', 'SerializerService');
 
-      const url = await uploadService.listImageNames(this.prefix, manifestId, packageId, req.query.filter);
+      const url = await uploadService.listImageNames(this.prefix, manifestId, packageId, filter);
 
       res.status(200).json(url);
     } catch (ex) {
