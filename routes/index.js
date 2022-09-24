@@ -111,4 +111,5 @@ module.exports = function(app) {
   app.post(`${apiPrefix}/manifests/:manifestId/packages/:packageId/images`, createControllerFunction(imagesController, 'upload'));
   app.get(`${apiPrefix}/manifests/:manifestId/packages/:packageId/images`,  createControllerFunction(imagesController, 'list'));
   app.post(`${apiPrefix}/manifests/:manifestId/packages/:packageId/images-batchget`,  createControllerFunction(imagesController, 'getImages'));
+  app.delete(`${apiPrefix}/manifests/:manifestId/packages/:packageId/images/:imagename`, createControllerFunction(imagesController, 'delete'));
 };

@@ -117,6 +117,24 @@ class UploadService {
     );
     return imageUrls;
   }
+
+  async deleteImage(prefix, manifestId, packageId, pathnode, imageName) {
+    const filepath = `${prefix}/${manifestId}/${packageId}/${pathnode}/${imageName}`;
+    const fileExt = '.png'
+    const realFilename = _.trimEnd(imageName, fileExt);
+
+    const filepathList = [
+      `${prefix}/${manifestId}/${packageId}/${pathnode}/${imageName}`,// image name
+      `${prefix}/${manifestId}/${packageId}/${pathnode}/${realFilename}_thumbnail${fileExt}`
+    ]
+
+    const results = await Promise.all(
+      filepathList.map(async (fp) => {
+        return await cosHelper.deleteObject(this.logger, this._cos, this._bucket, this._region, fp);
+      })
+    );
+    return _.every(results, Boolean);
+  }
 }
 
 module.exports = UploadService;

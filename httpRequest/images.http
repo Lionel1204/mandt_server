@@ -8,20 +8,24 @@ Content-Type: application/json
 }
 
 ###
-GET http://{{host}}/{{api_prefix}}/manifests/2/packages/3/images?filter[thumbnail]=true&filter[pathnode]=0
+GET http://{{host}}/{{api_prefix}}/manifests/2/packages/3/images
 Content-Type: application/json
 
 ###
-POST http://{{host}}/{{api_prefix}}/manifests/2/packages/3/images-batchget
+POST http://{{host}}/{{api_prefix}}/manifests/10/packages/36/images-batchget
 Content-Type: application/json
 
 [
   {
-    "pathNode": 2,
-    "imageName": "1663771034104_H1Yp6oqxa.png"
+    "pathNode": 1,
+    "imageName": "1663816255297_hWIWRlxhX.png"
   },
   {
-    "pathNode": 2,
-    "imageName": "1663771034104_H1Yp6oqxa.png"
+    "pathNode": 1,
+    "imageName": "1663816268759__1EahmirG.png"
   }
 ]
+
+###
+DELETE http://{{host}}/{{api_prefix}}/manifests/2/packages/3/images/1664028997515_eSU-nM0ta.png?pathnode=2
+Content-Type: application/json

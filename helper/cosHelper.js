@@ -84,9 +84,32 @@ const getObjectUrl = async (logger, cos, bucket, region, path, name) => {
   });
 };
 
+/**
+ * deleteObject
+ * @param logger
+ * @param cos
+ * @param bucket
+ * @param region
+ * @param filePath
+ * @returns {Promise<unknown>}
+ */
+const deleteObject = async (logger, cos, bucket, region, filePath) => {
+  return new Promise((resolve, reject) => {
+    cos.deleteObject({
+      Bucket: bucket,
+      Region: region,
+      Key: filePath,
+    }, function(err, data) {
+      if (err) return reject(err);
+      return resolve(data.statusCode === 204);
+    });
+  });
+};
+
 module.exports = {
   createCOS,
   uploadBase64,
   listObjects,
-  getObjectUrl
+  getObjectUrl,
+  deleteObject
 };

@@ -52,11 +52,23 @@ const getImagesSchema = {
       }
     }
   }
+};
+
+const deleteImagesSchema = {
+  type: 'object',
+  properties: {
+    pathnode: {
+      type: 'integer',
+      minimum: 1
+    }
+  },
+  required: ['pathnode']
 }
 
 module.exports = {
   createImageBodySchema,
   listImagesSchema,
   getImagesSchema,
-  listImagesFilterSchema
+  listImagesFilterSchema,
+  deleteImagesSchema
 };
