@@ -59,7 +59,7 @@ const deleteImagesSchema = {
   properties: {
     pathnode: {
       type: 'integer',
-      minimum: 1
+      minimum: 0
     }
   },
   required: ['pathnode']
